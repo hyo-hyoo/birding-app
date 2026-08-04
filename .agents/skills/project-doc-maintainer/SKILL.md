@@ -82,6 +82,7 @@ Use exactly these status categories: `confirmed`, `provisional`, `open-question`
 12. Re-read affected files and verify links, status labels, scope boundaries, and duplicate facts.
 13. Explain each change, show focused diff evidence, and provide a per-file summary.
 14. Decide separately whether `AGENTS.md` and `DOCUMENTS-GUIDE.md` meet their update triggers. If neither does, state why each one remains unchanged.
+15. After maintenance, report the evidence for the edits, files actually modified, considered files left unchanged and why, unresolved questions, and a suggested Git commit message based only on the completed diff.
 
 ## Editing boundaries
 
@@ -93,6 +94,18 @@ Use exactly these status categories: `confirmed`, `provisional`, `open-question`
 - Do not reverse-engineer a requirement merely because code exists.
 - Do not create a new document without a clear, established responsibility.
 - Do not duplicate a fact across documents merely to make synchronization appear complete.
+
+## Post-maintenance reporting
+
+After making edits:
+
+- State the evidence source, confirmation status, and reasoning that authorized each modification.
+- List every file actually modified and summarize what changed in it.
+- List files that were inspected or considered but left unchanged, and explain why. Do not pad this list with unrelated files.
+- List unresolved questions explicitly; write `无` when none remain.
+- Suggest one concise Git commit message derived from the actual completed diff. Do not include planned or unimplemented work in the message.
+- Suggest a commit message only; do not run `git add` or `git commit` unless the user explicitly requests it.
+- Do not create a standalone documentation change log, maintenance log, or similar file unless the user explicitly requests one or project governance rules require it.
 
 ## Required output
 
@@ -110,6 +123,9 @@ Use these sections in order:
 10. 不修改的文件及原因
 11. 修改完成后的摘要
 12. 尚待用户确认的问题
+13. 本次修改依据
+14. 已修改文件
+15. 建议的 Git commit message
 
 Present each parsed item with compact fixed fields or a concise table containing: `变更`, `状态`, `证据`, `主文档`, `同步文档`, `处理`, and `原因`. If no edit occurred, rename section 11 to `建议修改摘要` or state `本次未修改文件` explicitly.
 
