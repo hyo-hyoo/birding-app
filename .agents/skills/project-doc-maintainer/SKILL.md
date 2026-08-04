@@ -15,6 +15,7 @@ Read these files before judging or editing:
 - `docs/idea-dump.md`
 - `docs/requirements.md`
 - `docs/mvp-scope.md`
+- `docs/ui-design.md`, if it exists
 - `docs/current-status.md`
 - `docs/technical-decisions.md`, if it exists
 - [references/document-governance.md](references/document-governance.md)

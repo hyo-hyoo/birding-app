@@ -3,7 +3,7 @@
 Before changing project files:
 
 1. Read `docs/current-status.md` first, then read `docs/project-overview.md`.
-2. Read `DOCUMENTS-GUIDE.md`, `docs/requirements.md`, `docs/mvp-scope.md`, and `docs/technical-decisions.md` if they exist.
+2. Read `DOCUMENTS-GUIDE.md`, `docs/requirements.md`, `docs/mvp-scope.md`, `docs/ui-design.md`, and `docs/technical-decisions.md` if they exist.
 3. Treat `docs/idea-dump.md` as unconfirmed ideas, not as development requirements.
 4. Do not expand the product scope without explicit approval.
 5. Propose a short implementation plan before editing files.
