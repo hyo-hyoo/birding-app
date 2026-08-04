@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Doc Maintainer"
+  short_description: "Audit and align project documents and agent rules"
+  default_prompt: "Use $project-doc-maintainer to audit current workspace changes and keep project documentation consistent."
