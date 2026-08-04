@@ -27,7 +27,7 @@ When Git is available, inspect at least:
 
 Use the last commit as the comparison baseline unless the user names another baseline. Include untracked files from status and inspect relevant ones directly because ordinary Git diffs omit them.
 
-When Git is unavailable, state which Git evidence could not be collected. Inspect the visible file tree and file contents, but do not claim to know what changed since a commit or that no changes exist. If project documentation confirms that Git has not been initialized, treat that as a known state rather than an unresolved problem. Do not initialize Git without explicit authorization.
+When Git is unavailable, state which Git evidence could not be collected. Inspect the visible file tree and file contents, but do not claim to know what changed since a commit or that no changes exist. Do not initialize Git without explicit authorization.
 
 ## Consistency checks
 
