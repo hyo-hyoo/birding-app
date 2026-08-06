@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>观鸟 Web App｜柔雾标本册</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --mist: #f2f4ef;
+      --paper: #fbfcf8;
+      --moss-wash: #e0e8de;
+      --blue-wash: #d3e0dc;
+      --selection: #d6e4d6;
+      --line: #c5d0c7;
+      --ink: #284a3e;
+      --body: #4c6258;
+      --quiet: #788b83;
+      --ginkgo: #c9a95f;
+      --ginkgo-wash: #f0e5c9;
+      --bird-yellow: #e8c864;
+      --bird-blue: #7fa9b8;
+      --bird-grey: #919995;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--mist);
+      color: var(--ink);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% 5%, rgba(211, 224, 220, .8), transparent 28rem),
+        var(--mist);
+    }
+
+    button { font: inherit; }
+
+    .prototype-note {
+      padding: 20px 24px 0;
+      color: var(--quiet);
+      font-size: 12px;
+      letter-spacing: .06em;
+      text-align: center;
+    }
+
+    .page {
+      position: relative;
+      width: min(100%, 420px);
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 24px 60px rgba(55, 82, 68, .13);
+    }
+
+    .page::before {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 27px;
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(40, 74, 62, .13) 5%, rgba(40, 74, 62, .13) 90%, transparent);
+      content: "";
+    }
+
+    .topbar,
+    main,
+    .save-dock { position: relative; z-index: 1; }
+
+    .topbar {
+      display: flex;
+      min-height: 68px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px 8px 48px;
+    }
+
+    .back {
+      display: inline-flex;
+      min-width: 44px;
+      min-height: 44px;
+      align-items: center;
+      gap: 7px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .back-mark { font-size: 19px; line-height: 1; }
+
+    .draft {
+      padding: 6px 9px;
+      border: 1px solid rgba(40, 74, 62, .13);
+      border-radius: 999px;
+      color: var(--quiet);
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+
+    main { padding: 0 24px 132px 48px; }
+
+    .intro { padding: 12px 0 24px; }
+
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--quiet);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .14em;
+    }
+
+    h1,
+    h2 {
+      font-family: ui-serif, "Songti SC", "STSong", "SimSun", serif;
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 28px;
+      letter-spacing: .035em;
+    }
+
+    .intro-copy {
+      max-width: 260px;
+      margin: 9px 0 0;
+      color: var(--body);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .specimen {
+      position: relative;
+      min-height: 218px;
+      padding: 18px 18px 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px 18px 40px 18px;
+      background: linear-gradient(135deg, #f7faf5 0%, var(--moss-wash) 100%);
+    }
+
+    .specimen-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--quiet);
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+
+    .specimen-label strong { color: var(--ink); font-weight: 700; }
+
+    .bird-svg {
+      position: absolute;
+      top: 29px;
+      right: 4px;
+      width: 220px;
+      height: 158px;
+    }
+
+    .feather-index {
+      position: absolute;
+      bottom: 16px;
+      left: 18px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .feather-index p {
+      margin: 0 0 1px;
+      color: var(--body);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .feather-index ul {
+      display: flex;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .feather-index li {
+      display: grid;
+      width: 31px;
+      height: 39px;
+      place-items: end center;
+      padding-bottom: 4px;
+      border: 1px solid rgba(40, 74, 62, .12);
+      border-radius: 18px 18px 5px 5px;
+      color: rgba(40, 74, 62, .72);
+      font-size: 9px;
+    }
+
+    .feather-index .yellow { background: var(--bird-yellow); }
+    .feather-index .blue { background: var(--bird-blue); }
+    .feather-index .grey { background: var(--bird-grey); }
+
+    .section { padding: 28px 0 0; }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    h2 { margin: 0; font-size: 18px; letter-spacing: .025em; }
+
+    .section-note {
+      margin: 0;
+      color: var(--quiet);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .body-parts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .part {
+      min-height: 52px;
+      padding: 8px 3px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper);
+      color: var(--body);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .part::before {
+      display: block;
+      width: 6px;
+      height: 6px;
+      margin: 0 auto 5px;
+      border-radius: 50%;
+      background: #b9c5bd;
+      content: "";
+    }
+
+    .part.is-set::before { background: var(--ink); }
+
+    .part.is-active {
+      border-color: transparent;
+      background: var(--selection);
+      box-shadow: inset 0 0 0 1px rgba(40, 74, 62, .12);
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .part.is-active::before { background: var(--ginkgo); }
+
+    .observation {
+      position: relative;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px 18px 18px 6px;
+      background: #f8faf6;
+    }
+
+    .observation::before {
+      position: absolute;
+      top: 18px;
+      left: -12px;
+      width: 12px;
+      height: 1px;
+      background: var(--line);
+      content: "";
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--body);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .color-row { display: flex; gap: 8px; }
+
+    .color-option {
+      display: inline-flex;
+      min-height: 44px;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: var(--paper);
+      color: var(--body);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .color-option::before {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--swatch);
+      box-shadow: 0 0 0 1px rgba(40, 74, 62, .11);
+      content: "";
+    }
+
+    .color-option.is-selected {
+      border-color: rgba(201, 169, 95, .66);
+      background: var(--ginkgo-wash);
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .select-like {
+      display: flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border: 1px solid rgba(40, 74, 62, .11);
+      border-radius: 12px;
+      background: var(--paper);
+      color: var(--body);
+      font-size: 12px;
+    }
+
+    .select-like strong { color: var(--ink); font-weight: 700; }
+    .chevron { color: var(--quiet); font-size: 14px; }
+
+    .summary {
+      margin: 24px 0 0;
+      padding: 16px 18px 16px 20px;
+      border-left: 3px solid var(--ginkgo);
+      background: var(--moss-wash);
+      color: var(--body);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .summary strong { color: var(--ink); font-weight: 700; }
+
+    .save-dock {
+      position: fixed;
+      right: max(0px, calc((100vw - 420px) / 2));
+      bottom: 0;
+      left: max(0px, calc((100vw - 420px) / 2));
+      padding: 12px 24px 20px 48px;
+      border-top: 1px solid rgba(197, 208, 199, .8);
+      background: rgba(251, 252, 248, .94);
+      box-shadow: 0 -10px 25px rgba(55, 82, 68, .06);
+      backdrop-filter: blur(10px);
+    }
+
+    .save-button {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--ink);
+      box-shadow: inset 0 1px rgba(255, 255, 255, .18), 0 8px 18px rgba(40, 74, 62, .18);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      cursor: pointer;
+    }
+
+    button:focus-visible { outline: 3px solid rgba(201, 169, 95, .8); outline-offset: 2px; }
+
+    @media (min-width: 421px) {
+      .page { min-height: calc(100vh - 52px); margin-top: 16px; margin-bottom: 36px; border: 1px solid rgba(197, 208, 199, .72); border-radius: 24px; }
+      .save-dock { bottom: 36px; }
+    }
+
+    @media (max-width: 380px) {
+      .topbar { padding-left: 36px; }
+      main { padding-left: 44px; }
+      .save-dock { padding-left: 44px; }
+      .body-parts { gap: 5px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <p class="prototype-note">视觉实验 · B′ 柔雾标本册</p>
+
+  <div class="page">
+    <header class="topbar">
+      <button class="back" type="button" aria-label="返回修改轮廓"><span class="back-mark">←</span>修改轮廓</button>
+      <span class="draft">草稿</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <p class="kicker">OBSERVATION NOTE</p>
+        <h1 id="page-title">记录这只鸟</h1>
+        <p class="intro-copy">只留下你看清的部分。模糊之处可以先不填。</p>
+      </section>
+
+      <section class="specimen" aria-label="当前选择的鸟类轮廓与羽色印象">
+        <div class="specimen-label"><span>整体轮廓</span><strong>枝头鸟</strong></div>
+        <svg class="bird-svg" viewBox="0 0 240 170" role="img" aria-label="抽象的枝头鸟轮廓">
+          <path d="M24 136 C71 133 107 136 147 139 C177 142 199 142 222 136" fill="none" stroke="#70887d" stroke-width="4" stroke-linecap="round"/>
+          <path d="M123 136 C112 118 116 102 126 91 C135 82 143 81 149 70 C157 54 151 36 168 26 C188 15 214 25 220 45 C223 56 217 66 207 71 C219 80 218 101 205 110 C192 119 179 119 168 117 C156 132 145 140 123 136Z" fill="#f4f7f1" stroke="#284a3e" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M167 62 C182 64 195 70 203 84 C190 88 177 94 163 105 C158 89 158 76 167 62Z" fill="#d3e0dc" stroke="#284a3e" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M167 91 C180 92 188 97 195 104" fill="none" stroke="#c9a95f" stroke-width="7" stroke-linecap="round"/>
+          <path d="M218 48 L236 42 L221 57Z" fill="#c9a95f" stroke="#284a3e" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="203" cy="42" r="3" fill="#284a3e"/>
+          <path d="M151 117 C150 128 154 136 160 141 M161 117 C161 129 165 136 171 140" fill="none" stroke="#284a3e" stroke-width="3" stroke-linecap="round"/>
+          <path d="M113 141 L107 151 M124 141 L119 151" fill="none" stroke="#284a3e" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div class="feather-index">
+          <p>羽色印象</p>
+          <ul aria-label="已选择的颜色">
+            <li class="yellow">黄</li>
+            <li class="blue">蓝</li>
+            <li class="grey">灰</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="parts-title">
+        <div class="section-head"><h2 id="parts-title">观察部位</h2><p class="section-note">已记录胸腹</p></div>
+        <div class="body-parts">
+          <button class="part" type="button">头部</button>
+          <button class="part is-active" type="button" aria-pressed="true">胸腹</button>
+          <button class="part is-set" type="button">翅膀</button>
+          <button class="part" type="button">尾部</button>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="detail-title">
+        <div class="section-head"><h2 id="detail-title">胸腹的印象</h2><p class="section-note">可随时跳过</p></div>
+        <div class="observation">
+          <span class="field-label">主颜色</span>
+          <div class="color-row">
+            <button class="color-option is-selected" type="button" style="--swatch: var(--bird-yellow)" aria-pressed="true">黄色</button>
+            <button class="color-option" type="button" style="--swatch: var(--bird-blue)" aria-pressed="false">蓝色</button>
+            <button class="color-option" type="button" style="--swatch: var(--bird-grey)" aria-pressed="false">灰色</button>
+          </div>
+          <div class="detail-grid">
+            <div class="select-like"><span>花纹</span><strong>细条纹</strong><span class="chevron">⌄</span></div>
+            <div class="select-like"><span>确定度</span><strong>大概</strong><span class="chevron">⌄</span></div>
+          </div>
+        </div>
+      </section>
+
+      <p class="summary"><strong>当前印象</strong><br>胸腹偏黄，有细条纹；大概如此。</p>
+    </main>
+
+    <footer class="save-dock"><button class="save-button" type="button">保存这次观察</button></footer>
+  </div>
+</body>
+</html>
