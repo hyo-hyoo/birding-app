@@ -16,3 +16,5 @@ Before changing project files:
 12. Record important architectural decisions in `docs/technical-decisions.md`.
 13. After project documents or project-level rules change, use `$project-doc-maintainer` to check document-system consistency.
 14. Make user-facing output easy to understand: lead with conclusions and impact, explain important changes in plain language, and do not paste large file contents or long diffs unless the user asks for them.
+15. For UI design tasks, use `$frontend-design` first to establish the visual direction, then use `$mobile-app-ui-design` to check the mobile experience.
+16. Treat React, Tailwind, React Native, Flutter, and SwiftUI references in external UI skills as examples only. Keep Rails Views, HTML, CSS, JavaScript, Turbo, and Stimulus as the default Web App direction unless the project explicitly approves a change.

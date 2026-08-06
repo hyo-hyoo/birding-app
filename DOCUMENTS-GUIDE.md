@@ -10,6 +10,8 @@ birding-app/
 ├─ DOCUMENTS-GUIDE.md
 ├─ .agents/
 │  └─ skills/
+│     ├─ frontend-design/
+│     ├─ mobile-app-ui-design/
 │     └─ project-doc-maintainer/
 └─ docs/
    ├─ current-status.md
@@ -31,8 +33,10 @@ birding-app/
 - `docs/idea-dump.md`：未确认想法、研究方向、风险和后续候选。内容不得自动升级为需求或开发任务。
 - `docs/requirements.md`：已确认的正式产品需求，以及明确标记的待确认需求问题。
 - `docs/mvp-scope.md`：当前版本明确纳入、暂定、未决定和排除的范围及完成标准。
-- `docs/ui-design.md`：页面清单、用户流程、导航、组件、页面状态、低保真原型位置和 UI 未决问题；原型内容不自动成为正式需求。
+- `docs/ui-design.md`：页面清单、用户流程、导航、组件、页面状态、低保真与视觉实验原型位置、实验状态和 UI 未决问题；原型内容不自动成为正式需求或视觉规范。
 - `docs/technical-decisions.md`：已确认的重要技术选择、背景、理由和影响；仅在存在正式决定时创建和更新。
+- `.agents/skills/frontend-design/`：UI 设计任务的第一阶段，用于建立有项目辨识度的视觉方向。
+- `.agents/skills/mobile-app-ui-design/`：在视觉方向形成后检查移动端信息层级、操作区域、触控尺寸、状态与整体体验。
 - `.agents/skills/project-doc-maintainer/`：项目文档或项目级规则变化后，检查文档体系一致性并维护本指南与 `AGENTS.md`。
 
 ## 信息流
@@ -43,12 +47,13 @@ birding-app/
 4. 用 `docs/current-status.md` 汇总当前阶段、开放问题和下一步，但不得覆盖需求或 MVP 文档中的正式结论。
 5. 将长期稳定的方向写入 `docs/project-overview.md`；将已确认的重要技术选择写入 `docs/technical-decisions.md`。
 6. 当文档结构、全局规则或工具职责变化时，更新 `DOCUMENTS-GUIDE.md` 或 `AGENTS.md`。
-7. 将页面清单、用户流程、导航、组件和 UI 未决问题写入 `docs/ui-design.md`，但不得用原型内容覆盖正式需求或 MVP 边界。
+7. 将页面清单、用户流程、导航、组件、视觉实验状态和 UI 未决问题写入 `docs/ui-design.md`，但不得用原型内容覆盖正式需求、MVP 边界或正式视觉规范。
 
 ## 工具职责
 
 - ChatGPT：用于需求探索、澄清、范围讨论和学习复盘；讨论本身不是正式记录。
 - Codex：读取代码与正式文档，提出小范围计划，实施和验证变更，并维护受变更影响的项目文档。
+- `$frontend-design` 与 `$mobile-app-ui-design`：UI 任务先用前者建立视觉方向，再用后者检查移动端体验。Skill 中提到的 React、Tailwind、React Native、Flutter 或 SwiftUI 仅是设计或实现示例，不改变本项目默认的 Rails Web 技术方向。
 - `$project-doc-maintainer`：在项目文档或项目级规则变化后，检查 Git 变更、文档职责、状态、路径和遗漏；信息不足时列出问题，不编造项目决定。
 
 ## 维护检查
