@@ -12,6 +12,7 @@ birding-app/
 │  └─ skills/
 │     ├─ frontend-design/
 │     ├─ mobile-app-ui-design/
+│     ├─ project-ui-designer/
 │     └─ project-doc-maintainer/
 └─ docs/
    ├─ current-status.md
@@ -37,6 +38,7 @@ birding-app/
 - `docs/technical-decisions.md`：已确认的重要技术选择、背景、理由和影响；仅在存在正式决定时创建和更新。
 - `.agents/skills/frontend-design/`：UI 设计任务的第一阶段，用于建立有项目辨识度的视觉方向。
 - `.agents/skills/mobile-app-ui-design/`：在视觉方向形成后检查移动端信息层级、操作区域、触控尺寸、状态与整体体验。
+- `.agents/skills/project-ui-designer/`：负责 UI/UX 分析、页面与流程设计、原型制作和验证；只读取正式文档作为约束，不直接维护正式文档，并在产生实质性 UI 决定时输出一次性交接单。
 - `.agents/skills/project-doc-maintainer/`：项目文档或项目级规则变化后，检查文档体系一致性并维护本指南与 `AGENTS.md`。
 
 ## 信息流
@@ -48,13 +50,17 @@ birding-app/
 5. 将长期稳定的方向写入 `docs/project-overview.md`；将已确认的重要技术选择写入 `docs/technical-decisions.md`。
 6. 当文档结构、全局规则或工具职责变化时，更新 `DOCUMENTS-GUIDE.md` 或 `AGENTS.md`。
 7. 将页面清单、用户流程、导航、组件、视觉实验状态和 UI 未决问题写入 `docs/ui-design.md`，但不得用原型内容覆盖正式需求、MVP 边界或正式视觉规范。
+8. UI Designer 只在对话中输出一次性交接单；Project Maintainer 判断交接内容的状态、正式归属和同步范围后再修改文档。
 
 ## 工具职责
 
 - ChatGPT：用于需求探索、澄清、范围讨论和学习复盘；讨论本身不是正式记录。
 - Codex：读取代码与正式文档，提出小范围计划，实施和验证变更，并维护受变更影响的项目文档。
-- `$frontend-design` 与 `$mobile-app-ui-design`：UI 任务先用前者建立视觉方向，再用后者检查移动端体验。Skill 中提到的 React、Tailwind、React Native、Flutter 或 SwiftUI 仅是设计或实现示例，不改变本项目默认的 Rails Web 技术方向。
+- `$project-ui-designer`：负责页面结构、用户流程、交互状态、视觉方向、移动端体验和前端原型；需要视觉设计时先用 `$frontend-design`，再用 `$mobile-app-ui-design`。它不得直接修改正式项目文档，只能输出一次性交接单。
+- `$frontend-design` 与 `$mobile-app-ui-design`：作为 `$project-ui-designer` 的专业设计与移动端检查步骤。Skill 中提到的 React、Tailwind、React Native、Flutter 或 SwiftUI 仅是设计或实现示例，不改变本项目默认的 Rails Web 技术方向。
 - `$project-doc-maintainer`：在项目文档或项目级规则变化后，检查 Git 变更、文档职责、状态、路径和遗漏；信息不足时列出问题，不编造项目决定。
+
+当当前 Codex 任务被明确分配为 Project Maintainer、UI Designer 或开发 Agent，而用户请求明显属于另一角色时，当前 Agent 应先提醒用户可能发错任务或窗口，并在该轮停止执行，不得静默切换职责。
 
 ## 维护检查
 

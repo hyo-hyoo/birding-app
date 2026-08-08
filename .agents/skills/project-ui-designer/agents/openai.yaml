@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project UI Designer"
+  short_description: "Design and validate project UI flows and prototypes"
+  default_prompt: "Use $project-ui-designer to analyze and improve this project UI flow or prototype."
