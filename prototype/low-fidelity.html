@@ -168,6 +168,13 @@
     font-size:12px;
   }
   .btn.ghost{border-style:dashed; font-weight:400; color:var(--gray-1);}
+  .btn.disabled{
+    border-color:var(--gray-3);
+    color:var(--gray-2);
+    background:var(--gray-5);
+    cursor:not-allowed;
+  }
+  .btn.small{padding:6px 8px; font-size:10px;}
   .link{
     text-align:center;
     font-size:11px;
@@ -261,25 +268,99 @@
   }
   .grid2{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
 
-  .language-switch{
-    display:flex;
-    justify-content:flex-end;
-    align-items:center;
-    gap:4px;
-    font-size:10px;
-    color:var(--gray-1);
+  .state-tabs{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:6px;
   }
-  .language-switch .lang-option{
-    border:1px solid var(--gray-3);
-    padding:3px 6px;
+  .state-tab{
+    border:1.5px solid var(--gray-3);
+    padding:7px 5px;
+    text-align:center;
+    font-size:10px;
+    color:var(--gray-2);
     cursor:pointer;
   }
-  .language-switch .lang-option.active{
+  .state-tab.active{
     border-color:var(--ink);
     color:var(--ink);
     font-weight:700;
     background:var(--gray-5);
   }
+  .state-panel{display:none; flex-direction:column; gap:8px;}
+  .state-panel.active{display:flex;}
+  .choice{
+    min-height:52px;
+    border:1.5px dashed var(--tentative);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px;
+    text-align:center;
+    color:var(--gray-2);
+    font-size:9.5px;
+    cursor:pointer;
+  }
+  .choice.selected{border-style:solid; border-width:2.5px; color:var(--ink); font-weight:700;}
+  .field{
+    border:1.5px dashed var(--tentative);
+    min-height:38px;
+    padding:8px 10px;
+    color:var(--gray-2);
+    font-size:10px;
+  }
+  .state-note{
+    border:1.5px dashed var(--tentative);
+    background:var(--gray-5);
+    padding:8px 10px;
+    font-size:10px;
+    color:var(--gray-1);
+    line-height:1.5;
+  }
+  .mini-list{display:flex; flex-direction:column; gap:6px;}
+  .mini-row{
+    border:1px solid var(--gray-3);
+    padding:7px 8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    font-size:10px;
+  }
+
+  .language-control{position:relative; align-self:flex-end; font-size:10px;}
+  .language-button{
+    border:1.5px solid var(--ink);
+    background:var(--paper);
+    padding:6px 8px;
+    min-width:92px;
+    text-align:left;
+    cursor:pointer;
+  }
+  .language-menu{
+    display:none;
+    position:absolute;
+    top:calc(100% + 4px);
+    right:0;
+    width:116px;
+    border:1.5px solid var(--ink);
+    background:var(--paper);
+    z-index:4;
+  }
+  .language-control.open .language-menu{display:block;}
+  .language-option{padding:7px 8px; cursor:pointer;}
+  .language-option + .language-option{border-top:1px solid var(--gray-4);}
+  .language-option.active{font-weight:700; background:var(--gray-5);}
+
+  .inline-dialog{
+    display:none;
+    border:2px solid var(--ink);
+    padding:10px;
+    background:var(--paper);
+    flex-direction:column;
+    gap:8px;
+  }
+  .inline-dialog.active{display:flex;}
   .app-bottom-nav{
     display:flex;
     border-top:1.5px solid var(--ink);
@@ -358,7 +439,7 @@
 <div class="shell">
   <div class="sidebar">
     <h1>观鸟 Web App</h1>
-    <p class="sub">低保真线框图 · MVP 七页面</p>
+    <p class="sub">低保真线框图 · 七个核心页面＋辅助流程状态</p>
 
     <div class="nav-item active" data-page="p1"><span class="num">01</span>登录页面</div>
     <div class="nav-item" data-page="p2"><span class="num">02</span>注册页面</div>
@@ -367,6 +448,7 @@
     <div class="nav-item" data-page="p5"><span class="num">05</span>观察记录编辑</div>
     <div class="nav-item" data-page="p6"><span class="num">06</span>观察记录详情</div>
     <div class="nav-item" data-page="p7"><span class="num">07</span>设置页面</div>
+    <div class="nav-item" data-page="p8"><span class="num">08</span>账户辅助流程</div>
 
     <div class="legend">
       <div class="row"><span class="swatch solid"></span>已确认需求模块</div>
@@ -381,27 +463,29 @@
     <div class="page active" id="p1">
       <div class="page-meta">
         <h2>01 登录页面</h2>
-        <span class="status-tag confirmed">注册登录能力：已确认</span>
-        <span class="status-tag tentative">字段与形式：MVP暂定</span>
+        <span class="status-tag confirmed">邮箱＋密码登录：已确认</span>
         <div class="block">
           <h3>用户目的</h3>
           <p>进入个人观察历史，管理观察记录。</p>
         </div>
         <div class="block">
           <h3>页面信息</h3>
-          <ul><li>产品标识</li><li>邮箱/密码输入</li><li>登录按钮</li><li>去注册入口</li></ul>
+          <ul><li>邮箱与密码</li><li>登录按钮</li><li>注册入口</li><li>忘记密码入口</li><li>单一语言下拉入口</li></ul>
         </div>
         <div class="block">
           <h3>去向</h3>
-          <ul><li>成功→观察历史</li><li>失败→停留+错误提示</li><li>点注册→注册页</li></ul>
+          <ul><li>成功 → 观察历史</li><li>失败 → 停留并提示</li><li>注册 → 注册页</li><li>忘记密码 → 重置申请</li></ul>
         </div>
       </div>
       <div class="frame">
         <div class="notch"></div>
         <div class="screen">
-          <div class="language-switch" aria-label="语言切换">
-            <span class="lang-option active" data-lang="zh">中文</span>
-            <span class="lang-option" data-lang="ja">日本語</span>
+          <div class="language-control">
+            <button class="language-button" type="button" aria-expanded="false">简体中文 ▾</button>
+            <div class="language-menu" role="menu">
+              <div class="language-option active" data-lang="简体中文">✓ 简体中文</div>
+              <div class="language-option" data-lang="日本語">日本語</div>
+            </div>
           </div>
           <div style="text-align:center; padding:24px 0 8px;">
             <div class="box" style="display:inline-block; padding:6px 14px; font-weight:700;">[产品标识]</div>
@@ -418,8 +502,9 @@
             （错误提示占位 · 登录失败时显示）
           </div>
           <div class="btn">登录</div>
-          <div class="link">还没有账号？去注册</div>
-          <div class="footnote">MVP：仅邮箱+密码，不做用户名/社交登录/验证码/MFA</div>
+          <div class="link page-link" data-page="p8" data-flow-state="reset-request">忘记密码</div>
+          <div class="link page-link" data-page="p2">还没有账号？去注册</div>
+          <div class="footnote">仅支持邮箱和密码；不使用用户名或第三方 OAuth 登录</div>
         </div>
       </div>
     </div>
@@ -428,19 +513,18 @@
     <div class="page" id="p2">
       <div class="page-meta">
         <h2>02 注册页面</h2>
-        <span class="status-tag confirmed">用户注册：已确认</span>
-        <span class="status-tag tentative">注册字段：MVP暂定</span>
+        <span class="status-tag confirmed">字段与验证流程：已确认</span>
         <div class="block">
           <h3>用户目的</h3>
           <p>创建可保存个人观察历史的账户。</p>
         </div>
         <div class="block">
           <h3>页面信息</h3>
-          <ul><li>注册凭据输入区</li><li>注册按钮</li><li>返回登录入口</li></ul>
+          <ul><li>邮箱</li><li>密码</li><li>确认密码</li><li>注册按钮</li><li>返回登录</li><li>语言入口</li></ul>
         </div>
         <div class="block">
           <h3>去向</h3>
-          <ul><li>成功→观察历史 或 登录页（待定，二选一）</li></ul>
+          <ul><li>提交成功 → 查收验证邮件</li><li>邮箱确认成功 → 返回登录</li><li>验证后仍由用户手动登录</li></ul>
         </div>
         <div class="block">
           <h3>不要求</h3>
@@ -450,19 +534,22 @@
       <div class="frame">
         <div class="notch"></div>
         <div class="screen">
-          <div class="language-switch" aria-label="语言切换">
-            <span class="lang-option active" data-lang="zh">中文</span>
-            <span class="lang-option" data-lang="ja">日本語</span>
+          <div class="language-control">
+            <button class="language-button" type="button" aria-expanded="false">简体中文 ▾</button>
+            <div class="language-menu" role="menu">
+              <div class="language-option active" data-lang="简体中文">✓ 简体中文</div>
+              <div class="language-option" data-lang="日本語">日本語</div>
+            </div>
           </div>
           <div style="text-align:center; padding:24px 0 8px;">
             <div class="box" style="display:inline-block; padding:6px 14px; font-weight:700;">[产品标识]</div>
           </div>
           <div class="box tent"><span class="label">邮箱</span>&nbsp;</div>
           <div class="box tent"><span class="label">密码</span>&nbsp;</div>
-          <div class="box tent"><span class="label">确认密码（占位，字段待定）</span>&nbsp;</div>
-          <div class="btn">注册</div>
-          <div class="link">已有账号？去登录</div>
-          <div class="footnote">成功后去向（历史 / 登录页）：仍待技术阶段确认</div>
+          <div class="box tent"><span class="label">确认密码</span>&nbsp;</div>
+          <div class="btn page-link" data-page="p8" data-flow-state="verify-sent">注册并发送验证邮件</div>
+          <div class="link page-link" data-page="p1">已有账号？去登录</div>
+          <div class="footnote">注册成功或邮箱确认成功后均不自动登录</div>
         </div>
       </div>
     </div>
@@ -478,11 +565,11 @@
         </div>
         <div class="block">
           <h3>卡片最少显示</h3>
-          <ul><li>抽象鸟图缩略图</li><li>待确认/已确认状态</li><li>已确认时的鸟名</li></ul>
+          <ul><li>抽象鸟图缩略图</li><li>待确认 / 候选中 / 已确认</li><li>仅已确认时显示最终鸟名</li></ul>
         </div>
         <div class="block">
-          <h3>MVP暂不做</h3>
-          <p>搜索/筛选/排序/地图/日历/收藏/批量操作。时间地点是否显示在卡片：待定，初稿先不显示。</p>
+          <h3>卡片不显示</h3>
+          <p>候选鸟名、行动位置和行为。空状态的具体表现仍是 UI 细节，不与列表同时展示。</p>
         </div>
       </div>
       <div class="frame">
@@ -494,35 +581,30 @@
           </div>
           <div class="row" style="justify-content:space-between; align-items:center;">
             <span style="font-weight:700; font-size:13px;">我的观察历史</span>
-            <div class="btn" style="padding:6px 10px; font-size:11px;">+ 新建观察</div>
+            <div class="btn page-link" data-page="p4" style="padding:6px 10px; font-size:11px;">+ 新建观察</div>
           </div>
 
-          <div class="card">
+          <div class="card page-link" data-page="p6">
             <div class="thumb"></div>
             <div style="flex:1;">
               <span class="pill">待确认</span>
-              <div style="font-size:10px; color:var(--gray-2); margin-top:4px;">（未确认鸟名）</div>
             </div>
           </div>
-          <div class="card">
+          <div class="card page-link" data-page="p6">
+            <div class="thumb"></div>
+            <div style="flex:1;">
+              <span class="pill">候选中</span>
+              <div style="font-size:10px; color:var(--gray-2); margin-top:4px;">候选名称不在历史卡片显示</div>
+            </div>
+          </div>
+          <div class="card page-link" data-page="p6">
             <div class="thumb"></div>
             <div style="flex:1;">
               <span class="pill">已确认</span>
-              <div style="font-size:11px; margin-top:4px; font-weight:700;">[鸟名占位]</div>
+              <div style="font-size:11px; margin-top:4px; font-weight:700;">[最终鸟名占位]</div>
             </div>
           </div>
-          <div class="card">
-            <div class="thumb"></div>
-            <div style="flex:1;">
-              <span class="pill">待确认</span>
-              <div style="font-size:10px; color:var(--gray-2); margin-top:4px;">（未确认鸟名）</div>
-            </div>
-          </div>
-
-          <div class="box tent fill" style="text-align:center; color:var(--gray-2); font-size:10px;">
-            空状态占位：暂无观察记录，去新建第一条
-          </div>
-          <div class="footnote">观察时间/地点是否显示在卡片上：仍待决定</div>
+          <div class="state-note">列表状态示例：三个识别状态分别展示。空状态不与有记录列表同时出现。</div>
           <div class="app-bottom-nav" aria-label="App 底部导航">
             <div class="app-nav-item active" data-app-page="p3">观察历史</div>
             <div class="app-nav-item" data-app-page="p4">＋ 新建观察</div>
@@ -536,44 +618,66 @@
     <div class="page" id="p4">
       <div class="page-meta">
         <h2>04 轮廓选择页面</h2>
-        <span class="status-tag confirmed">选择整体轮廓：已确认</span>
-        <span class="status-tag tentative">模板数量/分类：待决定</span>
+        <span class="status-tag confirmed">两层纯视觉选择：已确认</span>
         <div class="block">
           <h3>用户目的</h3>
           <p>为抽象鸟图选择最接近记忆的基础轮廓。</p>
         </div>
         <div class="block">
-          <h3>MVP暂定</h3>
-          <ul><li>单层网格</li><li>4~6个占位轮廓</li><li>工作名称，非最终分类</li><li>不支持拖拽变形</li></ul>
+          <h3>已确认结构</h3>
+          <ul><li>第一层：约 4 个视觉大组</li><li>第二层：约 12～14 个具体轮廓</li><li>剪影为主、短文字为辅</li><li>不要求理解鸟类学分类</li></ul>
         </div>
         <div class="block">
-          <h3>仍待决定</h3>
-          <ul><li>是否有"没有合适的轮廓"</li><li>一层/两层选择</li><li>是否含飞行轮廓</li></ul>
+          <h3>边界</h3>
+          <ul><li>“没有合适的轮廓”是有效选项</li><li>使用中性通用鸟体继续</li><li>不做飞行鸟专用轮廓</li><li>不提供自由绘图或变形</li></ul>
+        </div>
+        <div class="block">
+          <h3>仍待专项验证</h3>
+          <p>大组和轮廓的最终名单、名称、排序及福冈常见鸟覆盖。</p>
         </div>
       </div>
       <div class="frame">
         <div class="notch"></div>
         <div class="screen">
           <div class="topbar">
-            <span class="link" style="text-decoration:underline;">← 返回历史</span>
+            <span class="link page-link" data-page="p3">← 返回历史</span>
             <span></span>
           </div>
-          <div class="box tent fill" style="font-size:11px;">
-            请选择最接近的轮廓，不要求完全一致
+          <div class="state-tabs" aria-label="轮廓选择层级">
+            <div class="state-tab active" data-outline-state="outline-groups">1 选择视觉大组</div>
+            <div class="state-tab" data-outline-state="outline-shapes">2 选择具体轮廓</div>
           </div>
-          <div class="grid2">
-            <div class="placeholder-img box tent" style="height:64px;">轮廓A</div>
-            <div class="placeholder-img box tent" style="height:64px; border-style:solid; border-width:2.5px;">轮廓B（选中）</div>
-            <div class="placeholder-img box tent" style="height:64px;">轮廓C</div>
-            <div class="placeholder-img box tent" style="height:64px;">轮廓D</div>
-            <div class="placeholder-img box tent" style="height:64px;">轮廓E</div>
-            <div class="placeholder-img box tent" style="height:64px;">轮廓F</div>
+
+          <div class="state-panel active" id="outline-groups">
+            <div class="state-note">先凭整体体型选择最接近的一组；以下名称均为原型占位。</div>
+            <div class="grid2">
+              <div class="choice outline-group-choice">[视觉大组占位 A]</div>
+              <div class="choice outline-group-choice">[视觉大组占位 B]</div>
+              <div class="choice outline-group-choice">[视觉大组占位 C]</div>
+              <div class="choice outline-group-choice">[视觉大组占位 D]</div>
+            </div>
           </div>
-          <div class="box tent" style="text-align:center; font-size:10px; color:var(--gray-2);">
-            + 没有合适的轮廓？（是否保留待定）
+
+          <div class="state-panel" id="outline-shapes">
+            <div class="row" style="justify-content:space-between; align-items:center;">
+              <span style="font-size:11px; font-weight:700;">[已选视觉大组]</span>
+              <span class="link" data-outline-state="outline-groups">重新选择大组</span>
+            </div>
+            <div class="state-note">再选择最接近的具体轮廓，不要求完全一致。最终数量与排序待样本验证。</div>
+            <div class="grid2">
+              <div class="choice">[具体轮廓占位 01]</div><div class="choice selected">[具体轮廓占位 02]</div>
+              <div class="choice">[具体轮廓占位 03]</div><div class="choice">[具体轮廓占位 04]</div>
+              <div class="choice">[具体轮廓占位 05]</div><div class="choice">[具体轮廓占位 06]</div>
+              <div class="choice">[具体轮廓占位 07]</div><div class="choice">[具体轮廓占位 08]</div>
+              <div class="choice">[具体轮廓占位 09]</div><div class="choice">[具体轮廓占位 10]</div>
+              <div class="choice">[更多占位]</div><div class="choice">[更多占位]</div>
+            </div>
+            <div class="box" style="text-align:center; font-size:10px;">
+              没有合适的轮廓<br><span style="color:var(--gray-2);">使用中性通用鸟体继续</span>
+            </div>
+            <div class="btn page-link" data-page="p5">使用所选轮廓并继续</div>
           </div>
-          <div class="btn" style="margin-top:auto;">继续</div>
-          <div class="footnote">数量/分类需通过福冈常见鸟类样本进一步验证</div>
+          <div class="footnote">原型占位不代表最终轮廓名单或鸟类学分类</div>
         </div>
       </div>
     </div>
@@ -582,67 +686,70 @@
     <div class="page" id="p5">
       <div class="page-meta">
         <h2>05 观察记录编辑</h2>
-        <span class="status-tag confirmed">能力：已确认需求</span>
-        <span class="status-tag tentative">页内排布：MVP暂定</span>
+        <span class="status-tag confirmed">结构与保存规则：已确认</span>
         <div class="block">
           <h3>用户目的</h3>
           <p>记忆消退前快速记录视觉特征，检查生成的抽象印象。</p>
         </div>
         <div class="block">
           <h3>四部位（均可跳过）</h3>
-          <p>头部 / 胸腹 / 翅膀 / 尾部 → 各1主色+1补充色(可选)+花纹标签+文字+确定程度</p>
+          <p>头部 / 胸腹 / 翅膀 / 尾部 → 各 1 主色＋最多 1 补充色＋最多 1 个预设特征＋自由文字＋确定程度。</p>
         </div>
         <div class="block">
           <h3>更新规则</h3>
-          <p>完成一次选择/编辑后更新抽象图与摘要，非逐字符实时更新。</p>
+          <p>完成一个部位编辑或切换部位后，统一更新抽象图与摘要。</p>
         </div>
         <div class="block">
-          <h3>修正范围（暂定）</h3>
-          <p>仅通过结构化输入修正，不支持直接拖动色块/自由变形。</p>
+          <h3>保存与离开</h3>
+          <p>有效轮廓＋至少一个部位有效特征后才能保存。未保存修改离开时必须二次确认；不提供草稿或自动保存。</p>
         </div>
       </div>
       <div class="frame">
         <div class="notch"></div>
         <div class="screen" style="gap:8px;">
           <div class="topbar">
-            <span class="link" style="text-decoration:underline;">← 修改轮廓</span>
-            <span style="font-size:10px; color:var(--gray-2);">[已选轮廓B]</span>
+            <span class="link leave-trigger" data-exit-target="p4">← 修改轮廓</span>
+            <span style="font-size:10px; color:var(--gray-2);">[已选具体轮廓]</span>
           </div>
 
           <div class="bodydiagram">
             <span class="label">标准侧面鸟体图（点击部位编辑）</span>
             <div class="silhouette">[鸟体轮廓图占位]</div>
             <div class="part-tags">
-              <span class="part-tag">✓ 头部</span>
-              <span class="part-tag editing">● 胸腹（编辑中）</span>
+              <span class="part-tag editing">● 头部（默认打开，尚未记录）</span>
+              <span class="part-tag empty">胸腹</span>
               <span class="part-tag empty">翅膀</span>
               <span class="part-tag empty">尾部</span>
             </div>
           </div>
 
           <div class="sheet">
-            <span class="label">胸腹 — 部位编辑面板（底部展开/弹出）</span>
+            <span class="label">头部 — 当前部位编辑面板</span>
             <div class="row">
               <div>
-                <span class="label">主颜色</span>
-                <div class="row"><div class="swatch-dot fill"></div><div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div></div>
+                <span class="label">主颜色（选择 1 个）</span>
+                <div class="row wrap">
+                  <div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div>
+                  <div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div>
+                  <div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div>
+                </div>
               </div>
             </div>
             <div>
-              <span class="label">补充颜色（可选）</span>
-              <div class="row"><div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div></div>
+              <span class="label">补充颜色（可选，使用同一色板，最多 1 个）</span>
+              <div class="row wrap"><div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div><div class="swatch-dot"></div></div>
             </div>
             <div>
-              <span class="label">花纹/特征标签（可选，占位）</span>
+              <span class="label">花纹／特征（可选，最多 1 个；名单待验证）</span>
               <div class="row wrap">
-                <span class="part-tag">条纹</span><span class="part-tag">斑点</span><span class="part-tag">纯色</span><span class="part-tag empty">+自由文字</span>
+                <span class="part-tag empty">[通用标签占位]</span><span class="part-tag empty">[头部专属标签占位]</span>
               </div>
             </div>
-            <div class="box tent" style="font-size:10px; color:var(--gray-2);">补充描述（自由文字，可选）</div>
+            <div class="field">补充其他看见的头部细节（自由文字，可选）</div>
             <div>
-              <span class="label">确定程度</span>
+              <span class="label">确定程度（记录有效特征后选择）</span>
               <div class="certainty-track">
-                <div class="opt sel">确定</div>
+                <div class="opt">确定</div>
                 <div class="opt">大概如此</div>
                 <div class="opt">非常模糊</div>
               </div>
@@ -651,18 +758,40 @@
 
           <div class="divider"></div>
           <div>
-            <span class="label">生成结果（仅反映已填内容，不擅自补全）</span>
+            <span class="label">生成结果（完成部位编辑或切换部位后统一更新）</span>
             <div class="row">
-              <div class="placeholder-img box" style="width:64px; height:64px;">抽象图</div>
-              <div class="box" style="flex:1; font-size:10px; color:var(--gray-1);">
-                文字特征摘要占位：头部…胸腹…（未填部位不出现）
+              <div class="placeholder-img box" style="width:64px; height:64px;">中性预览</div>
+              <div class="box tent" style="flex:1; font-size:10px; color:var(--gray-2);">
+                尚未记录身体部位。未填写的部位不会出现在摘要中。
               </div>
             </div>
           </div>
 
+          <div class="divider"></div>
+          <div>
+            <span class="label">补充观察信息（可选，不影响保存条件）</span>
+            <div class="row wrap">
+              <span class="part-tag empty">[行动位置标签]</span>
+              <span class="part-tag empty">[行动位置标签]</span>
+              <span style="font-size:9.5px; color:var(--gray-2); align-self:center;">最多选择 2 个</span>
+            </div>
+            <div class="field" style="margin-top:6px;">当时的行为（自由文字，可选）</div>
+          </div>
+
+          <div class="state-note"><strong>当前不可保存：</strong>请至少为一个身体部位记录颜色、预设特征或自由文字。行动位置和行为不能单独满足保存条件。</div>
+
           <div class="row" style="margin-top:auto;">
-            <div class="btn ghost" style="flex:1;">取消</div>
-            <div class="btn" style="flex:1;">保存</div>
+            <div class="btn ghost leave-trigger" data-exit-target="p3" style="flex:1;">取消并离开</div>
+            <div class="btn disabled" style="flex:1;">保存记录</div>
+          </div>
+
+          <div class="inline-dialog" id="unsaved-dialog" role="dialog" aria-label="未保存修改确认">
+            <strong>尚未保存修改</strong>
+            <span style="font-size:10px; color:var(--gray-1);">离开后，本次修改将丢失。</span>
+            <div class="row">
+              <div class="btn small" id="continue-editing" style="flex:1;">继续编辑</div>
+              <div class="btn ghost small" id="discard-changes" style="flex:1;">放弃修改并离开</div>
+            </div>
           </div>
         </div>
       </div>
@@ -672,27 +801,26 @@
     <div class="page" id="p6">
       <div class="page-meta">
         <h2>06 观察记录详情</h2>
-        <span class="status-tag confirmed">查看/编辑：已确认</span>
-        <span class="status-tag tentative">确认鸟种操作：MVP暂定</span>
+        <span class="status-tag confirmed">查看、编辑与识别管理：已确认</span>
         <div class="block">
           <h3>用户目的</h3>
           <ul><li>查看已保存印象</li><li>回忆特征</li><li>继续修改</li><li>日后补充确认</li></ul>
         </div>
         <div class="block">
-          <h3>确认鸟种（暂定）</h3>
-          <p>默认待确认 → 用户点"确认鸟种" → 自由文字填写鸟名 → 状态变已确认。不接入鸟种数据库/无候选推荐。</p>
+          <h3>鸟种识别</h3>
+          <p>最多维护三个自由输入候选鸟名；可以从候选确认或输入其他最终鸟名。状态根据数据自动计算。</p>
         </div>
         <div class="block">
-          <h3>仍待决定</h3>
-          <ul><li>已确认能否撤销</li><li>是否需要"候选中"状态</li><li>改原始特征是否影响确认状态</li></ul>
+          <h3>已确认状态规则</h3>
+          <ul><li>无候选、无最终名 → 待确认</li><li>有候选、无最终名 → 候选中</li><li>有最终名 → 已确认</li><li>可修改最终名或撤销确认</li><li>编辑观察特征不取消确认</li></ul>
         </div>
       </div>
       <div class="frame">
         <div class="notch"></div>
         <div class="screen">
           <div class="topbar">
-            <span class="link" style="text-decoration:underline;">← 返回历史</span>
-            <span class="pill">待确认</span>
+            <span class="link page-link" data-page="p3">← 返回历史</span>
+            <span class="pill">候选中</span>
           </div>
 
           <div class="placeholder-img box" style="height:120px;">抽象鸟图（大图）</div>
@@ -702,26 +830,46 @@
           </div>
 
           <div class="box tent">
-            <span class="label">各部位确定程度（可选展开）</span>
+            <span class="label">各已记录部位的确定程度</span>
             <div class="row wrap">
               <span class="part-tag">头部·确定</span>
               <span class="part-tag">胸腹·大概如此</span>
             </div>
           </div>
 
+          <div class="mini-list">
+            <div class="mini-row"><span>正式记录时间</span><span>[首次成功保存时间]</span></div>
+            <div class="mini-row"><span>行动位置</span><span>[标签 1] · [标签 2]</span></div>
+            <div class="mini-row"><span>行为</span><span>[自由文字占位]</span></div>
+          </div>
+
           <div class="divider"></div>
 
           <div class="box tent">
-            <span class="label">确认鸟种</span>
-            <div class="row" style="margin-top:4px;">
-              <div class="box" style="flex:1; font-size:10px; color:var(--gray-2);">输入鸟名（自由文字）</div>
-              <div class="btn" style="padding:6px 10px; font-size:10px;">确认</div>
+            <span class="label">候选鸟名（自由输入，最多 3 个）</span>
+            <div class="mini-list">
+              <div class="mini-row"><span>[候选鸟名 1]</span><span class="link">删除</span></div>
+              <div class="mini-row"><span>[候选鸟名 2]</span><span class="link">替换 / 删除</span></div>
+            </div>
+            <div class="row" style="margin-top:6px;">
+              <div class="field" style="flex:1;">输入候选鸟名</div>
+              <div class="btn small">添加候选</div>
             </div>
           </div>
 
+          <div class="box tent">
+            <span class="label">最终确认</span>
+            <div class="field">选择一个候选，或输入其他最终鸟名</div>
+            <div class="row" style="margin-top:6px;">
+              <div class="btn small" style="flex:1;">确认最终鸟名</div>
+              <div class="btn ghost small" style="flex:1;">修改 / 撤销确认</div>
+            </div>
+            <div style="font-size:9.5px; color:var(--gray-2); margin-top:6px;">状态由候选和最终鸟名自动变化，用户不直接选择状态。</div>
+          </div>
+
           <div class="row">
-            <div class="btn ghost" style="flex:1;">返回历史</div>
-            <div class="btn" style="flex:1;">编辑</div>
+            <div class="btn ghost page-link" data-page="p3" style="flex:1;">返回历史</div>
+            <div class="btn page-link" data-page="p5" style="flex:1;">编辑观察特征</div>
           </div>
           <div class="app-bottom-nav" aria-label="App 底部导航">
             <div class="app-nav-item active" data-app-page="p3">观察历史</div>
@@ -736,18 +884,18 @@
     <div class="page" id="p7">
       <div class="page-meta">
         <h2>07 设置页面</h2>
-        <span class="status-tag tentative">页面结构：MVP暂定</span>
+        <span class="status-tag confirmed">MVP 内容：已确认</span>
         <div class="block">
           <h3>用户目的</h3>
-          <p>修改 App 语言，或退出当前账户。</p>
+          <p>查看当前账户、修改密码、切换语言或退出。</p>
         </div>
         <div class="block">
-          <h3>语言切换</h3>
-          <p>登录后统一放在设置页，不在每个业务页面重复显示。登录/注册页保留顶部语言入口。</p>
+          <h3>已确认内容</h3>
+          <ul><li>当前邮箱只读</li><li>修改密码</li><li>简体中文 / 日本語</li><li>退出登录</li></ul>
         </div>
         <div class="block">
-          <h3>MVP暂定</h3>
-          <ul><li>简体中文</li><li>日本語</li><li>退出登录</li></ul>
+          <h3>边界</h3>
+          <p>不能修改邮箱；没有“跟随系统”；语言切换立即生效，不需要保存按钮。</p>
         </div>
       </div>
       <div class="frame">
@@ -759,23 +907,121 @@
           </div>
 
           <div>
-            <span class="label">语言</span>
+            <span class="label">账户</span>
             <div class="setting-row">
-              <span>App 显示语言</span>
-              <span class="setting-value">简体中文 ›</span>
+              <span>当前邮箱</span>
+              <span class="setting-value">user@example.com（只读）</span>
+            </div>
+            <div class="setting-row page-link" data-page="p8" data-flow-state="change-password" style="margin-top:6px; cursor:pointer;">
+              <span>修改密码</span>
+              <span class="setting-value">›</span>
             </div>
           </div>
 
-          <div class="box tent fill" style="font-size:10px; color:var(--gray-2);">
-            语言选项占位：简体中文 / 日本語。切换后整个 App 文案统一变化。
+          <div>
+            <span class="label">显示语言</span>
+            <div class="language-control" style="align-self:stretch;">
+              <button class="language-button" type="button" aria-expanded="false" style="width:100%;">简体中文 ▾</button>
+              <div class="language-menu" role="menu" style="width:100%;">
+                <div class="language-option active" data-lang="简体中文">✓ 简体中文</div>
+                <div class="language-option" data-lang="日本語">日本語</div>
+              </div>
+            </div>
+            <div class="state-note" style="margin-top:6px;">切换后当前页面立即生效；偏好只保存在当前浏览器。</div>
           </div>
 
-          <div class="btn ghost">退出登录</div>
+          <div class="btn ghost page-link" data-page="p1">退出登录</div>
 
           <div class="app-bottom-nav" aria-label="App 底部导航">
             <div class="app-nav-item" data-app-page="p3">观察历史</div>
             <div class="app-nav-item" data-app-page="p4">＋ 新建观察</div>
             <div class="app-nav-item active" data-app-page="p7">设置</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 08 账户辅助流程与状态 ============ -->
+    <div class="page" id="p8">
+      <div class="page-meta">
+        <h2>08 账户辅助流程</h2>
+        <span class="status-tag confirmed">流程能力：已确认</span>
+        <span class="status-tag tentative">最终页面拆分：未确认</span>
+        <div class="block">
+          <h3>原型用途</h3>
+          <p>顶部只展示用户主动进入的“忘记密码”和“修改密码”。邮箱验证、设置新密码和完成结果均作为所属流程的内部状态表达。</p>
+        </div>
+        <div class="block">
+          <h3>已确认流程</h3>
+          <ul><li>注册后查收验证邮件</li><li>邮箱确认后返回登录</li><li>邮件限时链接重置密码</li><li>重置成功后返回登录</li><li>登录后使用当前密码修改密码</li></ul>
+        </div>
+        <div class="block">
+          <h3>仍属 UI 细节</h3>
+          <p>流程内部的页面拆分、异常状态和具体反馈形式。</p>
+        </div>
+      </div>
+      <div class="frame">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="topbar">
+            <span class="link page-link" id="account-flow-back" data-page="p1">← 返回登录</span>
+            <span id="account-flow-label" style="font-size:10px; color:var(--gray-2);">忘记密码</span>
+          </div>
+
+          <div class="state-tabs" aria-label="账户功能入口">
+            <div class="state-tab active" data-flow-state="reset-request">忘记密码</div>
+            <div class="state-tab" data-flow-state="change-password">修改密码</div>
+          </div>
+
+          <div class="state-panel" id="verify-sent">
+            <div class="box fill">
+              <strong>请查收验证邮件</strong>
+              <p style="font-size:10px; color:var(--gray-1); margin-bottom:0;">验证链接已发送到注册邮箱。完成邮箱确认后返回登录页，手动登录。</p>
+            </div>
+            <div class="link" data-flow-state="verify-result">原型流程：点击邮件中的验证链接 →</div>
+            <div class="btn ghost page-link" data-page="p1">返回登录</div>
+          </div>
+
+          <div class="state-panel" id="verify-result">
+            <div class="box fill">
+              <strong>邮箱确认成功</strong>
+              <p style="font-size:10px; color:var(--gray-1); margin-bottom:0;">账户已完成邮箱验证。接下来请使用邮箱和密码登录。</p>
+            </div>
+            <div class="btn page-link" data-page="p1">前往登录</div>
+            <div class="state-note">验证失败或链接失效的具体反馈形式尚待 UI 细化。</div>
+          </div>
+
+          <div class="state-panel active" id="reset-request">
+            <strong>忘记密码</strong>
+            <div class="field"><span class="label">邮箱</span>name@example.com</div>
+            <div class="btn">发送密码重置邮件</div>
+            <div class="state-note">发送后提示用户查收限时重置链接；不使用邮件验证码。</div>
+            <div class="link" data-flow-state="reset-form">原型流程：点击邮件中的限时链接 → 设置新密码</div>
+          </div>
+
+          <div class="state-panel" id="reset-form">
+            <strong>设置新密码</strong>
+            <div class="field"><span class="label">新密码</span>&nbsp;</div>
+            <div class="field"><span class="label">确认新密码</span>&nbsp;</div>
+            <div class="btn" data-flow-state="reset-success">重置密码</div>
+          </div>
+
+          <div class="state-panel" id="reset-success">
+            <div class="box fill">
+              <strong>密码重置成功</strong>
+              <p style="font-size:10px; color:var(--gray-1); margin-bottom:0;">密码已经更新。系统不会自动登录。</p>
+            </div>
+            <div class="btn page-link" data-page="p1">返回登录</div>
+          </div>
+
+          <div class="state-panel" id="change-password">
+            <strong>修改密码</strong>
+            <div class="field"><span class="label">当前密码</span>&nbsp;</div>
+            <div class="field"><span class="label">新密码</span>&nbsp;</div>
+            <div class="field"><span class="label">确认新密码</span>&nbsp;</div>
+            <div class="btn">保存新密码</div>
+            <div class="link page-link" data-page="p7">取消并返回设置</div>
+            <div class="state-note">当前密码错误等异常反馈在此流程内部显示，不增加新的功能入口。</div>
           </div>
         </div>
       </div>
@@ -792,6 +1038,7 @@
   <div class="b-item" data-page="p5"><span class="b-num">05</span><span class="b-label">记录编辑</span></div>
   <div class="b-item" data-page="p6"><span class="b-num">06</span><span class="b-label">记录详情</span></div>
   <div class="b-item" data-page="p7"><span class="b-num">07</span><span class="b-label">设置</span></div>
+  <div class="b-item" data-page="p8"><span class="b-num">08</span><span class="b-label">账户辅助</span></div>
 </div>
 
 <script>
@@ -799,7 +1046,52 @@
     document.querySelectorAll('.nav-item').forEach(i=>i.classList.toggle('active', i.dataset.page===pageId));
     document.querySelectorAll('.b-item').forEach(i=>i.classList.toggle('active', i.dataset.page===pageId));
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id===pageId));
+    window.scrollTo({top:0, behavior:'auto'});
   }
+
+  function setOutlineState(stateId){
+    document.querySelectorAll('#p4 .state-tab[data-outline-state]').forEach(tab=>{
+      tab.classList.toggle('active', tab.dataset.outlineState===stateId);
+    });
+    document.querySelectorAll('#p4 .state-panel').forEach(panel=>{
+      panel.classList.toggle('active', panel.id===stateId);
+    });
+  }
+
+  function setFlowState(stateId){
+    const isVerificationFlow = stateId==='verify-sent' || stateId==='verify-result';
+    const activeEntry = stateId==='change-password' ? 'change-password' : (stateId.startsWith('reset-') ? 'reset-request' : '');
+    const tabs = document.querySelector('#p8 .state-tabs');
+    const back = document.querySelector('#account-flow-back');
+    const label = document.querySelector('#account-flow-label');
+
+    tabs.style.display = isVerificationFlow ? 'none' : '';
+    document.querySelectorAll('#p8 .state-tab[data-flow-state]').forEach(tab=>{
+      tab.classList.toggle('active', tab.dataset.flowState===activeEntry);
+    });
+    document.querySelectorAll('#p8 .state-panel').forEach(panel=>{
+      panel.classList.toggle('active', panel.id===stateId);
+    });
+
+    if(stateId==='change-password'){
+      back.dataset.page = 'p7';
+      back.textContent = '← 返回设置';
+      label.textContent = '修改密码';
+    }else if(stateId==='verify-sent'){
+      back.dataset.page = 'p2';
+      back.textContent = '← 返回注册';
+      label.textContent = '注册 · 查收验证邮件';
+    }else if(stateId==='verify-result'){
+      back.dataset.page = 'p1';
+      back.textContent = '← 返回登录';
+      label.textContent = '注册 · 邮箱验证结果';
+    }else{
+      back.dataset.page = 'p1';
+      back.textContent = '← 返回登录';
+      label.textContent = '忘记密码';
+    }
+  }
+
   document.querySelectorAll('.nav-item').forEach(item=>{
     item.addEventListener('click', ()=> goToPage(item.dataset.page));
   });
@@ -809,14 +1101,68 @@
   document.querySelectorAll('.app-nav-item').forEach(item=>{
     item.addEventListener('click', ()=> goToPage(item.dataset.appPage));
   });
-  document.querySelectorAll('.language-switch').forEach(group=>{
-    group.querySelectorAll('.lang-option').forEach(option=>{
-      option.addEventListener('click', ()=>{
-        document.querySelectorAll('.language-switch .lang-option').forEach(el=>{
-          el.classList.toggle('active', el.dataset.lang===option.dataset.lang);
-        });
-      });
+
+  document.querySelectorAll('.page-link').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      if(item.dataset.flowState) setFlowState(item.dataset.flowState);
+      goToPage(item.dataset.page);
     });
+  });
+
+  document.querySelectorAll('[data-outline-state]').forEach(item=>{
+    item.addEventListener('click', ()=> setOutlineState(item.dataset.outlineState));
+  });
+  document.querySelectorAll('.outline-group-choice').forEach(item=>{
+    item.addEventListener('click', ()=> setOutlineState('outline-shapes'));
+  });
+
+  document.querySelectorAll('[data-flow-state]').forEach(item=>{
+    item.addEventListener('click', ()=> setFlowState(item.dataset.flowState));
+  });
+
+  document.querySelectorAll('.language-button').forEach(button=>{
+    button.addEventListener('click', event=>{
+      event.stopPropagation();
+      const control = button.closest('.language-control');
+      const willOpen = !control.classList.contains('open');
+      document.querySelectorAll('.language-control').forEach(item=>item.classList.remove('open'));
+      control.classList.toggle('open', willOpen);
+      button.setAttribute('aria-expanded', String(willOpen));
+    });
+  });
+  document.querySelectorAll('.language-option').forEach(option=>{
+    option.addEventListener('click', event=>{
+      event.stopPropagation();
+      const language = option.dataset.lang;
+      document.querySelectorAll('.language-option').forEach(item=>{
+        item.classList.toggle('active', item.dataset.lang===language);
+        item.textContent = `${item.dataset.lang===language ? '✓ ' : ''}${item.dataset.lang}`;
+      });
+      document.querySelectorAll('.language-button').forEach(button=>{
+        button.textContent = `${language} ▾`;
+        button.setAttribute('aria-expanded', 'false');
+      });
+      document.querySelectorAll('.language-control').forEach(item=>item.classList.remove('open'));
+    });
+  });
+  document.addEventListener('click', ()=>{
+    document.querySelectorAll('.language-control').forEach(item=>item.classList.remove('open'));
+    document.querySelectorAll('.language-button').forEach(button=>button.setAttribute('aria-expanded', 'false'));
+  });
+
+  let pendingExitTarget = 'p3';
+  document.querySelectorAll('.leave-trigger').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      pendingExitTarget = item.dataset.exitTarget;
+      document.getElementById('unsaved-dialog').classList.add('active');
+    });
+  });
+  document.getElementById('continue-editing').addEventListener('click', ()=>{
+    document.getElementById('unsaved-dialog').classList.remove('active');
+  });
+  document.getElementById('discard-changes').addEventListener('click', ()=>{
+    document.getElementById('unsaved-dialog').classList.remove('active');
+    goToPage(pendingExitTarget);
   });
 </script>
 </body>
