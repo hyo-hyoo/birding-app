@@ -11,8 +11,8 @@ Before changing project files:
 7. Explain which files were changed and why.
 8. Keep Ruby on Rails backend learning as the main technical focus.
 9. Do not introduce Vue unless the interaction clearly requires it and explain the reason first.
-10. Add or update tests for important backend behavior.
-11. Do not treat AI-generated code as complete until it has been run, reviewed, and tested.
+10. Add or update tests for important backend behavior. The development Agent must design, write, run, and regression-check relevant tests, then report commands, test counts, failures, errors, skips, and known coverage gaps for user acceptance.
+11. Do not treat AI-generated code as complete until it has been run, reviewed, and tested. Never delete, skip, or weaken tests merely to obtain a passing result.
 12. Record important architectural decisions in `docs/technical-decisions.md`.
 13. After project documents or project-level rules change, use `$project-doc-maintainer` to check document-system consistency.
 14. Make user-facing output easy to understand: lead with conclusions and impact, explain important changes in plain language, and do not paste large file contents or long diffs unless the user asks for them.

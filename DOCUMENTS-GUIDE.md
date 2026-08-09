@@ -14,16 +14,22 @@ birding-app/
 │     ├─ mobile-app-ui-design/
 │     ├─ project-ui-designer/
 │     └─ project-doc-maintainer/
+├─ prototype/
+│  ├─ low-fidelity.html
+│  └─ experiments/
+│     ├─ visual-direction-comparison.html
+│     └─ high-fidelity-baseline.html
 └─ docs/
    ├─ current-status.md
    ├─ project-overview.md
    ├─ idea-dump.md
    ├─ requirements.md
    ├─ mvp-scope.md
-   └─ ui-design.md
+   ├─ ui-design.md
+   └─ technical-decisions.md
 ```
 
-`docs/technical-decisions.md` 当前尚未创建；出现第一项已确认的重要技术或架构决定时再创建，不得用未决定的方案占位。
+`docs/technical-decisions.md` 已创建，用于记录已确认的技术路线、实施边界和仍需实施验证的事项。
 
 ## 文档职责
 
@@ -40,6 +46,9 @@ birding-app/
 - `.agents/skills/mobile-app-ui-design/`：在视觉方向形成后检查移动端信息层级、操作区域、触控尺寸、状态与整体体验。
 - `.agents/skills/project-ui-designer/`：负责 UI/UX 分析、页面与流程设计、原型制作和验证；只读取正式文档作为约束，不直接维护正式文档，并在产生实质性 UI 决定时输出一次性交接单。
 - `.agents/skills/project-doc-maintainer/`：项目文档或项目级规则变化后，检查文档体系一致性并维护本指南与 `AGENTS.md`。
+- `prototype/low-fidelity.html`：当前低保真页面、流程和状态核对原型；不作为需求确认依据。
+- `prototype/experiments/visual-direction-comparison.html`：当前 B′ 单页视觉方向实验。
+- `prototype/experiments/high-fidelity-baseline.html`：高保真页面与设计系统观察原型；当前整体为 `observed-only`，不得自动升级为正式视觉规范。
 
 ## 信息流
 

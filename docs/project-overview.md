@@ -64,11 +64,13 @@
 
 本项目主要用于学习和展示 Ruby on Rails 后端开发能力。
 
-暂定技术栈：
+已确认技术路线：
 
-- Ruby；
-- Ruby on Rails；
-- PostgreSQL；
+- Windows 原生开发环境；
+- Ruby 4.0.6；
+- Ruby on Rails 8.1.x；
+- Rails 模块化单体；
+- MySQL 8.4 LTS；
 - Active Record；
 - Rails Migration；
 - Routing；
@@ -80,10 +82,12 @@
 - 用户认证；
 - 搜索与筛选；
 - 错误处理；
-- 测试；
+- Minitest、Fixtures 和 Rails System Tests；
 - Git；
 - GitHub；
 - 部署。
+
+现有 MySQL 5.7 服务及数据继续保留；MySQL 8.4 使用独立服务、数据目录和端口运行，本项目只连接新实例。当前规划服务名为 `MySQL84`、端口为 `3307`，实际安装前仍需核对端口占用并完成 5.7 数据备份与恢复验证。
 
 后续根据真实需求，再评估：
 
@@ -104,7 +108,7 @@
 - 可维护的代码结构；
 - AI 辅助开发后的代码理解、验证和修改。
 
-具体数据库与技术架构不在当前产品需求阶段决定。
+完整技术决定、实施边界和待验证事项见 `technical-decisions.md`。Ruby、Rails、MySQL 与第三方 gems 的实际兼容性仍需在项目初始化和测试运行中验证。
 
 ## 6. 前端方向
 
@@ -117,15 +121,19 @@
 - JavaScript；
 - Rails Views；
 - 必要的 ERB 模板语法；
-- 必要时使用 Turbo 或少量 Stimulus。
+- Turbo；
+- Stimulus；
+- 少量普通 JavaScript。
 
-对于较复杂的实时交互，先评估普通 JavaScript 是否足够。只有当页面状态和维护复杂度明显上升时，才考虑局部引入 Vue。
+抽象鸟类印象图采用服务器生成的 inline SVG；预览按普通 Rails 提交、Turbo Frame 局部替换和 Stimulus 自动触发的顺序渐进实现。数据库只保存结构化观察数据，不持久化生成后的 SVG 或文字摘要。
 
-当前不默认采用：
+MVP 不采用：
 
 - 完整 React 前端；
-- 完整 Vue SPA；
-- Rails API 与独立前端完全分离的架构。
+- Vue；
+- 完整 React 或 Vue SPA；
+- 独立前端仓库；
+- 仅提供 JSON API 的后端。
 
 前端设计、CSS 和响应式适配可以大量由 AI 辅助，但开发者需要理解完整数据流：
 
