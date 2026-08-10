@@ -68,9 +68,9 @@
 
 - Windows 原生开发环境；
 - Ruby 4.0.6；
-- Ruby on Rails 8.1.x；
+- Ruby on Rails 8.1.3.1；
 - Rails 模块化单体；
-- MySQL 8.4 LTS；
+- MySQL 8.4.10 LTS；
 - Active Record；
 - Rails Migration；
 - Routing；
@@ -87,7 +87,7 @@
 - GitHub；
 - 部署。
 
-现有 MySQL 5.7 服务及数据继续保留；MySQL 8.4 使用独立服务、数据目录和端口运行，本项目只连接新实例。当前规划服务名为 `MySQL84`、端口为 `3307`，实际安装前仍需核对端口占用并完成 5.7 数据备份与恢复验证。
+现有 MySQL 5.7 服务及数据继续保留；MySQL 8.4.10 已作为独立服务 `MySQL84` 在 `127.0.0.1:3307` 运行，本项目只连接新实例。MySQL 5.7 已完成全量备份和 dump 标记检查，但尚未进行隔离恢复演练。
 
 后续根据真实需求，再评估：
 
@@ -108,7 +108,7 @@
 - 可维护的代码结构；
 - AI 辅助开发后的代码理解、验证和修改。
 
-完整技术决定、实施边界和待验证事项见 `technical-decisions.md`。Ruby、Rails、MySQL 与第三方 gems 的实际兼容性仍需在项目初始化和测试运行中验证。
+完整技术决定、实施边界和待验证事项见 `technical-decisions.md`。Ruby 4.0.6、Rails 8.1.3.1、MySQL 8.4.10 和 Windows 下的 `mysql2` 基础组合已经通过项目初始化、数据库连接、健康检查和基础测试验证；后续业务 gems 与页面行为仍需随实现持续验证。
 
 ## 6. 前端方向
 
