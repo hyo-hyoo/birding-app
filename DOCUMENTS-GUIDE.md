@@ -16,6 +16,8 @@ birding-app/
 │     └─ project-doc-maintainer/
 ├─ prototype/
 │  ├─ low-fidelity.html
+│  ├─ assets/
+│  │  └─ app-logo-preview.png
 │  └─ experiments/
 │     ├─ visual-direction-comparison.html
 │     └─ high-fidelity-baseline.html
@@ -40,7 +42,7 @@ birding-app/
 - `docs/idea-dump.md`：未确认想法、研究方向、风险和后续候选。内容不得自动升级为需求或开发任务。
 - `docs/requirements.md`：已确认的正式产品需求，以及明确标记的待确认需求问题。
 - `docs/mvp-scope.md`：当前版本明确纳入、暂定、未决定和排除的范围及完成标准。
-- `docs/ui-design.md`：页面清单、用户流程、导航、组件、页面状态、低保真与视觉原型位置、正式高保真实现基线、适配边界和 UI 未决问题；原型中的业务示例数据不自动成为正式需求。
+- `docs/ui-design.md`：页面清单、用户流程、导航、组件、页面状态、低保真与视觉原型位置、正式高保真实现基线、Logo 状态、适配边界和 UI 未决问题；原型中的业务示例数据不自动成为正式需求。
 - `docs/technical-decisions.md`：已确认的重要技术选择、背景、理由和影响；仅在存在正式决定时创建和更新。
 - `.agents/skills/frontend-design/`：UI 设计任务的第一阶段，用于建立有项目辨识度的视觉方向。
 - `.agents/skills/mobile-app-ui-design/`：在视觉方向形成后检查移动端信息层级、操作区域、触控尺寸、状态与整体体验。
@@ -48,7 +50,8 @@ birding-app/
 - `.agents/skills/project-doc-maintainer/`：项目文档或项目级规则变化后，检查文档体系一致性并维护本指南与 `AGENTS.md`。
 - `prototype/low-fidelity.html`：当前低保真页面、流程和状态核对原型；不作为需求确认依据。
 - `prototype/experiments/visual-direction-comparison.html`：B′ 形成过程中的单页视觉实验记录，不承担正式实现基线职责。
-- `prototype/experiments/high-fidelity-baseline.html`：已确认的 B′ 高保真页面实现基线，用于指导首批 Rails 页面；其中的业务示例数据不构成正式需求，具体微交互可在不改变整体视觉方向的前提下适配。
+- `prototype/experiments/high-fidelity-baseline.html`：已确认的 B′ 完整 MVP 高保真页面实现基线，覆盖主要页面、账户流程状态、设计系统和 Rails 前端组件参考；其中的业务示例数据不构成正式需求，具体微交互可在不改变整体视觉方向的前提下适配。
+- `prototype/assets/app-logo-preview.png`：用户确认的第三版正式 App Logo；具体应用位置、尺寸、安全边距、投影、响应式适配和衍生图标仍由 UI 设计与实现验证确定。
 
 ## 信息流
 
