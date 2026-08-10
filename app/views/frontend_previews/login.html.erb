@@ -1,0 +1,31 @@
+<% content_for :title, t("frontend_previews.login.page_title") %>
+<% chinese_path = frontend_preview_login_path(locale: "zh-CN") %>
+<% japanese_path = frontend_preview_login_path(locale: :ja) %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("application.name"), show_language_switcher: true, chinese_path: chinese_path, japanese_path: japanese_path %>
+
+  <main class="app-content auth-content">
+    <%= render "shared/auth_intro", eyebrow: t("frontend_previews.login.eyebrow"), title: t("frontend_previews.login.title"), description: t("frontend_previews.login.description") %>
+
+    <form class="auth-card form-stack" data-static-preview="true">
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.email") %></span>
+        <input class="input-field" type="email" autocomplete="email" placeholder="<%= t("frontend_previews.forms.email_placeholder") %>" required>
+      </label>
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.password") %></span>
+        <input class="input-field" type="password" autocomplete="current-password" placeholder="<%= t("frontend_previews.forms.password_placeholder") %>" required>
+      </label>
+      <button class="text-link text-link--end" type="button"><%= t("frontend_previews.login.forgot_password") %></button>
+      <button class="primary-button full" type="button"><%= t("frontend_previews.login.submit") %></button>
+    </form>
+
+    <p class="auth-footer"><%= t("frontend_previews.login.no_account") %> <%= link_to t("frontend_previews.login.register"), frontend_preview_register_path(locale: I18n.locale), class: "text-link" %></p>
+
+    <aside class="preview-note">
+      <p><%= t("frontend_previews.login.preview_note") %></p>
+      <%= link_to t("frontend_previews.login.preview_link"), frontend_preview_history_empty_path(locale: I18n.locale), class: "preview-link" %>
+    </aside>
+  </main>
+</section>

@@ -1,0 +1,72 @@
+require "test_helper"
+
+class FrontendPreviewsTest < ActionDispatch::IntegrationTest
+  self.use_transactional_tests = false
+
+  PREVIEW_PAGES = %i[
+    frontend_preview_login_path
+    frontend_preview_register_path
+    frontend_preview_verification_sent_path
+    frontend_preview_verification_success_path
+    frontend_preview_history_empty_path
+  ].freeze
+  PREVIEW_LOCALES = %w[zh-CN ja].freeze
+
+  test "renders every static preview in both supported languages" do
+    PREVIEW_PAGES.product(PREVIEW_LOCALES).each do |path_helper, locale|
+      get public_send(path_helper, locale: locale)
+
+      assert_response :success
+      assert_select "html[lang='#{locale}']", count: 1
+      assert_select "h1", count: 1
+      assert_select "title", text: /\S+/
+      assert_no_match(/translation missing/, response.body)
+    end
+  end
+
+  test "keeps account forms and controls explicitly static" do
+    %i[frontend_preview_login_path frontend_preview_register_path].each do |path_helper|
+      get public_send(path_helper, locale: "zh-CN")
+
+      assert_select "form[data-static-preview='true']", count: 1
+      assert_select "form[data-static-preview='true'][action]", count: 0
+      assert_select "form[data-static-preview='true'] button:not([type='button'])", count: 0
+      assert_select "details.language-switcher", count: 1
+      assert_select ".language-switcher__option[aria-current='page']", count: 1
+      assert_select "a[href='#']", count: 0
+    end
+  end
+
+  test "connects the static first-slice preview flow" do
+    get frontend_preview_login_path(locale: "zh-CN")
+    assert_select "a[href='#{frontend_preview_register_path(locale: "zh-CN")}']"
+    assert_select "a[href='#{frontend_preview_history_empty_path(locale: "zh-CN")}']"
+
+    get frontend_preview_register_path(locale: "zh-CN")
+    assert_select "a[href='#{frontend_preview_verification_sent_path(locale: "zh-CN")}']"
+
+    get frontend_preview_verification_sent_path(locale: "zh-CN")
+    assert_select "a[href='#{frontend_preview_verification_success_path(locale: "zh-CN")}']"
+    assert_select ".notice", count: 1
+
+    get frontend_preview_verification_success_path(locale: "zh-CN")
+    assert_select "a[href='#{frontend_preview_login_path(locale: "zh-CN")}']"
+  end
+
+  test "renders the empty history hierarchy and disabled future navigation" do
+    get frontend_preview_history_empty_path(locale: "zh-CN")
+
+    assert_select "main h2", count: 1
+    assert_select ".bottom-nav__item", count: 3
+    assert_select ".bottom-nav__item.is-active", count: 1
+    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 2
+  end
+
+  test "falls back to Japanese for an unsupported preview locale" do
+    get frontend_preview_login_path(locale: "unsupported")
+
+    assert_response :success
+    assert_select "html[lang='ja']", count: 1
+    assert_select "h1", text: "おかえりなさい"
+  end
+end

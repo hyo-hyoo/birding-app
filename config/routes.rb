@@ -5,6 +5,14 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  if Rails.env.local?
+    get "previews/login", to: "frontend_previews#login", as: :frontend_preview_login
+    get "previews/register", to: "frontend_previews#register", as: :frontend_preview_register
+    get "previews/verification-sent", to: "frontend_previews#verification_sent", as: :frontend_preview_verification_sent
+    get "previews/verification-success", to: "frontend_previews#verification_success", as: :frontend_preview_verification_success
+    get "previews/history-empty", to: "frontend_previews#history_empty", as: :frontend_preview_history_empty
+  end
+
   # Defines the root path route ("/")
   # root "posts#index"
 end

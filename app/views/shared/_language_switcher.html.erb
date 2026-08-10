@@ -1,0 +1,7 @@
+<details class="language-switcher">
+  <summary class="language-switcher__summary"><%= t("frontend_previews.shared.language.current") %></summary>
+  <nav class="language-switcher__menu" aria-label="<%= t("frontend_previews.shared.language.label") %>">
+    <%= link_to t("frontend_previews.shared.language.zh_cn"), chinese_path, class: "language-switcher__option", aria: { current: ("page" if I18n.locale == :"zh-CN") } %>
+    <%= link_to t("frontend_previews.shared.language.ja"), japanese_path, class: "language-switcher__option", aria: { current: ("page" if I18n.locale == :ja) } %>
+  </nav>
+</details>

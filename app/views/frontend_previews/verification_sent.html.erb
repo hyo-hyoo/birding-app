@@ -1,0 +1,19 @@
+<% content_for :title, t("frontend_previews.verification_sent.page_title") %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("frontend_previews.verification_sent.header_title"), back_path: frontend_preview_login_path(locale: I18n.locale), back_label: t("frontend_previews.verification_sent.back") %>
+
+  <main class="app-content auth-content auth-content--centered">
+    <%= render "shared/result_card", icon: "✉", eyebrow: t("frontend_previews.verification_sent.eyebrow"), title: t("frontend_previews.verification_sent.title"), description: t("frontend_previews.verification_sent.description") do %>
+      <button class="secondary-button full" type="button"><%= t("frontend_previews.verification_sent.resend") %></button>
+      <button class="text-link result-card__text-link" type="button"><%= t("frontend_previews.verification_sent.use_another_email") %></button>
+    <% end %>
+
+    <p class="notice"><%= t("frontend_previews.verification_sent.privacy_notice") %></p>
+
+    <aside class="preview-note">
+      <p><%= t("frontend_previews.verification_sent.preview_note") %></p>
+      <%= link_to t("frontend_previews.verification_sent.preview_link"), frontend_preview_verification_success_path(locale: I18n.locale), class: "preview-link" %>
+    </aside>
+  </main>
+</section>

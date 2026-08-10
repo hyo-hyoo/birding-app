@@ -1,1 +1,79 @@
-ja: {}
+ja:
+  application:
+    name: "野鳥観察ノート"
+    title: "野鳥観察ノート｜鳥の印象を記録"
+    logo_alt: "野鳥観察ノート"
+  shared:
+    form_errors:
+      heading: "%{count} 件の入力内容を確認してください"
+  frontend_previews:
+    shared:
+      bottom_navigation: "ボトムナビゲーション"
+      language:
+        label: "表示言語"
+        current: "日本語"
+        zh_cn: "简体中文"
+        ja: "日本語"
+    forms:
+      email: "メールアドレス"
+      email_placeholder: "メールアドレスを入力"
+      password: "パスワード"
+      password_placeholder: "パスワードを入力"
+      password_confirmation: "パスワードを確認"
+      password_confirmation_placeholder: "もう一度入力"
+    navigation:
+      history: "観察履歴"
+      new_observation: "新しい観察"
+      settings: "設定"
+    login:
+      page_title: "ログイン｜野鳥観察ノート"
+      eyebrow: "Field memory"
+      title: "おかえりなさい"
+      description: "まだ名前のない観察を続けて整理しましょう。"
+      forgot_password: "パスワードを忘れた場合"
+      submit: "ログイン"
+      no_account: "アカウントをお持ちでない場合："
+      register: "アカウントを作成"
+      preview_note: "プレビューのみ：ログイン機能はまだアカウントサービスに接続されていません。"
+      preview_link: "ログイン後の空の観察履歴をプレビュー"
+    register:
+      page_title: "アカウント作成｜野鳥観察ノート"
+      header_title: "アカウント作成"
+      back: "← ログイン"
+      eyebrow: "Create account"
+      title: "観察ノートを作る"
+      description: "必要なのはメールアドレスとパスワードだけです。メールを確認した後、手動でログインします。"
+      verification_help: "送信後、15 分間有効な確認メールをお送りします。"
+      submit: "アカウントを作成"
+      preview_note: "プレビューのみ：作成ボタンは情報を送信しません。"
+      preview_link: "確認メール送信済みをプレビュー"
+    verification_sent:
+      page_title: "確認メールを送信しました｜野鳥観察ノート"
+      header_title: "メール確認"
+      back: "← ログイン"
+      eyebrow: "Check your inbox"
+      title: "確認メールを送信しました"
+      description: "受信箱を確認し、メールアドレスに届いたリンクを開いてください。リンクは 15 分間有効です。"
+      resend: "確認メールを再送"
+      use_another_email: "別のメールアドレスで送信を依頼"
+      privacy_notice: "再送とメールアドレスの再入力では、アカウントの有無を示さない同じ結果を表示します。"
+      preview_note: "プレビューのみ：このページからメールは送信されません。"
+      preview_link: "メール確認の成功状態をプレビュー"
+    verification_success:
+      page_title: "メール確認完了｜野鳥観察ノート"
+      header_title: "メール確認"
+      header_action: "完了"
+      eyebrow: "Email verified"
+      title: "メール確認が完了しました"
+      description: "アカウントにログインできるようになりました。安全のため、このページでは自動的にログインしません。"
+      login: "ログインに戻る"
+    history_empty:
+      page_title: "観察履歴｜野鳥観察ノート"
+      eyebrow: "Field notes"
+      header_title: "観察ノート"
+      result_eyebrow: "Your first note"
+      title: "まだ観察記録がありません"
+      description: "次に名前の分からない鳥に出会ったら、覚えている輪郭、色、局所的な特徴を先に残しましょう。"
+      new_observation: "最初の鳥を記録"
+      preview_note: "プレビューのみ：ログアウトしても実際のセッションは終了しません。"
+      preview_link: "プレビュー：ログアウト"

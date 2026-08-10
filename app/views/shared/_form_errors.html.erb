@@ -1,0 +1,12 @@
+<% if object.present? && object.errors.any? %>
+  <% error_summary_id = "form-errors-#{object.object_id}" %>
+
+  <section class="form-errors" role="alert" aria-labelledby="<%= error_summary_id %>">
+    <h2 class="form-errors__title" id="<%= error_summary_id %>"><%= t("shared.form_errors.heading", count: object.errors.count) %></h2>
+    <ul class="form-errors__list">
+      <% object.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

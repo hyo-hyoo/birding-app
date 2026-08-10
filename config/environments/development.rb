@@ -40,8 +40,9 @@ Rails.application.configure do
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
-  # Raise an error on page load if there are pending migrations.
-  config.active_record.migration_error = :page_load
+  # Static frontend previews do not need a database connection. Normal development
+  # still raises on pending migrations unless the explicit preview flag is enabled.
+  config.active_record.migration_error = :page_load unless ENV["STATIC_FRONTEND_PREVIEW"] == "1"
 
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true

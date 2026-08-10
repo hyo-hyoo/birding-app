@@ -1,0 +1,33 @@
+<% content_for :title, t("frontend_previews.register.page_title") %>
+<% chinese_path = frontend_preview_register_path(locale: "zh-CN") %>
+<% japanese_path = frontend_preview_register_path(locale: :ja) %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("frontend_previews.register.header_title"), back_path: frontend_preview_login_path(locale: I18n.locale), back_label: t("frontend_previews.register.back"), show_language_switcher: true, chinese_path: chinese_path, japanese_path: japanese_path %>
+
+  <main class="app-content auth-content">
+    <%= render "shared/auth_intro", show_brand: false, eyebrow: t("frontend_previews.register.eyebrow"), title: t("frontend_previews.register.title"), description: t("frontend_previews.register.description") %>
+
+    <form class="auth-card form-stack" data-static-preview="true">
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.email") %></span>
+        <input class="input-field" type="email" autocomplete="email" placeholder="<%= t("frontend_previews.forms.email_placeholder") %>" required>
+      </label>
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.password") %></span>
+        <input class="input-field" type="password" autocomplete="new-password" placeholder="<%= t("frontend_previews.forms.password_placeholder") %>" required>
+      </label>
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.password_confirmation") %></span>
+        <input class="input-field" type="password" autocomplete="new-password" placeholder="<%= t("frontend_previews.forms.password_confirmation_placeholder") %>" required>
+      </label>
+      <p class="form-help"><%= t("frontend_previews.register.verification_help") %></p>
+      <button class="primary-button full" type="button"><%= t("frontend_previews.register.submit") %></button>
+    </form>
+
+    <aside class="preview-note">
+      <p><%= t("frontend_previews.register.preview_note") %></p>
+      <%= link_to t("frontend_previews.register.preview_link"), frontend_preview_verification_sent_path(locale: I18n.locale), class: "preview-link" %>
+    </aside>
+  </main>
+</section>
