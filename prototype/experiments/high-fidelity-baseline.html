@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>观鸟 Web App｜高保真基线</title>
+  <title>观鸟 Web App｜完整高保真模型</title>
   <style>
     :root {
       color-scheme: light;
@@ -483,6 +483,145 @@
       box-shadow: 0 28px 70px rgba(30, 55, 44, .24);
     }
     .confirm-dialog::backdrop { background: rgba(35, 56, 47, .38); backdrop-filter: blur(3px); }
+
+    .nav-label {
+      margin: 18px 4px 2px;
+      color: var(--quiet);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .auth-view {
+      background:
+        radial-gradient(circle at 88% 6%, rgba(210, 225, 222, .85), transparent 17rem),
+        var(--paper);
+    }
+    .auth-view .app-scroll { display: flex; flex-direction: column; padding-bottom: 24px; }
+    .auth-brand { padding: 8px 0 24px; }
+    .brand-mark {
+      display: grid;
+      width: 54px;
+      height: 54px;
+      place-items: center;
+      margin-bottom: 20px;
+      border: 1px solid rgba(40, 74, 62, .14);
+      border-radius: 18px 18px 18px 7px;
+      background: var(--paper-strong);
+      box-shadow: 0 14px 30px rgba(46, 76, 62, .10);
+      color: var(--pine);
+      font-family: ui-serif, "Songti SC", serif;
+      font-size: 27px;
+    }
+    .auth-card {
+      padding: 22px;
+      border: 1px solid rgba(40, 74, 62, .12);
+      border-radius: var(--radius-card);
+      background: rgba(255, 255, 255, .72);
+      box-shadow: 0 16px 38px rgba(46, 76, 62, .08);
+    }
+    .form-stack { display: grid; gap: 16px; }
+    .form-label { display: grid; gap: 7px; color: var(--body); font-size: 12px; font-weight: 700; }
+    .input-field {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-control);
+      background: var(--paper-strong);
+      color: var(--pine);
+    }
+    .input-field::placeholder { color: #9aa7a1; }
+    .form-help { margin: 0; color: var(--quiet); font-size: 11px; line-height: 1.55; }
+    .text-link {
+      min-height: 44px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--pine);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 750;
+      text-decoration: underline;
+      text-decoration-color: rgba(197, 164, 90, .7);
+      text-underline-offset: 4px;
+    }
+    .auth-footer { margin-top: auto; padding-top: 24px; color: var(--quiet); text-align: center; font-size: 12px; }
+    .language-button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(251, 252, 248, .9);
+      color: var(--body);
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .language-menu {
+      position: absolute;
+      z-index: 4;
+      top: 56px;
+      right: 20px;
+      display: none;
+      width: 154px;
+      padding: 7px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper-strong);
+      box-shadow: 0 14px 34px rgba(46, 76, 62, .14);
+    }
+    .language-menu.is-open { display: grid; }
+    .language-menu button { min-height: 42px; border: 0; border-radius: 10px; background: transparent; color: var(--body); text-align: left; cursor: pointer; }
+    .language-menu button[aria-checked="true"] { background: var(--moss); color: var(--pine); font-weight: 750; }
+    .result-card { padding: 32px 22px; text-align: center; }
+    .result-icon {
+      display: grid;
+      width: 72px;
+      height: 72px;
+      place-items: center;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      background: var(--moss);
+      box-shadow: 0 0 0 8px rgba(220, 231, 221, .45);
+      color: var(--pine);
+      font-size: 28px;
+    }
+    .result-card h1 { margin: 0; font-size: 26px; }
+    .result-card p { margin: 12px 0 22px; color: var(--body); font-size: 12px; line-height: 1.7; }
+    .notice {
+      padding: 12px 14px;
+      border-left: 3px solid var(--ginkgo);
+      border-radius: 4px 12px 12px 4px;
+      background: var(--ginkgo-soft);
+      color: var(--body);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    .settings-list { display: grid; gap: 12px; }
+    .setting-card {
+      display: flex;
+      min-height: 68px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid rgba(40, 74, 62, .11);
+      border-radius: 16px;
+      background: var(--paper-strong);
+      color: var(--pine);
+      text-align: left;
+    }
+    button.setting-card { width: 100%; cursor: pointer; }
+    .setting-card span { display: grid; gap: 4px; }
+    .setting-card small { color: var(--quiet); font-size: 11px; font-weight: 500; }
+    .setting-card strong { font-size: 13px; }
+    .danger-button { border-color: rgba(184, 92, 80, .25); color: var(--danger); }
+    .component-map { display: grid; gap: 8px; margin-top: 12px; }
+    .component-map div { display: grid; grid-template-columns: 110px 1fr; gap: 10px; padding: 9px 0; border-top: 1px solid rgba(40, 74, 62, .09); color: var(--body); font-size: 11px; line-height: 1.5; }
+    .component-map strong { color: var(--pine); }
     .dialog-content { padding: 24px; }
     .dialog-content h2 { margin: 0; font-family: ui-serif, "Songti SC", serif; font-size: 20px; }
     .dialog-content p { margin: 9px 0 20px; color: var(--body); font-size: 12px; line-height: 1.65; }
@@ -551,14 +690,27 @@
       <p class="eyebrow">High-fidelity baseline</p>
       <h1>柔雾观察册</h1>
       <p class="guide-copy">以野外观察记录的秩序感为骨架，用柔和雾绿降低填写压力。贯穿页面的观察脊线把“看见、记录、回看”连成同一种产品语言。</p>
-      <span class="prototype-status">视觉实验／暂定 · 等待确认</span>
+      <span class="prototype-status">正式高保真实现基线 · 全页面版</span>
       <p class="guide-copy" style="font-size:11px">页面中的轮廓名称、鸟体颜色和特征标签均为高保真示例，不代表正式名单。</p>
 
       <nav class="prototype-nav" aria-label="高保真页面切换">
-        <button class="is-active" type="button" data-view="history">观察历史 <span>App 壳层</span></button>
+        <p class="nav-label">账户入口</p>
+        <button class="is-active" type="button" data-view="login">登录 <span>入口</span></button>
+        <button type="button" data-view="register">注册 <span>创建账户</span></button>
+        <button type="button" data-view="verify-sent">验证邮件 <span>已发送</span></button>
+        <button type="button" data-view="verify-result">验证结果 <span>成功状态</span></button>
+        <button type="button" data-view="reset-request">忘记密码 <span>申请链接</span></button>
+        <button type="button" data-view="reset-password">设置新密码 <span>链接内部</span></button>
+        <button type="button" data-view="reset-success">重置完成 <span>手动登录</span></button>
+        <p class="nav-label">核心产品</p>
+        <button type="button" data-view="history-empty">观察历史 · 空 <span>首个切片</span></button>
+        <button type="button" data-view="history">观察历史 <span>App 壳层</span></button>
         <button type="button" data-view="outline">轮廓选择 <span>核心选择</span></button>
         <button type="button" data-view="editor">观察记录 <span>核心编辑</span></button>
         <button type="button" data-view="detail">记录详情 <span>状态管理</span></button>
+        <button type="button" data-view="settings">设置 <span>账户与语言</span></button>
+        <button type="button" data-view="change-password">修改密码 <span>登录后</span></button>
+        <p class="nav-label">交接参考</p>
         <button type="button" data-view="system">设计系统 <span>Tokens</span></button>
       </nav>
 
@@ -584,9 +736,90 @@
 
     <main class="stage">
       <div class="stage-inner">
-        <div class="stage-head"><strong id="preview-title">观察历史</strong><span>移动端基线 · 390px</span></div>
+        <div class="stage-head"><strong id="preview-title">登录</strong><span>移动端基线 · 390px</span></div>
         <div class="phone">
-          <section class="app-view is-active" id="view-history" aria-label="观察历史高保真页面">
+          <section class="app-view auth-view is-active" id="view-login" aria-label="登录高保真页面">
+            <header class="app-header" style="position:relative">
+              <span class="subtle">观鸟观察册</span>
+              <button class="language-button" type="button" data-language-toggle>简体中文⌄</button>
+              <div class="language-menu" role="radiogroup" aria-label="显示语言">
+                <button type="button" role="radio" aria-checked="true">简体中文</button>
+                <button type="button" role="radio" aria-checked="false">日本語</button>
+              </div>
+            </header>
+            <div class="app-scroll">
+              <div class="auth-brand"><div class="brand-mark" aria-hidden="true">鸟</div><p class="eyebrow">Field memory</p><h1 class="display">欢迎回来</h1><p class="lead">继续整理那些还没有名字的观察。</p></div>
+              <form class="auth-card form-stack" onsubmit="return false">
+                <label class="form-label">邮箱<input class="input-field" type="email" value="birdwatcher@example.com" autocomplete="email"></label>
+                <label class="form-label">密码<input class="input-field" type="password" placeholder="输入密码" autocomplete="current-password"></label>
+                <button class="text-link" type="button" data-go="reset-request" style="justify-self:end">忘记密码？</button>
+                <button class="primary-button full" type="button" data-go="history-empty">登录</button>
+              </form>
+              <div class="auth-footer">还没有账户？ <button class="text-link" type="button" data-go="register">创建账户</button></div>
+            </div>
+          </section>
+
+          <section class="app-view auth-view" id="view-register" aria-label="注册高保真页面">
+            <header class="app-header" style="position:relative">
+              <button class="back-button" type="button" data-go="login">← 登录</button>
+              <button class="language-button" type="button" data-language-toggle>简体中文⌄</button>
+              <div class="language-menu" role="radiogroup" aria-label="显示语言"><button type="button" role="radio" aria-checked="true">简体中文</button><button type="button" role="radio" aria-checked="false">日本語</button></div>
+            </header>
+            <div class="app-scroll">
+              <div class="auth-brand"><p class="eyebrow">Create account</p><h1 class="display">建立你的观察册</h1><p class="lead">只需要邮箱和密码。验证邮箱后再手动登录。</p></div>
+              <form class="auth-card form-stack" onsubmit="return false">
+                <label class="form-label">邮箱<input class="input-field" type="email" placeholder="you@example.com" autocomplete="email"></label>
+                <label class="form-label">密码<input class="input-field" type="password" placeholder="输入密码" autocomplete="new-password"></label>
+                <label class="form-label">确认密码<input class="input-field" type="password" placeholder="再次输入密码" autocomplete="new-password"></label>
+                <p class="form-help">提交后会发送一封 15 分钟内有效的验证邮件。</p>
+                <button class="primary-button full" type="button" data-go="verify-sent">创建账户</button>
+              </form>
+            </div>
+          </section>
+
+          <section class="app-view auth-view" id="view-verify-sent" aria-label="验证邮件已发送高保真页面">
+            <header class="app-header"><button class="back-button" type="button" data-go="login">← 登录</button><span class="header-action">邮箱验证</span></header>
+            <div class="app-scroll" style="justify-content:center">
+              <section class="auth-card result-card"><div class="result-icon" aria-hidden="true">✉</div><p class="eyebrow">Check your inbox</p><h1 class="display">验证邮件已发送</h1><p>请打开发送到 <strong>birdwatcher@example.com</strong> 的链接。链接在 15 分钟内有效。</p><button class="primary-button full" type="button" data-go="verify-result">演示：打开验证链接</button><button class="secondary-button full" type="button" style="margin-top:8px">重新发送验证邮件</button><button class="text-link" type="button">使用其他邮箱请求发送</button></section>
+              <p class="notice" style="margin-top:14px">重发与重新输入邮箱会返回相同的通用结果，不提示账户是否存在。</p>
+            </div>
+          </section>
+
+          <section class="app-view auth-view" id="view-verify-result" aria-label="邮箱验证结果高保真页面">
+            <header class="app-header"><span class="subtle">邮箱验证</span><span class="header-action">完成</span></header>
+            <div class="app-scroll" style="justify-content:center"><section class="auth-card result-card"><div class="result-icon" aria-hidden="true">✓</div><p class="eyebrow">Email verified</p><h1 class="display">邮箱已验证</h1><p>账户现在可以登录。为了保护登录流程，本页不会自动进入账户。</p><button class="primary-button full" type="button" data-go="login">返回登录</button></section></div>
+          </section>
+
+          <section class="app-view auth-view" id="view-reset-request" aria-label="忘记密码申请高保真页面">
+            <header class="app-header"><button class="back-button" type="button" data-go="login">← 登录</button><span class="header-action">找回密码</span></header>
+            <div class="app-scroll">
+              <div class="auth-brand"><p class="eyebrow">Password reset</p><h1 class="display">重新设置密码</h1><p class="lead">输入邮箱，我们会发送一条 15 分钟内有效的重置链接。</p></div>
+              <form class="auth-card form-stack" onsubmit="return false"><label class="form-label">邮箱<input class="input-field" type="email" placeholder="you@example.com"></label><button class="primary-button full" type="button" data-go="reset-password">发送重置链接</button><p class="form-help">无论邮箱是否存在，页面都会显示相同的发送结果。</p></form>
+            </div>
+          </section>
+
+          <section class="app-view auth-view" id="view-reset-password" aria-label="设置新密码高保真页面">
+            <header class="app-header"><span class="subtle">邮件链接内部页面</span><span class="header-action">15 分钟内有效</span></header>
+            <div class="app-scroll">
+              <div class="auth-brand"><p class="eyebrow">New password</p><h1 class="display">设置新密码</h1><p class="lead">设置完成后仍需回到登录页手动登录。</p></div>
+              <form class="auth-card form-stack" onsubmit="return false"><label class="form-label">新密码<input class="input-field" type="password" autocomplete="new-password"></label><label class="form-label">确认新密码<input class="input-field" type="password" autocomplete="new-password"></label><button class="primary-button full" type="button" data-go="reset-success">更新密码</button></form>
+            </div>
+          </section>
+
+          <section class="app-view auth-view" id="view-reset-success" aria-label="密码重置成功高保真页面">
+            <header class="app-header"><span class="subtle">密码重置</span><span class="header-action">完成</span></header>
+            <div class="app-scroll" style="justify-content:center"><section class="auth-card result-card"><div class="result-icon" aria-hidden="true">✓</div><p class="eyebrow">Password updated</p><h1 class="display">密码已更新</h1><p>请使用新密码登录。此步骤不会自动创建登录状态。</p><button class="primary-button full" type="button" data-go="login">返回登录</button></section></div>
+          </section>
+
+          <section class="app-view" id="view-history-empty" aria-label="空观察历史高保真状态">
+            <header class="app-header"><div><p class="eyebrow" style="margin-bottom:3px">FIELD NOTES</p><h2 class="screen-title">观察册</h2></div></header>
+            <div class="app-scroll" style="display:flex;flex-direction:column;justify-content:center">
+              <section class="auth-card result-card"><div class="result-icon" aria-hidden="true">⌁</div><p class="eyebrow">Your first note</p><h1 class="display">这里还没有观察</h1><p>下次遇到还叫不出名字的鸟，先把记得的轮廓、颜色和局部特征留下来。</p><button class="primary-button full" type="button" data-go="outline">记录第一只鸟</button></section>
+            </div>
+            <nav class="bottom-nav" aria-label="底部导航"><button class="is-active" type="button" data-go="history-empty"><b>⌂</b>观察历史</button><button type="button" data-go="outline"><b>＋</b>新建观察</button><button type="button" data-go="settings"><b>⚙</b>设置</button></nav>
+          </section>
+
+          <section class="app-view" id="view-history" aria-label="观察历史高保真页面">
             <header class="app-header">
               <div><p class="eyebrow" style="margin-bottom:3px">FIELD NOTES</p><h2 class="screen-title">观察册</h2></div>
               <button class="icon-button" type="button" aria-label="更多选项">•••</button>
@@ -620,7 +853,7 @@
             <nav class="bottom-nav" aria-label="底部导航">
               <button class="is-active" type="button" data-go="history"><b>⌂</b>观察历史</button>
               <button type="button" data-go="outline"><b>＋</b>新建观察</button>
-              <button type="button" aria-disabled="true"><b>⚙</b>设置</button>
+              <button type="button" data-go="settings"><b>⚙</b>设置</button>
             </nav>
           </section>
 
@@ -789,8 +1022,41 @@
             <nav class="bottom-nav" aria-label="底部导航">
               <button class="is-active" type="button" data-go="history"><b>⌂</b>观察历史</button>
               <button type="button" data-go="outline"><b>＋</b>新建观察</button>
-              <button type="button" aria-disabled="true"><b>⚙</b>设置</button>
+              <button type="button" data-go="settings"><b>⚙</b>设置</button>
             </nav>
+          </section>
+
+          <section class="app-view" id="view-settings" aria-label="设置高保真页面">
+            <header class="app-header"><div><p class="eyebrow" style="margin-bottom:3px">Account</p><h2 class="screen-title">设置</h2></div></header>
+            <div class="app-scroll">
+              <div class="hero-copy"><h1 class="display" style="font-size:25px">你的观察环境</h1><p class="lead">账户信息保持简单，语言只保存在当前浏览器。</p></div>
+              <section class="section-block">
+                <div class="section-head"><h2 class="section-title">账户</h2></div>
+                <div class="settings-list">
+                  <div class="setting-card"><span><small>当前邮箱 · 只读</small><strong>birdwatcher@example.com</strong></span><span aria-hidden="true">—</span></div>
+                  <button class="setting-card" type="button" data-go="change-password"><span><strong>修改密码</strong><small>需要输入当前密码</small></span><span aria-hidden="true">›</span></button>
+                </div>
+              </section>
+              <section class="section-block">
+                <div class="section-head"><h2 class="section-title">显示语言</h2><span class="subtle">立即生效</span></div>
+                <div class="auth-card" style="padding:10px"><div class="chip-row" data-single-choice><button class="choice-chip" type="button" aria-pressed="true">简体中文</button><button class="choice-chip" type="button" aria-pressed="false">日本語</button></div><p class="form-help" style="margin:10px 4px 2px">不提供“跟随系统”；选择不会绑定账户或跨设备同步。</p></div>
+              </section>
+              <section class="section-block"><button class="setting-card danger-button" type="button" data-go="login"><span><strong>退出登录</strong><small>返回登录页面</small></span><span aria-hidden="true">›</span></button></section>
+            </div>
+            <nav class="bottom-nav" aria-label="底部导航">
+              <button type="button" data-go="history"><b>⌂</b>观察历史</button>
+              <button type="button" data-go="outline"><b>＋</b>新建观察</button>
+              <button class="is-active" type="button" data-go="settings"><b>⚙</b>设置</button>
+            </nav>
+          </section>
+
+          <section class="app-view auth-view" id="view-change-password" aria-label="修改密码高保真页面">
+            <header class="app-header"><button class="back-button" type="button" data-go="settings">← 设置</button><span class="header-action">账户安全</span></header>
+            <div class="app-scroll">
+              <div class="auth-brand"><p class="eyebrow">Account security</p><h1 class="display">修改密码</h1><p class="lead">确认当前密码，再设置新的登录密码。</p></div>
+              <form class="auth-card form-stack" onsubmit="return false"><label class="form-label">当前密码<input class="input-field" type="password" autocomplete="current-password"></label><label class="form-label">新密码<input class="input-field" type="password" autocomplete="new-password"></label><label class="form-label">确认新密码<input class="input-field" type="password" autocomplete="new-password"></label><button class="primary-button full" type="button" data-go="settings">保存新密码</button></form>
+              <p class="notice" style="margin-top:14px">错误状态沿用输入框与提示组件；不新增独立一级页面。</p>
+            </div>
           </section>
 
           <section class="app-view" id="view-system" aria-label="设计系统说明">
@@ -837,6 +1103,28 @@
                     <li>仅历史、详情、设置显示 App 底部导航。</li>
                   </ul>
                 </section>
+                <section class="system-card">
+                  <h3>Rails 前端组件清单</h3>
+                  <p class="lead" style="max-width:none">以下是视觉与交互复用单元，不要求引入组件框架；可由 Rails partial、HTML、CSS、Turbo 与 Stimulus 实现。</p>
+                  <div class="component-map">
+                    <div><strong>App 壳层</strong><span>页面标题、滚动区、底部导航</span></div>
+                    <div><strong>账户表单</strong><span>字段、帮助文字、错误提示、语言菜单</span></div>
+                    <div><strong>观察卡片</strong><span>inline SVG 缩略图、派生状态、最终鸟名</span></div>
+                    <div><strong>选择控件</strong><span>轮廓卡、色点、单选标签、双选标签</span></div>
+                    <div><strong>编辑预览</strong><span>Turbo Frame 承载 SVG 与摘要；Stimulus 触发更新</span></div>
+                    <div><strong>状态反馈</strong><span>结果页、行内提示、未保存确认 Dialog</span></div>
+                  </div>
+                </section>
+                <section class="system-card">
+                  <h3>实现状态边界</h3>
+                  <ul class="rule-list" style="font-size:12px">
+                    <li>轮廓、颜色、花纹与行动位置名称均为示例，正式名单仍待专项验证。</li>
+                    <li>页面流程和产品能力以正式文档为准，原型交互不替代服务端验证。</li>
+                    <li>历史状态由候选与最终鸟名派生，用户不直接选择状态。</li>
+                    <li>账户成功页不自动登录；验证和重置链接均为 15 分钟。</li>
+                    <li>无 React、Tailwind、原生 App 或外部资源依赖。</li>
+                  </ul>
+                </section>
               </div>
             </div>
           </section>
@@ -858,10 +1146,20 @@
 
   <script>
     const titles = {
+      login: '登录',
+      register: '注册',
+      'verify-sent': '验证邮件已发送',
+      'verify-result': '邮箱验证结果',
+      'reset-request': '忘记密码',
+      'reset-password': '设置新密码',
+      'reset-success': '密码重置成功',
+      'history-empty': '观察历史 · 空状态',
       history: '观察历史',
       outline: '两层轮廓选择',
       editor: '观察记录编辑',
       detail: '观察记录详情',
+      settings: '设置',
+      'change-password': '修改密码',
       system: '设计系统'
     };
 
@@ -878,6 +1176,16 @@
       element.addEventListener('keydown', event => {
         if ((event.key === 'Enter' || event.key === ' ') && element.matches('[tabindex]')) showView(element.dataset.go);
       });
+    });
+
+    document.querySelectorAll('[data-language-toggle]').forEach(toggle => {
+      const menu = toggle.nextElementSibling;
+      toggle.addEventListener('click', () => menu.classList.toggle('is-open'));
+      menu.querySelectorAll('[role="radio"]').forEach(option => option.addEventListener('click', () => {
+        menu.querySelectorAll('[role="radio"]').forEach(item => item.setAttribute('aria-checked', String(item === option)));
+        toggle.textContent = `${option.textContent}⌄`;
+        menu.classList.remove('is-open');
+      }));
     });
 
     function setOutlineStage(stage) {

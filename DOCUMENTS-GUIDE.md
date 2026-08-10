@@ -40,15 +40,15 @@ birding-app/
 - `docs/idea-dump.md`：未确认想法、研究方向、风险和后续候选。内容不得自动升级为需求或开发任务。
 - `docs/requirements.md`：已确认的正式产品需求，以及明确标记的待确认需求问题。
 - `docs/mvp-scope.md`：当前版本明确纳入、暂定、未决定和排除的范围及完成标准。
-- `docs/ui-design.md`：页面清单、用户流程、导航、组件、页面状态、低保真与视觉实验原型位置、实验状态和 UI 未决问题；原型内容不自动成为正式需求或视觉规范。
+- `docs/ui-design.md`：页面清单、用户流程、导航、组件、页面状态、低保真与视觉原型位置、正式高保真实现基线、适配边界和 UI 未决问题；原型中的业务示例数据不自动成为正式需求。
 - `docs/technical-decisions.md`：已确认的重要技术选择、背景、理由和影响；仅在存在正式决定时创建和更新。
 - `.agents/skills/frontend-design/`：UI 设计任务的第一阶段，用于建立有项目辨识度的视觉方向。
 - `.agents/skills/mobile-app-ui-design/`：在视觉方向形成后检查移动端信息层级、操作区域、触控尺寸、状态与整体体验。
 - `.agents/skills/project-ui-designer/`：负责 UI/UX 分析、页面与流程设计、原型制作和验证；只读取正式文档作为约束，不直接维护正式文档，并在产生实质性 UI 决定时输出一次性交接单。
 - `.agents/skills/project-doc-maintainer/`：项目文档或项目级规则变化后，检查文档体系一致性并维护本指南与 `AGENTS.md`。
 - `prototype/low-fidelity.html`：当前低保真页面、流程和状态核对原型；不作为需求确认依据。
-- `prototype/experiments/visual-direction-comparison.html`：当前 B′ 单页视觉方向实验。
-- `prototype/experiments/high-fidelity-baseline.html`：高保真页面与设计系统观察原型；当前整体为 `observed-only`，不得自动升级为正式视觉规范。
+- `prototype/experiments/visual-direction-comparison.html`：B′ 形成过程中的单页视觉实验记录，不承担正式实现基线职责。
+- `prototype/experiments/high-fidelity-baseline.html`：已确认的 B′ 高保真页面实现基线，用于指导首批 Rails 页面；其中的业务示例数据不构成正式需求，具体微交互可在不改变整体视觉方向的前提下适配。
 
 ## 信息流
 
@@ -58,7 +58,7 @@ birding-app/
 4. 用 `docs/current-status.md` 汇总当前阶段、开放问题和下一步，但不得覆盖需求或 MVP 文档中的正式结论。
 5. 将长期稳定的方向写入 `docs/project-overview.md`；将已确认的重要技术选择写入 `docs/technical-decisions.md`。
 6. 当文档结构、全局规则或工具职责变化时，更新 `DOCUMENTS-GUIDE.md` 或 `AGENTS.md`。
-7. 将页面清单、用户流程、导航、组件、视觉实验状态和 UI 未决问题写入 `docs/ui-design.md`，但不得用原型内容覆盖正式需求、MVP 边界或正式视觉规范。
+7. 将页面清单、用户流程、导航、组件、视觉实验状态、正式高保真实现基线和 UI 未决问题写入 `docs/ui-design.md`；只有用户明确确认的视觉层内容才能成为实现基线，原型业务示例不得覆盖正式需求或 MVP 边界。
 8. UI Designer 只在对话中输出一次性交接单；Project Maintainer 判断交接内容的状态、正式归属和同步范围后再修改文档。
 
 ## 工具职责
