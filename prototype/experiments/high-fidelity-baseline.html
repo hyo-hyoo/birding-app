@@ -500,18 +500,16 @@
     .auth-view .app-scroll { display: flex; flex-direction: column; padding-bottom: 24px; }
     .auth-brand { padding: 8px 0 24px; }
     .brand-mark {
-      display: grid;
-      width: 54px;
-      height: 54px;
-      place-items: center;
-      margin-bottom: 20px;
-      border: 1px solid rgba(40, 74, 62, .14);
-      border-radius: 18px 18px 18px 7px;
-      background: var(--paper-strong);
-      box-shadow: 0 14px 30px rgba(46, 76, 62, .10);
-      color: var(--pine);
-      font-family: ui-serif, "Songti SC", serif;
-      font-size: 27px;
+      width: 72px;
+      height: 72px;
+      margin-bottom: 18px;
+    }
+    .brand-mark img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 14px rgba(40, 74, 62, .14));
     }
     .auth-card {
       padding: 22px;
@@ -748,7 +746,7 @@
               </div>
             </header>
             <div class="app-scroll">
-              <div class="auth-brand"><div class="brand-mark" aria-hidden="true">鸟</div><p class="eyebrow">Field memory</p><h1 class="display">欢迎回来</h1><p class="lead">继续整理那些还没有名字的观察。</p></div>
+              <div class="auth-brand"><div class="brand-mark"><img src="../assets/app-logo-preview.png" alt="观鸟观察册 Logo"></div><p class="eyebrow">Field memory</p><h1 class="display">欢迎回来</h1><p class="lead">继续整理那些还没有名字的观察。</p></div>
               <form class="auth-card form-stack" onsubmit="return false">
                 <label class="form-label">邮箱<input class="input-field" type="email" value="birdwatcher@example.com" autocomplete="email"></label>
                 <label class="form-label">密码<input class="input-field" type="password" placeholder="输入密码" autocomplete="current-password"></label>
