@@ -20,10 +20,10 @@ class FrontendOutlinePreviewTest < ApplicationSystemTestCase
 
     click_button "使用这个轮廓"
 
-    assert_text "轮廓已选择。观察编辑页将在下一阶段接通。"
+    assert_current_path frontend_preview_editor_path(locale: "zh-CN")
+    assert_text "记录这只鸟"
 
-    click_button "重新选组"
-    assert_selector "[data-outline-selection-target='groupsStage']:not([hidden])"
+    visit frontend_preview_outline_path(locale: "zh-CN")
 
     click_button "水边低身"
     click_button "没有合适的轮廓"

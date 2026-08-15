@@ -21,6 +21,8 @@ class FrontendPreviewsController < ApplicationController
 
   def outline; end
 
+  def editor; end
+
   private
 
   def use_preview_locale

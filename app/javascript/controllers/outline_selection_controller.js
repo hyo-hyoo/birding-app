@@ -15,7 +15,8 @@ export default class extends Controller {
   static values = {
     groupsProgress: String,
     shapesProgress: String,
-    completeMessage: String
+    completeMessage: String,
+    editorUrl: String
   }
 
   connect() {
@@ -50,8 +51,12 @@ export default class extends Controller {
   announceSelection() {
     if (this.continueTarget.disabled) return
 
-    this.statusTarget.textContent = this.completeMessageValue
-    this.statusTarget.hidden = false
+    if (this.hasEditorUrlValue) {
+      window.location.assign(this.editorUrlValue)
+    } else {
+      this.statusTarget.textContent = this.completeMessageValue
+      this.statusTarget.hidden = false
+    }
   }
 
   selectOutline(selectedButton) {

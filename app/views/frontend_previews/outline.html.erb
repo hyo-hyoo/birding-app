@@ -16,7 +16,8 @@
          data-controller="outline-selection"
          data-outline-selection-groups-progress-value="<%= t("frontend_previews.outline.progress.groups") %>"
          data-outline-selection-shapes-progress-value="<%= t("frontend_previews.outline.progress.shapes") %>"
-         data-outline-selection-complete-message-value="<%= t("frontend_previews.outline.selection_ready") %>">
+         data-outline-selection-complete-message-value="<%= t("frontend_previews.outline.selection_ready") %>"
+         data-outline-selection-editor-url-value="<%= frontend_preview_editor_path(locale: I18n.locale) %>">
   <header class="app-header">
     <%= link_to t("frontend_previews.outline.back"), frontend_preview_history_path(locale: I18n.locale), class: "back-button" %>
     <span class="header-action"><%= t("frontend_previews.outline.header_action") %></span>

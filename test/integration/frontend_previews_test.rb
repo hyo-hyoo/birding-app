@@ -14,6 +14,7 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     frontend_preview_history_empty_path
     frontend_preview_history_path
     frontend_preview_outline_path
+    frontend_preview_editor_path
   ].freeze
   PREVIEW_LOCALES = %w[zh-CN ja].freeze
 
@@ -125,6 +126,27 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     assert_select ".bottom-nav", count: 0
     assert_select "script[type='importmap']", count: 1
     assert_select "a[href='#{frontend_preview_history_path(locale: "zh-CN")}']", count: 1
+    assert_select "[data-outline-selection-editor-url-value='#{frontend_preview_editor_path(locale: "zh-CN")}']", count: 1
+    assert_select "a[href='#']", count: 0
+  end
+
+  test "renders the observation editor with static save constraints" do
+    get frontend_preview_editor_path(locale: "zh-CN")
+
+    assert_response :success
+    assert_select "[data-controller='observation-editor']", count: 1
+    assert_select ".impression-bird[role='img']", count: 1
+    assert_select "[data-observation-editor-target='partGraphic']", count: 4
+    assert_select ".part-tab[role='tab']", count: 4
+    assert_select ".part-tab.is-active[aria-selected='true']", text: "头部", count: 1
+    assert_select "[data-observation-editor-target='primaryChoice']", count: 6
+    assert_select "[data-observation-editor-target='secondaryChoice']", count: 6
+    assert_select "[data-observation-editor-target='featureChoice']", count: 4
+    assert_select "[data-observation-editor-target='certaintyChoice']", count: 3
+    assert_select "[data-observation-editor-target='locationChoice']", count: 4
+    assert_select "button[data-observation-editor-target='save'][disabled][aria-disabled='true']", count: 1
+    assert_select "dialog.confirm-dialog", count: 1
+    assert_select ".bottom-nav", count: 0
     assert_select "a[href='#']", count: 0
   end
 

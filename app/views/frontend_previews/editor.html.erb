@@ -1,0 +1,177 @@
+<% content_for :title, t("frontend_previews.editor.page_title") %>
+<% parts = %i[head body wing tail] %>
+<% colors = {
+     yellow: "#e6c65f",
+     blue_gray: "#82a8b5",
+     gray: "#929b96",
+     green: "#91aa87",
+     brown: "#9b745c",
+     white: "#f3f1e8"
+   } %>
+<% features = %i[solid stripe spots patch] %>
+<% certainties = %i[sure likely vague] %>
+<% locations = %i[tree ground waterside building] %>
+
+<section class="app-page editor-page"
+         data-controller="observation-editor"
+         data-observation-editor-outline-url-value="<%= frontend_preview_outline_path(locale: I18n.locale) %>"
+         data-observation-editor-part-title-template-value="<%= t("frontend_previews.editor.part_title", part: "%{part}") %>"
+         data-observation-editor-part-status-none-value="<%= t("frontend_previews.editor.part_status.none") %>"
+         data-observation-editor-part-status-one-template-value="<%= t("frontend_previews.editor.part_status.one", part: "%{part}") %>"
+         data-observation-editor-part-status-many-template-value="<%= t("frontend_previews.editor.part_status.many", count: "%{count}") %>"
+         data-observation-editor-summary-empty-value="<%= t("frontend_previews.editor.summary.empty") %>"
+         data-observation-editor-summary-item-template-value="<%= t("frontend_previews.editor.summary.item", part: "%{part}", details: "%{details}", certainty: "%{certainty}") %>"
+         data-observation-editor-summary-primary-template-value="<%= t("frontend_previews.editor.summary.primary", value: "%{value}") %>"
+         data-observation-editor-summary-secondary-template-value="<%= t("frontend_previews.editor.summary.secondary", value: "%{value}") %>"
+         data-observation-editor-summary-feature-template-value="<%= t("frontend_previews.editor.summary.feature", value: "%{value}") %>"
+         data-observation-editor-summary-note-template-value="<%= t("frontend_previews.editor.summary.note", value: "%{value}") %>"
+         data-observation-editor-summary-certainty-pending-value="<%= t("frontend_previews.editor.summary.certainty_pending") %>"
+         data-observation-editor-save-empty-value="<%= t("frontend_previews.editor.save_state.empty") %>"
+         data-observation-editor-save-certainty-value="<%= t("frontend_previews.editor.save_state.certainty") %>"
+         data-observation-editor-save-ready-value="<%= t("frontend_previews.editor.save_state.ready") %>"
+         data-observation-editor-save-complete-value="<%= t("frontend_previews.editor.save_state.complete") %>"
+         data-observation-editor-location-limit-value="<%= t("frontend_previews.editor.location_limit") %>">
+  <header class="app-header">
+    <button class="back-button" type="button" data-action="observation-editor#requestExit"><%= t("frontend_previews.editor.back") %></button>
+    <span class="header-action"><%= t("frontend_previews.editor.header_action") %></span>
+  </header>
+
+  <main class="app-content editor-content spine">
+    <section class="hero-copy spine-node">
+      <p class="eyebrow"><%= t("frontend_previews.editor.eyebrow") %></p>
+      <h1 class="display"><%= t("frontend_previews.editor.title") %></h1>
+      <p class="lead"><%= t("frontend_previews.editor.description") %></p>
+    </section>
+
+    <section class="specimen-card spine-node" aria-labelledby="specimen-heading">
+      <div class="specimen-label">
+        <span id="specimen-heading"><%= t("frontend_previews.editor.specimen_label") %></span>
+        <strong><%= t("frontend_previews.editor.specimen_name") %></strong>
+      </div>
+      <%= render "frontend_previews/impression_bird" %>
+    </section>
+
+    <section class="section-block spine-node">
+      <div class="section-head">
+        <h2 class="section-title"><%= t("frontend_previews.editor.parts_heading") %></h2>
+        <span class="subtle" data-observation-editor-target="partStatus"><%= t("frontend_previews.editor.part_status.none") %></span>
+      </div>
+      <div class="part-tabs" role="tablist" aria-label="<%= t("frontend_previews.editor.parts_heading") %>">
+        <% parts.each_with_index do |part, index| %>
+          <button class="part-tab<%= " is-active" if index.zero? %>"
+                  type="button"
+                  role="tab"
+                  aria-selected="<%= index.zero? %>"
+                  data-part-key="<%= part %>"
+                  data-part-name="<%= t("frontend_previews.editor.parts.#{part}") %>"
+                  data-observation-editor-target="partTab"
+                  data-action="observation-editor#choosePart"><%= t("frontend_previews.editor.parts.#{part}") %></button>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="section-block spine-node" aria-labelledby="editor-part-title">
+      <div class="section-head">
+        <h2 class="section-title" id="editor-part-title" data-observation-editor-target="partTitle"><%= t("frontend_previews.editor.part_title", part: t("frontend_previews.editor.parts.head")) %></h2>
+        <span class="subtle"><%= t("frontend_previews.editor.skippable") %></span>
+      </div>
+
+      <div class="editor-panel">
+        <p class="example-disclaimer"><%= t("frontend_previews.editor.example_disclaimer") %></p>
+
+        <div class="field-group">
+          <span class="field-label"><%= t("frontend_previews.editor.primary_color") %> <small><%= t("frontend_previews.editor.swatch_help") %></small></span>
+          <div class="swatch-row" role="group" aria-label="<%= t("frontend_previews.editor.primary_color") %>">
+            <% colors.each do |key, hex| %>
+              <% name = t("frontend_previews.editor.colors.#{key}") %>
+              <div class="swatch-item">
+                <span><%= name %></span>
+                <button class="swatch" type="button" style="--swatch:<%= hex %>" aria-label="<%= name %>" aria-pressed="false" data-option-key="<%= key %>" data-option-name="<%= name %>" data-option-value="<%= hex %>" data-observation-editor-target="primaryChoice" data-action="observation-editor#choosePrimary"></button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label"><%= t("frontend_previews.editor.secondary_color") %> <small><%= t("frontend_previews.editor.optional") %></small></span>
+          <div class="swatch-row" role="group" aria-label="<%= t("frontend_previews.editor.secondary_color") %>">
+            <% colors.each do |key, hex| %>
+              <% name = t("frontend_previews.editor.colors.#{key}") %>
+              <div class="swatch-item">
+                <span><%= name %></span>
+                <button class="swatch" type="button" style="--swatch:<%= hex %>" aria-label="<%= name %>" aria-pressed="false" data-option-key="<%= key %>" data-option-name="<%= name %>" data-option-value="<%= hex %>" data-observation-editor-target="secondaryChoice" data-action="observation-editor#chooseSecondary"></button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label"><%= t("frontend_previews.editor.feature") %> <small><%= t("frontend_previews.editor.feature_help") %></small></span>
+          <div class="chip-row" role="group" aria-label="<%= t("frontend_previews.editor.feature") %>">
+            <% features.each do |feature| %>
+              <% name = t("frontend_previews.editor.features.#{feature}") %>
+              <button class="choice-chip" type="button" aria-pressed="false" data-option-key="<%= feature %>" data-option-name="<%= name %>" data-observation-editor-target="featureChoice" data-action="observation-editor#chooseFeature"><%= name %></button>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label"><%= t("frontend_previews.editor.certainty") %></span>
+          <div class="chip-row" role="group" aria-label="<%= t("frontend_previews.editor.certainty") %>">
+            <% certainties.each do |certainty| %>
+              <% name = t("frontend_previews.editor.certainties.#{certainty}") %>
+              <button class="choice-chip" type="button" aria-pressed="false" data-option-key="<%= certainty %>" data-option-name="<%= name %>" data-observation-editor-target="certaintyChoice" data-action="observation-editor#chooseCertainty"><%= name %></button>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="part-note"><%= t("frontend_previews.editor.note") %> <small><%= t("frontend_previews.editor.note_help") %></small></label>
+          <textarea class="text-field" id="part-note" data-observation-editor-target="note" data-action="input->observation-editor#updateNote" placeholder="<%= t("frontend_previews.editor.note_placeholder") %>"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block spine-node">
+      <div class="section-head">
+        <h2 class="section-title"><%= t("frontend_previews.editor.summary.heading") %></h2>
+        <span class="subtle"><%= t("frontend_previews.editor.summary.update_note") %></span>
+      </div>
+      <div class="impression-summary" aria-live="polite" data-observation-editor-target="summary"><%= t("frontend_previews.editor.summary.empty") %></div>
+    </section>
+
+    <section class="section-block spine-node supplement-section">
+      <div class="section-head">
+        <h2 class="section-title"><%= t("frontend_previews.editor.supplement_heading") %></h2>
+        <span class="subtle"><%= t("frontend_previews.editor.optional") %></span>
+      </div>
+      <p class="field-label field-label--stacked"><%= t("frontend_previews.editor.locations_label") %> <small><%= t("frontend_previews.editor.locations_help") %></small></p>
+      <div class="chip-row" role="group" aria-label="<%= t("frontend_previews.editor.locations_label") %>">
+        <% locations.each do |location| %>
+          <% name = t("frontend_previews.editor.locations.#{location}") %>
+          <button class="choice-chip" type="button" aria-pressed="false" data-option-key="<%= location %>" data-observation-editor-target="locationChoice" data-action="observation-editor#chooseLocation"><%= name %></button>
+        <% end %>
+      </div>
+      <label class="field-label behavior-label" for="behavior-note"><%= t("frontend_previews.editor.behavior_label") %> <small><%= t("frontend_previews.editor.optional") %></small></label>
+      <textarea class="text-field text-field--compact" id="behavior-note" data-observation-editor-target="behavior" data-action="input->observation-editor#updateBehavior" placeholder="<%= t("frontend_previews.editor.behavior_placeholder") %>"></textarea>
+    </section>
+
+    <p class="editor-example-note"><%= t("frontend_previews.editor.preview_note") %></p>
+  </main>
+
+  <footer class="editor-dock">
+    <p class="save-state" role="status" aria-live="polite" data-observation-editor-target="saveStatus"><%= t("frontend_previews.editor.save_state.empty") %></p>
+    <button class="primary-button full" type="button" disabled aria-disabled="true" data-observation-editor-target="save" data-action="observation-editor#save"><%= t("frontend_previews.editor.save") %></button>
+  </footer>
+
+  <dialog class="confirm-dialog" aria-labelledby="leave-title" data-observation-editor-target="dialog">
+    <div class="dialog-content">
+      <h2 id="leave-title"><%= t("frontend_previews.editor.dialog.title") %></h2>
+      <p><%= t("frontend_previews.editor.dialog.description") %></p>
+      <div class="dialog-actions">
+        <button class="primary-button full" type="button" data-action="observation-editor#continueEditing"><%= t("frontend_previews.editor.dialog.continue") %></button>
+        <button class="secondary-button full" type="button" data-action="observation-editor#discard"><%= t("frontend_previews.editor.dialog.discard") %></button>
+      </div>
+    </div>
+  </dialog>
+</section>
