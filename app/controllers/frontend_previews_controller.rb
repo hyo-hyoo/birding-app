@@ -19,6 +19,8 @@ class FrontendPreviewsController < ApplicationController
 
   def history; end
 
+  def outline; end
+
   private
 
   def use_preview_locale

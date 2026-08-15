@@ -1,0 +1,100 @@
+<% content_for :title, t("frontend_previews.outline.page_title") %>
+<% groups = [
+     { key: :round, variant: :round },
+     { key: :slender, variant: :slender },
+     { key: :water, variant: :water },
+     { key: :upright, variant: :upright }
+   ] %>
+<% shapes = [
+     { key: :one, variant: :round },
+     { key: :two, variant: :slender },
+     { key: :three, variant: :upright },
+     { key: :four, variant: :water }
+   ] %>
+
+<section class="app-page outline-page"
+         data-controller="outline-selection"
+         data-outline-selection-groups-progress-value="<%= t("frontend_previews.outline.progress.groups") %>"
+         data-outline-selection-shapes-progress-value="<%= t("frontend_previews.outline.progress.shapes") %>"
+         data-outline-selection-complete-message-value="<%= t("frontend_previews.outline.selection_ready") %>">
+  <header class="app-header">
+    <%= link_to t("frontend_previews.outline.back"), frontend_preview_history_path(locale: I18n.locale), class: "back-button" %>
+    <span class="header-action"><%= t("frontend_previews.outline.header_action") %></span>
+  </header>
+
+  <main class="app-content outline-content">
+    <section class="outline-intro">
+      <p class="eyebrow"><%= t("frontend_previews.outline.eyebrow") %></p>
+      <h1 class="display"><%= t("frontend_previews.outline.title") %></h1>
+      <p class="lead"><%= t("frontend_previews.outline.description") %></p>
+    </section>
+
+    <div class="progress-row" aria-label="<%= t("frontend_previews.outline.progress.label") %>">
+      <span class="is-active" data-outline-selection-target="progressStep"></span>
+      <span data-outline-selection-target="progressStep"></span>
+      <small data-outline-selection-target="progressLabel"><%= t("frontend_previews.outline.progress.groups") %></small>
+    </div>
+
+    <section class="outline-stage is-active" data-outline-selection-target="groupsStage">
+      <div class="group-grid">
+        <% groups.each do |group| %>
+          <% title = t("frontend_previews.outline.groups.#{group[:key]}") %>
+          <button class="group-card"
+                  type="button"
+                  aria-pressed="false"
+                  data-outline-selection-target="groupCard"
+                  data-action="outline-selection#chooseGroup">
+            <%= render "frontend_previews/bird_thumbnail", variant: group[:variant], label: title %>
+            <strong><%= title %></strong>
+            <small><%= t("frontend_previews.outline.example_note") %></small>
+          </button>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="outline-stage" data-outline-selection-target="shapesStage" hidden>
+      <div class="section-head">
+        <h2 class="section-title"><%= t("frontend_previews.outline.shape_title") %></h2>
+        <button class="back-button" type="button" data-action="outline-selection#returnToGroups"><%= t("frontend_previews.outline.choose_group_again") %></button>
+      </div>
+
+      <div class="shape-grid">
+        <% shapes.each do |shape| %>
+          <% title = t("frontend_previews.outline.shapes.#{shape[:key]}") %>
+          <button class="shape-card"
+                  type="button"
+                  aria-pressed="false"
+                  data-outline-selection-target="selection"
+                  data-action="outline-selection#chooseShape">
+            <%= render "frontend_previews/bird_thumbnail", variant: shape[:variant], label: title %>
+            <strong><%= title %></strong>
+          </button>
+        <% end %>
+      </div>
+
+      <button class="fallback-card"
+              type="button"
+              aria-pressed="false"
+              data-outline-selection-target="selection"
+              data-action="outline-selection#chooseFallback">
+        <span>
+          <strong><%= t("frontend_previews.outline.fallback_title") %></strong>
+          <small><%= t("frontend_previews.outline.fallback_description") %></small>
+        </span>
+        <span aria-hidden="true">›</span>
+      </button>
+
+      <p class="outline-example-note"><%= t("frontend_previews.outline.example_disclaimer") %></p>
+
+      <div class="selection-dock">
+        <button class="primary-button full"
+                type="button"
+                aria-disabled="true"
+                disabled
+                data-outline-selection-target="continue"
+                data-action="outline-selection#announceSelection"><%= t("frontend_previews.outline.continue") %></button>
+        <p class="selection-status" role="status" aria-live="polite" hidden data-outline-selection-target="status"><%= t("frontend_previews.outline.selection_ready") %></p>
+      </div>
+    </section>
+  </main>
+</section>

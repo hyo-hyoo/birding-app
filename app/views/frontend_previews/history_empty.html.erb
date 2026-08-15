@@ -10,7 +10,7 @@
 
   <main class="app-content preview-history-content">
     <%= render "shared/result_card", icon: "⌁", eyebrow: t("frontend_previews.history_empty.result_eyebrow"), title_tag: :h2, title: t("frontend_previews.history_empty.title"), description: t("frontend_previews.history_empty.description") do %>
-      <button class="primary-button full" type="button"><%= t("frontend_previews.history_empty.new_observation") %></button>
+      <%= link_to t("frontend_previews.history_empty.new_observation"), frontend_preview_outline_path(locale: I18n.locale), class: "primary-button full" %>
     <% end %>
 
     <aside class="preview-note">
@@ -21,7 +21,7 @@
 
   <%= render "shared/bottom_navigation", items: [
     { icon: "⌂", label: t("frontend_previews.navigation.history"), active: true, path: frontend_preview_history_empty_path(locale: I18n.locale) },
-    { icon: "＋", label: t("frontend_previews.navigation.new_observation") },
+    { icon: "＋", label: t("frontend_previews.navigation.new_observation"), path: frontend_preview_outline_path(locale: I18n.locale) },
     { icon: "⚙", label: t("frontend_previews.navigation.settings") }
   ] %>
 </section>

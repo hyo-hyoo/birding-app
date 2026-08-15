@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     get "previews/reset-success", to: "frontend_previews#reset_success", as: :frontend_preview_reset_success
     get "previews/history-empty", to: "frontend_previews#history_empty", as: :frontend_preview_history_empty
     get "previews/history", to: "frontend_previews#history", as: :frontend_preview_history
+    get "previews/outline", to: "frontend_previews#outline", as: :frontend_preview_outline
   end
 
   # Defines the root path route ("/")

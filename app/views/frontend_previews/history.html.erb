@@ -13,7 +13,7 @@
       <p class="eyebrow"><%= t("frontend_previews.history.intro_eyebrow") %></p>
       <h1 class="display history-intro__title"><%= t("frontend_previews.history.intro_title_line_one") %><br><%= t("frontend_previews.history.intro_title_line_two") %></h1>
       <p class="history-intro__body"><%= t("frontend_previews.history.intro_description") %></p>
-      <button class="primary-button" type="button" aria-disabled="true" disabled><%= t("frontend_previews.history.new_observation") %></button>
+      <%= link_to t("frontend_previews.history.new_observation"), frontend_preview_outline_path(locale: I18n.locale), class: "primary-button" %>
     </section>
 
     <section class="section-block history-records" aria-labelledby="recent-records-title">
@@ -35,7 +35,7 @@
 
   <%= render "shared/bottom_navigation", items: [
         { label: t("frontend_previews.navigation.history"), icon: "⌂", path: frontend_preview_history_path(locale: I18n.locale), active: true },
-        { label: t("frontend_previews.navigation.new_observation"), icon: "＋", path: nil, active: false },
+        { label: t("frontend_previews.navigation.new_observation"), icon: "＋", path: frontend_preview_outline_path(locale: I18n.locale), active: false },
         { label: t("frontend_previews.navigation.settings"), icon: "⚙", path: nil, active: false }
       ] %>
 </section>

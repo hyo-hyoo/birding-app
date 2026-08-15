@@ -13,6 +13,7 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     frontend_preview_reset_success_path
     frontend_preview_history_empty_path
     frontend_preview_history_path
+    frontend_preview_outline_path
   ].freeze
   PREVIEW_LOCALES = %w[zh-CN ja].freeze
 
@@ -83,13 +84,14 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{frontend_preview_login_path(locale: "zh-CN")}']"
   end
 
-  test "renders the empty history hierarchy and disabled future navigation" do
+  test "renders the empty history hierarchy and links to a new observation" do
     get frontend_preview_history_empty_path(locale: "zh-CN")
 
     assert_select "main h2", count: 1
     assert_select ".bottom-nav__item", count: 3
     assert_select ".bottom-nav__item.is-active", count: 1
-    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 2
+    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 1
+    assert_select "a[href='#{frontend_preview_outline_path(locale: "zh-CN")}']", count: 2
   end
 
   test "renders the non-empty history with derived identification states" do
@@ -105,7 +107,24 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     assert_select ".record-card--confirmed h3", text: "白鹡鸰", count: 1
     assert_select ".bottom-nav__item", count: 3
     assert_select ".bottom-nav__item.is-active", count: 1
-    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 2
+    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 1
+    assert_select "a[href='#{frontend_preview_outline_path(locale: "zh-CN")}']", count: 2
+    assert_select "a[href='#']", count: 0
+  end
+
+  test "renders the two-stage outline selector without future navigation" do
+    get frontend_preview_outline_path(locale: "zh-CN")
+
+    assert_response :success
+    assert_select "[data-controller='outline-selection']", count: 1
+    assert_select ".group-card[aria-pressed='false']", count: 4
+    assert_select ".shape-card[aria-pressed='false']", count: 4
+    assert_select ".fallback-card[aria-pressed='false']", count: 1
+    assert_select "[data-outline-selection-target='shapesStage'][hidden]", count: 1
+    assert_select "button[data-outline-selection-target='continue'][disabled][aria-disabled='true']", count: 1
+    assert_select ".bottom-nav", count: 0
+    assert_select "script[type='importmap']", count: 1
+    assert_select "a[href='#{frontend_preview_history_path(locale: "zh-CN")}']", count: 1
     assert_select "a[href='#']", count: 0
   end
 
