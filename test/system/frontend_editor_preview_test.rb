@@ -62,12 +62,7 @@ class FrontendEditorPreviewTest < ApplicationSystemTestCase
     assert_no_selector "dialog[open]"
 
     click_button "保存这次观察"
-    assert_text "保存状态已验证"
-
-    fill_in "当时的行为", with: "反复摆尾"
-    click_button "← 修改轮廓"
-    click_button "放弃修改并离开"
-
-    assert_current_path frontend_preview_outline_path(locale: "zh-CN")
+    assert_current_path frontend_preview_detail_path(locale: "zh-CN", state: "candidate")
+    assert_text "候选中"
   end
 end

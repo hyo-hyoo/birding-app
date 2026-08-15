@@ -15,6 +15,7 @@
 <section class="app-page editor-page"
          data-controller="observation-editor"
          data-observation-editor-outline-url-value="<%= frontend_preview_outline_path(locale: I18n.locale) %>"
+         data-observation-editor-detail-url-value="<%= frontend_preview_detail_path(locale: I18n.locale, state: "candidate") %>"
          data-observation-editor-part-title-template-value="<%= t("frontend_previews.editor.part_title", part: "%{part}") %>"
          data-observation-editor-part-status-none-value="<%= t("frontend_previews.editor.part_status.none") %>"
          data-observation-editor-part-status-one-template-value="<%= t("frontend_previews.editor.part_status.one", part: "%{part}") %>"

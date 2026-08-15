@@ -1,0 +1,202 @@
+<% content_for :title, t("frontend_previews.detail.page_title") %>
+<% initial_state = %w[pending candidate confirmed].include?(params[:state]) ? params[:state] : "candidate" %>
+<% initial_candidates = initial_state == "pending" ? [] : [t("frontend_previews.detail.examples.candidate_one"), t("frontend_previews.detail.examples.candidate_two")] %>
+<% initial_final_name = initial_state == "confirmed" ? t("frontend_previews.detail.examples.final_name") : "" %>
+
+<section class="app-page detail-page"
+         data-controller="identification"
+         data-action="click->identification#interceptNavigation"
+         data-identification-initial-candidates-value="<%= initial_candidates.to_json %>"
+         data-identification-initial-final-name-value="<%= initial_final_name %>"
+         data-identification-default-title-value="<%= t("frontend_previews.detail.title") %>"
+         data-identification-status-pending-value="<%= t("frontend_previews.history.statuses.pending") %>"
+         data-identification-status-candidate-value="<%= t("frontend_previews.history.statuses.candidate") %>"
+         data-identification-status-confirmed-value="<%= t("frontend_previews.history.statuses.confirmed") %>"
+         data-identification-count-template-value="<%= t("frontend_previews.detail.candidates.count", count: "%{count}") %>"
+         data-identification-delete-label-template-value="<%= t("frontend_previews.detail.candidates.delete", name: "%{name}") %>"
+         data-identification-select-label-template-value="<%= t("frontend_previews.detail.candidates.select", name: "%{name}") %>"
+         data-identification-limit-message-value="<%= t("frontend_previews.detail.messages.limit") %>"
+         data-identification-empty-message-value="<%= t("frontend_previews.detail.messages.empty") %>"
+         data-identification-duplicate-message-value="<%= t("frontend_previews.detail.messages.duplicate") %>"
+         data-identification-added-message-value="<%= t("frontend_previews.detail.messages.added") %>"
+         data-identification-removed-message-value="<%= t("frontend_previews.detail.messages.removed") %>"
+         data-identification-select-message-value="<%= t("frontend_previews.detail.messages.select") %>"
+          data-identification-confirmed-message-template-value="<%= t("frontend_previews.detail.messages.confirmed", name: "%{name}") %>"
+          data-identification-revoked-message-value="<%= t("frontend_previews.detail.messages.revoked") %>"
+          data-identification-revoked-retained-message-template-value="<%= t("frontend_previews.detail.messages.revoked_retained", name: "%{name}") %>"
+          data-identification-revoked-replaced-message-template-value="<%= t("frontend_previews.detail.messages.revoked_replaced", name: "%{name}", replaced: "%{replaced}") %>"
+          data-identification-saved-message-value="<%= t("frontend_previews.detail.messages.saved") %>">
+  <header class="app-header">
+    <%= link_to t("frontend_previews.detail.back"), frontend_preview_history_path(locale: I18n.locale), class: "back-button" %>
+    <%= link_to t("frontend_previews.detail.edit"), frontend_preview_editor_path(locale: I18n.locale), class: "soft-button detail-edit-link" %>
+  </header>
+
+  <main class="app-content detail-content">
+    <section class="detail-hero">
+      <div class="detail-meta">
+        <span class="detail-status-group">
+          <span class="status-pill status-pill--<%= initial_state %>" data-identification-target="status"><%= t("frontend_previews.history.statuses.#{initial_state}") %></span>
+          <span class="status-unsaved" data-identification-target="statusUnsaved" hidden><%= t("frontend_previews.detail.unsaved") %></span>
+        </span>
+        <span class="subtle"><%= t("frontend_previews.detail.recorded_at_short") %></span>
+      </div>
+      <span class="detail-concept-label"><%= t("frontend_previews.detail.concept_label") %></span>
+      <%= render "frontend_previews/impression_bird", filled_preview: true, alt: t("frontend_previews.detail.impression_alt") %>
+    </section>
+
+    <section class="detail-section detail-summary">
+      <p class="eyebrow"><%= t("frontend_previews.detail.eyebrow") %></p>
+      <h1 class="display detail-title" data-identification-target="title"><%= initial_final_name.presence || t("frontend_previews.detail.title") %></h1>
+      <p class="lead detail-lead"><%= t("frontend_previews.detail.summary") %></p>
+      <p class="example-disclaimer detail-disclaimer"><%= t("frontend_previews.detail.preview_note") %></p>
+    </section>
+
+    <section class="detail-section" aria-labelledby="certainty-title">
+      <div class="section-head">
+        <h2 class="section-title" id="certainty-title"><%= t("frontend_previews.detail.certainty_heading") %></h2>
+      </div>
+      <div class="fact-grid">
+        <% { head: :sure, body: :likely, wing: :vague, tail: :sure }.each do |part, certainty| %>
+          <div class="fact-card">
+            <span><%= t("frontend_previews.editor.parts.#{part}") %></span>
+            <strong><%= t("frontend_previews.editor.certainties.#{certainty}") %></strong>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="detail-section" aria-labelledby="information-title">
+      <div class="section-head">
+        <h2 class="section-title" id="information-title"><%= t("frontend_previews.detail.information_heading") %></h2>
+      </div>
+      <dl class="detail-facts">
+        <div><dt><%= t("frontend_previews.detail.recorded_at") %></dt><dd><%= t("frontend_previews.detail.examples.recorded_at") %></dd></div>
+        <div><dt><%= t("frontend_previews.detail.locations") %></dt><dd><%= t("frontend_previews.detail.examples.locations") %></dd></div>
+        <div><dt><%= t("frontend_previews.detail.behavior") %></dt><dd><%= t("frontend_previews.detail.examples.behavior") %></dd></div>
+      </dl>
+    </section>
+
+    <section class="detail-section identification-section" aria-labelledby="candidate-title">
+      <h2 class="sr-only" id="candidate-title"><%= t("frontend_previews.detail.candidates.heading") %></h2>
+      <div class="section-head" data-identification-target="candidateStaticHeading" <%= "hidden" if initial_final_name.present? %>>
+        <span class="section-title" aria-hidden="true"><%= t("frontend_previews.detail.candidates.heading") %></span>
+        <span class="subtle" data-identification-target="candidateCount"><%= t("frontend_previews.detail.candidates.count", count: initial_candidates.length) %></span>
+      </div>
+      <button class="candidate-disclosure" type="button" aria-controls="candidate-panel" aria-expanded="false" data-identification-target="candidateToggle" data-action="identification#toggleCandidates" <%= "hidden" if initial_final_name.blank? %>>
+        <span class="section-title"><%= t("frontend_previews.detail.candidates.heading") %></span>
+        <span class="candidate-disclosure__meta">
+          <span class="subtle" data-identification-target="candidateCount"><%= t("frontend_previews.detail.candidates.count", count: initial_candidates.length) %></span>
+          <span class="candidate-disclosure__chevron" aria-hidden="true">⌄</span>
+        </span>
+      </button>
+      <div id="candidate-panel" data-identification-target="candidatePanel" <%= "hidden" if initial_final_name.present? %>>
+        <p class="section-description"><%= t("frontend_previews.detail.candidates.description") %></p>
+        <div class="candidate-list" data-identification-target="candidateList">
+          <% initial_candidates.each_with_index do |name, index| %>
+            <div class="candidate-row<%= " is-selected" if index.zero? %>" data-candidate-name="<%= name %>">
+              <button class="candidate-select" type="button" aria-pressed="<%= index.zero? %>" data-action="identification#selectCandidate"><span><%= name %></span></button>
+              <button class="candidate-delete" type="button" aria-label="<%= t("frontend_previews.detail.candidates.delete", name: name) %>" data-action="identification#removeCandidate">×</button>
+            </div>
+          <% end %>
+        </div>
+        <div class="candidate-entry">
+          <label class="sr-only" for="candidate-name"><%= t("frontend_previews.detail.candidates.input_label") %></label>
+          <input class="input-field" id="candidate-name" type="text" maxlength="40" autocomplete="off" placeholder="<%= t("frontend_previews.detail.candidates.placeholder") %>" data-identification-target="candidateInput" data-action="keydown.enter->identification#addCandidate:prevent">
+          <button class="secondary-button" type="button" data-identification-target="addButton" data-action="identification#addCandidate"><%= t("frontend_previews.detail.candidates.add") %></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="detail-section final-name-section" aria-labelledby="final-name-title">
+      <div class="section-head"><h2 class="section-title" id="final-name-title"><%= t("frontend_previews.detail.final.heading") %></h2></div>
+
+      <div data-identification-target="confirmationControls" <%= "hidden" if initial_final_name.present? %>>
+        <button class="primary-button full" type="button" data-identification-target="confirmSelected" data-action="identification#confirmSelected" <%= "disabled aria-disabled=true" if initial_candidates.empty? %>><%= t("frontend_previews.detail.final.confirm_selected") %></button>
+        <button class="soft-button full final-choice-toggle" type="button" aria-expanded="false" data-identification-target="otherToggle" data-action="identification#toggleOther"><%= t("frontend_previews.detail.final.other_toggle") %></button>
+        <div class="other-final-name" data-identification-target="otherControls" hidden>
+          <label class="form-label" for="other-final-name"><%= t("frontend_previews.detail.final.other_label") %></label>
+          <input class="input-field" id="other-final-name" type="text" maxlength="40" autocomplete="off" placeholder="<%= t("frontend_previews.detail.final.other_placeholder") %>" data-identification-target="otherInput">
+          <button class="secondary-button full" type="button" data-action="identification#confirmOther"><%= t("frontend_previews.detail.final.confirm_other") %></button>
+        </div>
+      </div>
+
+      <div class="confirmed-name-card" data-identification-target="confirmedControls" <%= "hidden" if initial_final_name.blank? %>>
+        <div data-identification-target="confirmedDisplay" <%= "hidden" if initial_final_name.blank? %>>
+          <p><span><%= t("frontend_previews.detail.final.current") %></span><strong data-identification-target="confirmedName"><%= initial_final_name %></strong></p>
+          <div class="confirmed-name-actions">
+            <button class="secondary-button" type="button" data-action="identification#beginFinalEdit"><%= t("frontend_previews.detail.final.edit") %></button>
+            <button class="soft-button" type="button" data-action="identification#revoke"><%= t("frontend_previews.detail.final.revoke") %></button>
+          </div>
+        </div>
+        <div class="confirmed-name-editor" data-identification-target="confirmedEditor" hidden>
+          <label class="form-label" for="edit-final-name"><%= t("frontend_previews.detail.final.edit_label") %></label>
+          <input class="input-field" id="edit-final-name" type="text" maxlength="40" autocomplete="off" value="<%= initial_final_name %>" data-identification-target="editInput" data-action="input->identification#updateFinalDraft">
+          <p class="form-help"><%= t("frontend_previews.detail.final.edit_help") %></p>
+        </div>
+      </div>
+
+      <p class="identification-message" role="status" aria-live="polite" data-identification-target="message"><%= t("frontend_previews.detail.messages.rule") %></p>
+    </section>
+
+  </main>
+
+  <footer class="identification-save-bar" data-identification-target="saveBar" hidden>
+    <strong><%= t("frontend_previews.detail.save_bar.title") %></strong>
+    <button class="primary-button" type="button" data-action="identification#save"><%= t("frontend_previews.detail.save_bar.action") %></button>
+  </footer>
+
+  <%= render "shared/bottom_navigation", items: [
+        { label: t("frontend_previews.navigation.history"), icon: "⌂", path: frontend_preview_history_path(locale: I18n.locale), active: true },
+        { label: t("frontend_previews.navigation.new_observation"), icon: "＋", path: frontend_preview_outline_path(locale: I18n.locale), active: false },
+        { label: t("frontend_previews.navigation.settings"), icon: "⚙", path: nil, active: false }
+      ] %>
+
+  <dialog class="confirm-dialog" aria-labelledby="identification-leave-title" data-identification-target="dialog">
+    <div class="dialog-content">
+      <h2 id="identification-leave-title"><%= t("frontend_previews.detail.dialog.title") %></h2>
+      <p><%= t("frontend_previews.detail.dialog.description") %></p>
+      <div class="dialog-actions">
+        <button class="primary-button full" type="button" data-action="identification#saveAndLeave"><%= t("frontend_previews.detail.dialog.save_and_leave") %></button>
+        <button class="secondary-button full" type="button" data-action="identification#continueEditing"><%= t("frontend_previews.detail.dialog.continue") %></button>
+        <button class="soft-button full" type="button" data-action="identification#discardAndLeave"><%= t("frontend_previews.detail.dialog.discard") %></button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="confirm-dialog" aria-labelledby="identification-draft-title" data-identification-target="draftDialog">
+    <div class="dialog-content">
+      <h2 id="identification-draft-title"><%= t("frontend_previews.detail.draft_dialog.title") %></h2>
+      <p><%= t("frontend_previews.detail.draft_dialog.description") %></p>
+      <div class="dialog-actions">
+        <button class="primary-button full" type="button" data-action="identification#continueDraft"><%= t("frontend_previews.detail.draft_dialog.continue") %></button>
+        <button class="soft-button full" type="button" data-action="identification#discardDraftAndLeave"><%= t("frontend_previews.detail.draft_dialog.discard") %></button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="confirm-dialog" aria-labelledby="identification-revoke-title" data-identification-target="revokeDialog">
+    <div class="dialog-content">
+      <h2 id="identification-revoke-title"><%= t("frontend_previews.detail.revoke_dialog.title") %></h2>
+      <p><%= t("frontend_previews.detail.revoke_dialog.description_before") %><strong data-identification-target="revokeFinalName"></strong><%= t("frontend_previews.detail.revoke_dialog.description_after") %></p>
+
+      <div class="dialog-actions" data-identification-target="revokeRetainPanel">
+        <button class="primary-button full" type="button" data-action="identification#retainAndRevoke"><%= t("frontend_previews.detail.revoke_dialog.retain") %></button>
+        <button class="secondary-button full" type="button" data-action="identification#revokeWithoutRetaining"><%= t("frontend_previews.detail.revoke_dialog.discard") %></button>
+        <button class="soft-button full" type="button" data-action="identification#cancelRevoke"><%= t("frontend_previews.detail.revoke_dialog.cancel") %></button>
+      </div>
+
+      <div data-identification-target="revokeReplacePanel" hidden>
+        <p class="revoke-replacement-help"><%= t("frontend_previews.detail.revoke_dialog.full_help") %></p>
+        <fieldset class="revoke-candidate-list">
+          <legend class="sr-only"><%= t("frontend_previews.detail.revoke_dialog.replacement_legend") %></legend>
+          <div data-identification-target="replacementList"></div>
+        </fieldset>
+        <div class="dialog-actions">
+          <button class="primary-button full" type="button" disabled aria-disabled="true" data-identification-target="replaceAndRevoke" data-action="identification#replaceAndRevoke"><%= t("frontend_previews.detail.revoke_dialog.replace") %></button>
+          <button class="secondary-button full" type="button" data-action="identification#revokeWithoutRetaining"><%= t("frontend_previews.detail.revoke_dialog.discard") %></button>
+          <button class="soft-button full" type="button" data-action="identification#cancelRevoke"><%= t("frontend_previews.detail.revoke_dialog.cancel") %></button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+</section>

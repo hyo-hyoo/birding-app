@@ -22,9 +22,9 @@
         <span class="subtle"><%= t("frontend_previews.history.record_count") %></span>
       </div>
       <div class="record-list">
-        <%= render "frontend_previews/record_card", status: :candidate, variant: :perched %>
-        <%= render "frontend_previews/record_card", status: :confirmed, variant: :water, confirmed_name: t("frontend_previews.history.confirmed_name_example") %>
-        <%= render "frontend_previews/record_card", status: :pending, variant: :round %>
+        <%= render "frontend_previews/record_card", status: :candidate, variant: :perched, path: frontend_preview_detail_path(locale: I18n.locale, state: "candidate") %>
+        <%= render "frontend_previews/record_card", status: :confirmed, variant: :water, confirmed_name: t("frontend_previews.history.confirmed_name_example"), path: frontend_preview_detail_path(locale: I18n.locale, state: "confirmed") %>
+        <%= render "frontend_previews/record_card", status: :pending, variant: :round, path: frontend_preview_detail_path(locale: I18n.locale, state: "pending") %>
       </div>
     </section>
 

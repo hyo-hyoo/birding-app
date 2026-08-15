@@ -1,48 +1,49 @@
-<svg class="impression-bird" viewBox="0 0 320 190" role="img" aria-label="<%= t("frontend_previews.editor.specimen_alt") %>">
+<% filled_preview = local_assigns.fetch(:filled_preview, false) %>
+<svg class="impression-bird" viewBox="0 0 320 190" role="img" aria-label="<%= local_assigns.fetch(:alt, t("frontend_previews.editor.specimen_alt")) %>">
   <path class="impression-branch" d="M18 164 C84 154 160 167 300 151" />
 
   <path class="impression-part impression-part--tail"
         d="M101 128 L42 151 L109 143 Z"
-        fill="#dce3de"
+        fill="<%= filled_preview ? "#91aa87" : "#dce3de" %>"
         data-default-fill="#dce3de"
         data-part-key="tail"
         data-observation-editor-target="partGraphic" />
   <path class="impression-accent impression-accent--tail"
         d="M82 140 L48 150 L91 145 Z"
-        fill="#dce3de"
+        fill="#e6c65f"
         data-part-key="tail"
         data-observation-editor-target="partAccent"
-        hidden />
+        <%= "hidden" unless filled_preview %> />
 
   <path class="impression-part impression-part--body"
         d="M89 132 C76 108 84 78 110 61 C135 44 170 45 194 60 C211 71 219 90 213 109 C206 132 174 146 133 145 C113 145 98 141 89 132 Z"
-        fill="#e7ece8"
+        fill="<%= filled_preview ? "#e6c65f" : "#e7ece8" %>"
         data-default-fill="#e7ece8"
         data-part-key="body"
         data-observation-editor-target="partGraphic" />
   <path class="impression-accent impression-accent--body"
         d="M112 126 C107 107 114 88 131 78 C147 69 167 69 181 80 C191 89 193 105 185 117 C173 132 140 136 112 126 Z"
-        fill="#e7ece8"
+        fill="#f3f1e8"
         data-part-key="body"
         data-observation-editor-target="partAccent"
-        hidden />
+        <%= "hidden" unless filled_preview %> />
 
   <path class="impression-part impression-part--wing"
         d="M105 83 C124 65 163 64 187 82 C174 101 148 116 111 122 C100 109 98 94 105 83 Z"
-        fill="#d4ddd7"
+        fill="<%= filled_preview ? "#82a8b5" : "#d4ddd7" %>"
         data-default-fill="#d4ddd7"
         data-part-key="wing"
         data-observation-editor-target="partGraphic" />
   <path class="impression-accent impression-accent--wing"
         d="M120 91 C138 80 160 80 176 88 C161 99 143 107 122 111 Z"
-        fill="#d4ddd7"
+        fill="#929b96"
         data-part-key="wing"
         data-observation-editor-target="partAccent"
-        hidden />
+        <%= "hidden" unless filled_preview %> />
 
   <path class="impression-part impression-part--head"
         d="M180 69 C181 42 202 23 228 25 C250 27 267 44 265 65 C264 82 252 94 236 99 C220 104 203 98 194 87 C186 83 181 77 180 69 Z"
-        fill="#eef2ee"
+        fill="<%= filled_preview ? "#929b96" : "#eef2ee" %>"
         data-default-fill="#eef2ee"
         data-part-key="head"
         data-observation-editor-target="partGraphic" />

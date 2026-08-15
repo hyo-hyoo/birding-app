@@ -22,6 +22,7 @@ export default class extends Controller {
 
   static values = {
     outlineUrl: String,
+    detailUrl: String,
     partTitleTemplate: String,
     partStatusNone: String,
     partStatusOneTemplate: String,
@@ -128,7 +129,7 @@ export default class extends Controller {
 
     this.dirty = false
     this.saved = true
-    this.saveStatusTarget.textContent = this.saveCompleteValue
+    window.location.assign(this.detailUrlValue)
   }
 
   beforeUnload(event) {

@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     get "previews/history", to: "frontend_previews#history", as: :frontend_preview_history
     get "previews/outline", to: "frontend_previews#outline", as: :frontend_preview_outline
     get "previews/editor", to: "frontend_previews#editor", as: :frontend_preview_editor
+    get "previews/detail", to: "frontend_previews#detail", as: :frontend_preview_detail
   end
 
   # Defines the root path route ("/")

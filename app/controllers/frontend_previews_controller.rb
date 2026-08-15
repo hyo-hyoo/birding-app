@@ -23,6 +23,8 @@ class FrontendPreviewsController < ApplicationController
 
   def editor; end
 
+  def detail; end
+
   private
 
   def use_preview_locale

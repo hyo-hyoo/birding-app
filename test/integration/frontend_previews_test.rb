@@ -15,6 +15,7 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     frontend_preview_history_path
     frontend_preview_outline_path
     frontend_preview_editor_path
+    frontend_preview_detail_path
   ].freeze
   PREVIEW_LOCALES = %w[zh-CN ja].freeze
 
@@ -144,10 +145,66 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     assert_select "[data-observation-editor-target='featureChoice']", count: 4
     assert_select "[data-observation-editor-target='certaintyChoice']", count: 3
     assert_select "[data-observation-editor-target='locationChoice']", count: 4
+    assert_select "[data-observation-editor-detail-url-value='#{frontend_preview_detail_path(locale: "zh-CN", state: "candidate")}']", count: 1
     assert_select "button[data-observation-editor-target='save'][disabled][aria-disabled='true']", count: 1
     assert_select "dialog.confirm-dialog", count: 1
     assert_select ".bottom-nav", count: 0
     assert_select "a[href='#']", count: 0
+  end
+
+  test "renders observation detail information and all initial identification states" do
+    {
+      pending: [ "待确认", 0, nil ],
+      candidate: [ "候选中", 2, nil ],
+      confirmed: [ "已确认", 2, "远东山雀" ]
+    }.each do |state, (status, candidate_count, final_name)|
+      get frontend_preview_detail_path(locale: "zh-CN", state: state)
+
+      assert_response :success
+      assert_select "[data-controller='identification']", count: 1
+      assert_select ".detail-hero .impression-bird[role='img']", count: 1
+      assert_select ".detail-hero .status-pill", text: status, count: 1
+      assert_select ".fact-card", count: 4
+      assert_select ".detail-facts div", count: 3
+      assert_select ".candidate-row", count: candidate_count
+      assert_select ".bottom-nav__item", count: 3
+      assert_select ".bottom-nav__item.is-active", count: 1
+      assert_select "a[href='#{frontend_preview_history_path(locale: "zh-CN")}']", minimum: 2
+      assert_select "a[href='#{frontend_preview_editor_path(locale: "zh-CN")}']", count: 1
+      assert_select ".detail-actions", count: 0
+      assert_select "[data-identification-target='saveBar'][hidden]", count: 1
+      assert_select "[data-identification-target='statusUnsaved'][hidden]", count: 1
+      assert_select "[data-identification-target='otherControls'][hidden]", count: 1
+      assert_select "dialog[data-identification-target='dialog']", count: 1
+      assert_select "dialog[data-identification-target='draftDialog']", count: 1
+      assert_select "dialog[data-identification-target='revokeDialog']", count: 1
+      assert_select "[data-identification-target='revokeRetainPanel']", count: 1
+      assert_select "[data-identification-target='revokeReplacePanel'][hidden]", count: 1
+      assert_select "a[href='#']", count: 0
+
+      if final_name
+        assert_select "[data-identification-target='title']", text: final_name, count: 1
+        assert_select "[data-identification-target='confirmedControls']:not([hidden])", count: 1
+        assert_select "[data-identification-target='confirmedDisplay']:not([hidden])", count: 1
+        assert_select "[data-identification-target='confirmedEditor'][hidden]", count: 1
+        assert_select "[data-identification-target='candidateStaticHeading'][hidden]", count: 1
+        assert_select "[data-identification-target='candidateToggle']:not([hidden])[aria-expanded='false']", count: 1
+        assert_select "[data-identification-target='candidatePanel'][hidden]", count: 1
+      else
+        assert_select "[data-identification-target='confirmedControls'][hidden]", count: 1
+        assert_select "[data-identification-target='candidateStaticHeading']:not([hidden])", count: 1
+        assert_select "[data-identification-target='candidateToggle'][hidden]", count: 1
+        assert_select "[data-identification-target='candidatePanel']:not([hidden])", count: 1
+      end
+    end
+  end
+
+  test "connects every history record card to its corresponding detail state" do
+    get frontend_preview_history_path(locale: "zh-CN")
+
+    %w[candidate confirmed pending].each do |state|
+      assert_select "a.record-card-link[href='#{frontend_preview_detail_path(locale: "zh-CN", state: state)}']", count: 1
+    end
   end
 
   test "falls back to Japanese for an unsupported preview locale" do
