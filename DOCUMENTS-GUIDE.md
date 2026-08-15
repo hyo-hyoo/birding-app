@@ -28,7 +28,8 @@ birding-app/
    ├─ requirements.md
    ├─ mvp-scope.md
    ├─ ui-design.md
-   └─ technical-decisions.md
+   ├─ technical-decisions.md
+   └─ frontend-development-plan.md
 ```
 
 `docs/technical-decisions.md` 已创建，用于记录已确认的技术路线、实施边界和仍需实施验证的事项。
@@ -44,6 +45,7 @@ birding-app/
 - `docs/mvp-scope.md`：当前版本明确纳入、暂定、未决定和排除的范围及完成标准。
 - `docs/ui-design.md`：页面清单、用户流程、导航、组件、页面状态、低保真与视觉原型位置、正式高保真实现基线、Logo 状态、适配边界和 UI 未决问题；原型中的业务示例数据不自动成为正式需求。
 - `docs/technical-decisions.md`：已确认的重要技术选择、背景、理由和影响；仅在存在正式决定时创建和更新。
+- `docs/frontend-development-plan.md`：静态前端页面的实施顺序、阶段状态、依赖、验证证据和进度日志；不拥有产品需求、MVP 范围、UI 决定或技术架构。前端开发 Agent 在每个阶段完成后更新，用户验收后再把阶段标记为“已完成”。
 - `.agents/skills/frontend-design/`：UI 设计任务的第一阶段，用于建立有项目辨识度的视觉方向。
 - `.agents/skills/mobile-app-ui-design/`：在视觉方向形成后检查移动端信息层级、操作区域、触控尺寸、状态与整体体验。
 - `.agents/skills/project-ui-designer/`：负责 UI/UX 分析、页面与流程设计、原型制作和验证；只读取正式文档作为约束，不直接维护正式文档，并在产生实质性 UI 决定时输出一次性交接单。
@@ -63,6 +65,7 @@ birding-app/
 6. 当文档结构、全局规则或工具职责变化时，更新 `DOCUMENTS-GUIDE.md` 或 `AGENTS.md`。
 7. 将页面清单、用户流程、导航、组件、视觉实验状态、正式高保真实现基线和 UI 未决问题写入 `docs/ui-design.md`；只有用户明确确认的视觉层内容才能成为实现基线，原型业务示例不得覆盖正式需求或 MVP 边界。
 8. UI Designer 只在对话中输出一次性交接单；Project Maintainer 判断交接内容的状态、正式归属和同步范围后再修改文档。
+9. 前端开发 Agent 依据正式需求、MVP、UI 和技术文档执行静态页面实施，并在 `docs/frontend-development-plan.md` 中维护阶段进度与验证证据；该计划不得反向改变上游正式决定。
 
 ## 工具职责
 
