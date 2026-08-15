@@ -12,6 +12,7 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     frontend_preview_reset_password_path
     frontend_preview_reset_success_path
     frontend_preview_history_empty_path
+    frontend_preview_history_path
   ].freeze
   PREVIEW_LOCALES = %w[zh-CN ja].freeze
 
@@ -89,6 +90,23 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     assert_select ".bottom-nav__item", count: 3
     assert_select ".bottom-nav__item.is-active", count: 1
     assert_select "button.bottom-nav__item[aria-disabled='true']", count: 2
+  end
+
+  test "renders the non-empty history with derived identification states" do
+    get frontend_preview_history_path(locale: "zh-CN")
+
+    assert_response :success
+    assert_select ".record-card", count: 3
+    assert_select ".bird-thumbnail[role='img']", count: 3
+    assert_select ".record-card--pending .status-pill", text: "待确认", count: 1
+    assert_select ".record-card--candidate .status-pill", text: "候选中", count: 1
+    assert_select ".record-card--candidate h3", count: 0
+    assert_select ".record-card--confirmed .status-pill", text: "已确认", count: 1
+    assert_select ".record-card--confirmed h3", text: "白鹡鸰", count: 1
+    assert_select ".bottom-nav__item", count: 3
+    assert_select ".bottom-nav__item.is-active", count: 1
+    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 2
+    assert_select "a[href='#']", count: 0
   end
 
   test "falls back to Japanese for an unsupported preview locale" do

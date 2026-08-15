@@ -1,0 +1,16 @@
+<% status = local_assigns.fetch(:status, :pending).to_sym %>
+<% status = :pending unless %i[pending candidate confirmed].include?(status) %>
+<% confirmed_name = local_assigns.fetch(:confirmed_name, nil) %>
+
+<article class="record-card record-card--<%= status %>" aria-label="<%= t("frontend_previews.history.record_label", status: t("frontend_previews.history.statuses.#{status}")) %>">
+  <div class="bird-thumb">
+    <%= render "frontend_previews/bird_thumbnail", variant: variant %>
+  </div>
+  <div class="record-card__content">
+    <span class="status-pill status-pill--<%= status %>"><%= t("frontend_previews.history.statuses.#{status}") %></span>
+    <% if status == :confirmed && confirmed_name.present? %>
+      <h3><%= confirmed_name %></h3>
+    <% end %>
+  </div>
+  <span class="chevron" aria-hidden="true">›</span>
+</article>

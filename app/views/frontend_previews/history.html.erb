@@ -1,0 +1,41 @@
+<% content_for :title, t("frontend_previews.history.page_title") %>
+
+<section class="app-page preview-history-page">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow eyebrow--compact"><%= t("frontend_previews.history.eyebrow") %></p>
+      <h2 class="screen-title"><%= t("frontend_previews.history.header_title") %></h2>
+    </div>
+  </header>
+
+  <main class="app-content history-content">
+    <section class="history-intro">
+      <p class="eyebrow"><%= t("frontend_previews.history.intro_eyebrow") %></p>
+      <h1 class="display history-intro__title"><%= t("frontend_previews.history.intro_title_line_one") %><br><%= t("frontend_previews.history.intro_title_line_two") %></h1>
+      <p class="history-intro__body"><%= t("frontend_previews.history.intro_description") %></p>
+      <button class="primary-button" type="button" aria-disabled="true" disabled><%= t("frontend_previews.history.new_observation") %></button>
+    </section>
+
+    <section class="section-block history-records" aria-labelledby="recent-records-title">
+      <div class="section-head">
+        <h2 class="section-title" id="recent-records-title"><%= t("frontend_previews.history.recent_records") %></h2>
+        <span class="subtle"><%= t("frontend_previews.history.record_count") %></span>
+      </div>
+      <div class="record-list">
+        <%= render "frontend_previews/record_card", status: :candidate, variant: :perched %>
+        <%= render "frontend_previews/record_card", status: :confirmed, variant: :water, confirmed_name: t("frontend_previews.history.confirmed_name_example") %>
+        <%= render "frontend_previews/record_card", status: :pending, variant: :round %>
+      </div>
+    </section>
+
+    <aside class="preview-note history-preview-note">
+      <p><%= t("frontend_previews.history.preview_note") %></p>
+    </aside>
+  </main>
+
+  <%= render "shared/bottom_navigation", items: [
+        { label: t("frontend_previews.navigation.history"), icon: "⌂", path: frontend_preview_history_path(locale: I18n.locale), active: true },
+        { label: t("frontend_previews.navigation.new_observation"), icon: "＋", path: nil, active: false },
+        { label: t("frontend_previews.navigation.settings"), icon: "⚙", path: nil, active: false }
+      ] %>
+</section>
