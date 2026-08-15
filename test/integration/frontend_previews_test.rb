@@ -8,6 +8,9 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     frontend_preview_register_path
     frontend_preview_verification_sent_path
     frontend_preview_verification_success_path
+    frontend_preview_reset_request_path
+    frontend_preview_reset_password_path
+    frontend_preview_reset_success_path
     frontend_preview_history_empty_path
   ].freeze
   PREVIEW_LOCALES = %w[zh-CN ja].freeze
@@ -25,21 +28,32 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
   end
 
   test "keeps account forms and controls explicitly static" do
-    %i[frontend_preview_login_path frontend_preview_register_path].each do |path_helper|
+    %i[
+      frontend_preview_login_path
+      frontend_preview_register_path
+      frontend_preview_reset_request_path
+      frontend_preview_reset_password_path
+    ].each do |path_helper|
       get public_send(path_helper, locale: "zh-CN")
 
       assert_select "form[data-static-preview='true']", count: 1
       assert_select "form[data-static-preview='true'][action]", count: 0
       assert_select "form[data-static-preview='true'] button:not([type='button'])", count: 0
+      assert_select "a[href='#']", count: 0
+    end
+
+    %i[frontend_preview_login_path frontend_preview_register_path].each do |path_helper|
+      get public_send(path_helper, locale: "zh-CN")
+
       assert_select "details.language-switcher", count: 1
       assert_select ".language-switcher__option[aria-current='page']", count: 1
-      assert_select "a[href='#']", count: 0
     end
   end
 
   test "connects the static first-slice preview flow" do
     get frontend_preview_login_path(locale: "zh-CN")
     assert_select "a[href='#{frontend_preview_register_path(locale: "zh-CN")}']"
+    assert_select "a[href='#{frontend_preview_reset_request_path(locale: "zh-CN")}']"
     assert_select "a[href='#{frontend_preview_history_empty_path(locale: "zh-CN")}']"
 
     get frontend_preview_register_path(locale: "zh-CN")
@@ -50,6 +64,21 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     assert_select ".notice", count: 1
 
     get frontend_preview_verification_success_path(locale: "zh-CN")
+    assert_select "a[href='#{frontend_preview_login_path(locale: "zh-CN")}']"
+  end
+
+  test "connects the static password reset preview flow" do
+    get frontend_preview_reset_request_path(locale: "zh-CN")
+    assert_select "a[href='#{frontend_preview_login_path(locale: "zh-CN")}']"
+    assert_select "a[href='#{frontend_preview_reset_password_path(locale: "zh-CN")}']"
+    assert_select ".form-help", text: /相同的发送结果/
+
+    get frontend_preview_reset_password_path(locale: "zh-CN")
+    assert_select "input[autocomplete='new-password']", count: 2
+    assert_select "a[href='#{frontend_preview_reset_success_path(locale: "zh-CN")}']"
+
+    get frontend_preview_reset_success_path(locale: "zh-CN")
+    assert_select ".result-card", count: 1
     assert_select "a[href='#{frontend_preview_login_path(locale: "zh-CN")}']"
   end
 

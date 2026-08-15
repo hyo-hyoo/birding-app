@@ -1,0 +1,11 @@
+<% content_for :title, t("frontend_previews.reset_success.page_title") %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("frontend_previews.reset_success.header_title"), header_action: t("frontend_previews.reset_success.header_action") %>
+
+  <main class="app-content auth-content auth-content--centered">
+    <%= render "shared/result_card", icon: "✓", eyebrow: t("frontend_previews.reset_success.eyebrow"), title: t("frontend_previews.reset_success.title"), description: t("frontend_previews.reset_success.description") do %>
+      <%= link_to t("frontend_previews.reset_success.login"), frontend_preview_login_path(locale: I18n.locale), class: "primary-button full" %>
+    <% end %>
+  </main>
+</section>

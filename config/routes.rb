@@ -10,6 +10,9 @@ Rails.application.routes.draw do
     get "previews/register", to: "frontend_previews#register", as: :frontend_preview_register
     get "previews/verification-sent", to: "frontend_previews#verification_sent", as: :frontend_preview_verification_sent
     get "previews/verification-success", to: "frontend_previews#verification_success", as: :frontend_preview_verification_success
+    get "previews/reset-request", to: "frontend_previews#reset_request", as: :frontend_preview_reset_request
+    get "previews/reset-password", to: "frontend_previews#reset_password", as: :frontend_preview_reset_password
+    get "previews/reset-success", to: "frontend_previews#reset_success", as: :frontend_preview_reset_success
     get "previews/history-empty", to: "frontend_previews#history_empty", as: :frontend_preview_history_empty
   end
 

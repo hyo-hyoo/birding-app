@@ -9,6 +9,12 @@ class FrontendPreviewsController < ApplicationController
 
   def verification_success; end
 
+  def reset_request; end
+
+  def reset_password; end
+
+  def reset_success; end
+
   def history_empty; end
 
   private
