@@ -12,6 +12,8 @@ Rails 项目骨架已经提交，并通过 MySQL 连接、数据库准备、`/up
 
 当前前端批次只实现静态 Rails 页面和交互预览，不接入业务数据持久化，也不实施后端业务逻辑。
 
+`frontend-implementation-guide.md` 已建立为当前 Rails 前端实现、维护和学习入口，集中记录代码组织、维护约定、验证方式及高保真基线与 Rails 实现差异；阶段进度仍由 `frontend-development-plan.md` 负责。
+
 ## 已确认
 
 - 产品是面向普通用户、移动端优先的观鸟 Web App；

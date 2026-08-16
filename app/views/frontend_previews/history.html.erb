@@ -36,6 +36,6 @@
   <%= render "shared/bottom_navigation", items: [
         { label: t("frontend_previews.navigation.history"), icon: "⌂", path: frontend_preview_history_path(locale: I18n.locale), active: true },
         { label: t("frontend_previews.navigation.new_observation"), icon: "＋", path: frontend_preview_outline_path(locale: I18n.locale), active: false },
-        { label: t("frontend_previews.navigation.settings"), icon: "⚙", path: nil, active: false }
+        { label: t("frontend_previews.navigation.settings"), icon: "⚙", path: frontend_preview_settings_path(locale: I18n.locale), active: false }
       ] %>
 </section>

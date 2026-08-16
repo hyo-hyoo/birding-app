@@ -29,7 +29,8 @@ birding-app/
    ├─ mvp-scope.md
    ├─ ui-design.md
    ├─ technical-decisions.md
-   └─ frontend-development-plan.md
+   ├─ frontend-development-plan.md
+   └─ frontend-implementation-guide.md
 ```
 
 `docs/technical-decisions.md` 已创建，用于记录已确认的技术路线、实施边界和仍需实施验证的事项。
@@ -46,6 +47,7 @@ birding-app/
 - `docs/ui-design.md`：页面清单、用户流程、导航、组件、页面状态、低保真与视觉原型位置、正式高保真实现基线、Logo 状态、适配边界和 UI 未决问题；原型中的业务示例数据不自动成为正式需求。
 - `docs/technical-decisions.md`：已确认的重要技术选择、背景、理由和影响；仅在存在正式决定时创建和更新。
 - `docs/frontend-development-plan.md`：静态前端页面的实施顺序、阶段状态、依赖、验证证据和进度日志；不拥有产品需求、MVP 范围、UI 决定或技术架构。前端开发 Agent 在每个阶段完成后更新，用户验收后再把阶段标记为“已完成”。
+- `docs/frontend-implementation-guide.md`：当前 Rails 前端实现、维护和学习入口，集中说明渲染链路、文件职责、CSS、Stimulus、I18n、测试、移动端检查及高保真基线与 Rails 实现差异；不拥有产品需求、MVP 范围、UI 决定、技术架构或阶段进度，也不另行拆出设计系统文档。
 - `.agents/skills/frontend-design/`：UI 设计任务的第一阶段，用于建立有项目辨识度的视觉方向。
 - `.agents/skills/mobile-app-ui-design/`：在视觉方向形成后检查移动端信息层级、操作区域、触控尺寸、状态与整体体验。
 - `.agents/skills/project-ui-designer/`：负责 UI/UX 分析、页面与流程设计、原型制作和验证；只读取正式文档作为约束，不直接维护正式文档，并仅在产生实质性 UI 决定时输出一次性交接单。
@@ -66,6 +68,7 @@ birding-app/
 7. 将页面清单、用户流程、导航、组件、视觉实验状态、正式高保真实现基线和 UI 未决问题写入 `docs/ui-design.md`；只有用户明确确认的视觉层内容才能成为实现基线，原型业务示例不得覆盖正式需求或 MVP 边界。
 8. 讨论和实施必须区分已确认、暂定、未确认、延后、否决、AI 建议和 observed-only 内容。只有产生实质性正式事实变化时，UI Designer 或开发 Agent 才在对话中输出一次性交接单；按既有正式文档进行的常规实施不需要为形式生成交接单。Project Maintainer 判断交接内容的状态、正式归属和同步范围后再修改文档。
 9. 前端开发 Agent 依据正式需求、MVP、UI 和技术文档执行静态页面实施，并在 `docs/frontend-development-plan.md` 中维护阶段进度与验证证据；该计划不得反向改变上游正式决定。
+10. 修改 Rails 前端前，开发 Agent 使用 `docs/frontend-implementation-guide.md` 理解当前代码组织、维护约定和验证方式；指南中的代码现状和差异记录不得反向覆盖上游正式决定。
 
 ## 工具职责
 

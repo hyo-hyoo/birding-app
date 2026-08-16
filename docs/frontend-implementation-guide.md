@@ -155,16 +155,22 @@ test/
 | `/previews/outline` | `outline` | 两阶段鸟类轮廓选择 |
 | `/previews/editor` | `editor` | 观察印象记录编辑器 |
 | `/previews/detail?state=...` | `detail` | 待确认、候选中、已确认详情 |
+| `/previews/settings` | `settings` | 设置、语言和账户入口 |
+| `/previews/change-password` | `change_password` | 登录后修改密码静态表单 |
 
 常用本地浏览方式：
 
 ```text
 http://127.0.0.1:3100/previews/history?locale=zh-CN
+http://127.0.0.1:3100/previews/login?locale=zh-CN&state=invalid_credentials
+http://127.0.0.1:3100/previews/register?locale=ja&state=password_mismatch
 http://127.0.0.1:3100/previews/editor?locale=zh-CN
 http://127.0.0.1:3100/previews/detail?locale=zh-CN&state=confirmed
+http://127.0.0.1:3100/previews/settings?locale=zh-CN
+http://127.0.0.1:3100/previews/change-password?locale=zh-CN
 ```
 
-`locale` 当前支持 `zh-CN` 和 `ja`。`detail` 的 `state` 当前用于静态预览初始状态，不是正式数据接口。
+`locale` 当前支持 `zh-CN` 和 `ja`。`detail`、`login` 和 `register` 的 `state` 只用于选择静态预览状态，不是正式数据接口，也不执行服务器校验。
 
 ## 6. Layout、页面与 Partial 的边界
 
@@ -189,7 +195,7 @@ http://127.0.0.1:3100/previews/detail?locale=zh-CN&state=confirmed
 | `_auth_intro.html.erb` | 账户页 eyebrow、标题、说明和可选品牌 | 允许控制是否显示品牌 |
 | `_language_switcher.html.erb` | 基于原生 `<details>` 的语言菜单 | 当前是静态预览实现，不代表最终 locale 持久化方案 |
 | `_bottom_navigation.html.erb` | 三项底部导航 | 有 path 时输出链接；无 path 时输出禁用按钮 |
-| `_form_errors.html.erb` | Rails model 表单错误 | 当前账户静态表单尚未接入 model |
+| `_form_errors.html.erb` | Rails model 错误或明确传入的静态错误消息 | 当前账户页用静态消息预览效果；接入真实表单时传入 model object |
 | `_result_card.html.erb` | 邮件、验证和空状态结果卡片 | 支持标题级别和 action block |
 
 ### 6.3 页面专用 Partial
@@ -382,6 +388,8 @@ Turbo 和 Stimulus 已通过 importmap 加载。当前预览的主要互动仍�
 | `test/system/frontend_outline_preview_test.rb` | 两阶段选择、fallback 和跳转 |
 | `test/system/frontend_editor_preview_test.rb` | 部位记录、保存条件、位置上限、离开保护和跳转 |
 | `test/system/frontend_detail_preview_test.rb` | 确认/撤销、删除/保存、最终名称修改、候选保留/替换和离开保护 |
+| `test/system/frontend_settings_preview_test.rb` | 语言切换、修改密码入口、历史/设置导航和退出登录 |
+| `test/system/frontend_quality_preview_test.rb` | 320px、390px、桌面宽度、长日文、错误可访问性和短视口固定区域 |
 
 System Test 使用 headless Chrome，默认窗口为 390×844。它能验证交互，但不能替代人工视觉比对和其他尺寸检查。
 
@@ -440,8 +448,8 @@ bundle exec brakeman --no-pager
 | 撤销候选外最终名 | 早期撤销会直接清除名称 | 撤销时可保留为候选；候选已满时要求选择替换项，也可明确不保留 | 已确认规则；当前替换 Dialog 是现阶段实现 |
 | Turbo | 正式技术方向包含 Turbo | 已加载 Turbo，但预览交互主要是普通导航和 Stimulus | 仅代码现状：后端接入后再按真实响应决定 Frame/Stream 用法 |
 | 桌面布局 | 高保真主要体现移动端应用表面 | 781px 以上显示居中的设备式页面容器 | 暂定适配：保持 B′ 方向，同时便于桌面浏览预览 |
-| 设置与修改密码 | 正式页面清单包含后续账户与设置页面 | 当前路由尚未包含设置页和已登录后的修改密码页 | 当前缺口：按前端阶段计划后续处理，不代表功能被取消 |
-| 错误与边界状态 | 原型只覆盖部分状态 | 已有基础禁用、表单错误 Partial、Dialog 和空状态，尚未完成全量异常矩阵 | 当前缺口：留待对应开发阶段和后端接入继续验证 |
+| 设置与修改密码 | 高保真基线包含设置和登录后修改密码页面 | 当前提供只读示例邮箱、双语 locale 链接、静态修改密码表单、退出入口和导航闭环 | 已确认页面结构下的静态实现；Cookie、会话和密码更新仍待后端接入 |
+| 错误与边界状态 | 原型只覆盖部分状态 | 已有禁用、Dialog、空状态，并为登录凭证错误和注册密码不一致提供查询参数驱动的代表性静态效果 | 已确认需要代表性效果；具体错误文案、真实校验、字段值保留和其他账户异常仍待后端与设计确认 |
 
 ## 13. 新增或修改页面的推荐流程
 
@@ -482,21 +490,19 @@ bundle exec brakeman --no-pager
 
 ### 14.1 当前已知缺口
 
-- 阶段 5 的识别详情交互仍待用户整体验收，具体 Dialog 文案、按钮层级和视觉细节不应在验收前标为最终设计；
 - 账户表单尚未接入真实校验、提交结果和服务器错误反馈；
-- 设置页、已登录后的修改密码页和完整账户入口尚未实现；
 - 当前 SVG 鸟图和缩略图只是概念性前端资产；
 - 当前没有真实表单提交、认证、持久化、服务器校验或 Turbo 响应；
-- 尚未完成全部错误、超长内容、键盘、窄屏和多浏览器边界状态的集中回归；
+- 当前 14 个页面已完成 320px、390px、桌面宽度、长日文、键盘顺序和短视口的集中回归；真实移动设备、软键盘和 Safari、Firefox 等多浏览器验证仍未完成；
 - 当前本地预览语言切换不持久化到 cookie。
 
 ### 14.2 已排除、未确认或不在本文档中决定
 
-- 最终鸟类剪影资产和抽象鸟图生成质量：当前静态前端只提供概念图，最终实现方式不在本文档中决定；
+- 最终鸟类剪影资产和抽象鸟图生成细节：服务器生成 inline SVG 的高层路线已经确认；当前静态前端只提供概念图，最终剪影资产、部位映射配置和视觉生成细节仍未确认，不在本文档中决定；
 - 真实鸟类图片上传：已确认不进入当前 MVP；
 - 确认依据输入字段：仍未确认是否进入 MVP，不得因出现在讨论中而实现；
 - 后端 Model、Migration、认证和业务服务；
-- 独立设计系统文档；
+- 独立设计系统文档：已确认不创建，当前视觉变量、组件约定和维护说明继续集中在本指南与正式 UI 文档中；
 - 新前端框架或独立构建体系。
 
 “不进入当前 MVP”不等于永久否决；是否进入后续版本仍以正式产品文档和用户确认结果为准。

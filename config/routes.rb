@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     get "previews/outline", to: "frontend_previews#outline", as: :frontend_preview_outline
     get "previews/editor", to: "frontend_previews#editor", as: :frontend_preview_editor
     get "previews/detail", to: "frontend_previews#detail", as: :frontend_preview_detail
+    get "previews/settings", to: "frontend_previews#settings", as: :frontend_preview_settings
+    get "previews/change-password", to: "frontend_previews#change_password", as: :frontend_preview_change_password
   end
 
   # Defines the root path route ("/")

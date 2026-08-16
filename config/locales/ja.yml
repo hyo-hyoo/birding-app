@@ -26,6 +26,8 @@ ja:
       new_password_placeholder: "新しいパスワードを入力"
       new_password_confirmation: "新しいパスワードを確認"
       new_password_confirmation_placeholder: "もう一度入力"
+      current_password: "現在のパスワード"
+      current_password_placeholder: "現在のパスワードを入力"
     navigation:
       history: "観察履歴"
       new_observation: "新しい観察"
@@ -39,6 +41,8 @@ ja:
       submit: "ログイン"
       no_account: "アカウントをお持ちでない場合："
       register: "アカウントを作成"
+      errors:
+        credentials: "メールアドレスまたはパスワードが正しくありません。もう一度入力してください。"
       preview_note: "プレビューのみ：ログイン機能はまだアカウントサービスに接続されていません。"
       preview_link: "ログイン後の空の観察履歴をプレビュー"
     register:
@@ -50,6 +54,8 @@ ja:
       description: "必要なのはメールアドレスとパスワードだけです。メールを確認した後、手動でログインします。"
       verification_help: "送信後、15 分間有効な確認メールをお送りします。"
       submit: "アカウントを作成"
+      errors:
+        password_mismatch: "入力したパスワードが一致しません。もう一度確認してください。"
       preview_note: "プレビューのみ：作成ボタンは情報を送信しません。"
       preview_link: "確認メール送信済みをプレビュー"
     verification_sent:
@@ -130,7 +136,7 @@ ja:
         pending: "未確認"
         candidate: "候補あり"
         confirmed: "確認済み"
-      preview_note: "プレビュー記録には例示データのみを使用します。3 種類のカードから各詳細状態を開けます。設定はステージ 6 で接続します。"
+      preview_note: "プレビュー記録には例示データのみを使用します。3 種類のカードから各詳細を開き、ボトムナビから新しい観察と設定へ移動できます。"
     outline:
       page_title: "輪郭を選択｜野鳥観察ノート"
       back: "← 戻る"
@@ -324,3 +330,33 @@ ja:
         revoked_retained: "最終確認を取り消し、「%{name}」を候補に残しました。"
         revoked_replaced: "候補「%{replaced}」を「%{name}」に置き換え、最終確認を取り消しました。"
         saved: "未保存だった識別情報を保存しました。"
+    settings:
+      page_title: "設定｜野鳥観察ノート"
+      eyebrow: "Account"
+      header_title: "設定"
+      title: "観察環境の設定"
+      description: "アカウント情報はシンプルに保ち、言語設定はこのブラウザにだけ保存します。"
+      account:
+        heading: "アカウント"
+        email_label: "現在のメールアドレス・変更不可"
+        email_example: "birdwatcher@example.com"
+        change_password: "パスワードを変更"
+        change_password_help: "現在のパスワードが必要です"
+      language:
+        heading: "表示言語"
+        label: "表示言語を選択"
+        immediate: "すぐに反映"
+        help: "「システム設定に従う」はありません。選択はアカウントや別の端末と共有されません。"
+      logout:
+        title: "ログアウト"
+        help: "ログインページに戻る"
+    change_password:
+      page_title: "パスワード変更｜野鳥観察ノート"
+      header_title: "パスワード変更"
+      back: "← 設定"
+      header_action: "アカウントの安全"
+      eyebrow: "Account security"
+      title: "パスワードを変更"
+      description: "現在のパスワードを確認してから、新しいログインパスワードを設定します。"
+      submit: "新しいパスワードを保存"
+      preview_note: "プレビューのみ：保存しても実際のパスワードは変わりません。エラーはこの画面内に表示します。"

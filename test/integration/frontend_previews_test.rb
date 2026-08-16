@@ -16,6 +16,8 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     frontend_preview_outline_path
     frontend_preview_editor_path
     frontend_preview_detail_path
+    frontend_preview_settings_path
+    frontend_preview_change_password_path
   ].freeze
   PREVIEW_LOCALES = %w[zh-CN ja].freeze
 
@@ -37,6 +39,7 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
       frontend_preview_register_path
       frontend_preview_reset_request_path
       frontend_preview_reset_password_path
+      frontend_preview_change_password_path
     ].each do |path_helper|
       get public_send(path_helper, locale: "zh-CN")
 
@@ -52,6 +55,37 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
       assert_select "details.language-switcher", count: 1
       assert_select ".language-switcher__option[aria-current='page']", count: 1
     end
+  end
+
+  test "renders accessible representative account error states" do
+    get frontend_preview_login_path(locale: "zh-CN", state: "invalid_credentials")
+
+    assert_response :success
+    assert_select "#login-credentials-error.form-errors[role='alert'][tabindex='-1']", text: /邮箱或密码不正确/, count: 1
+    assert_select "#login-email[aria-invalid='true'][aria-describedby='login-credentials-error']", count: 1
+    assert_select "#login-password[aria-invalid='true'][aria-describedby='login-credentials-error']", count: 1
+    assert_select "a[href='#{frontend_preview_login_path(locale: "ja", state: "invalid_credentials")}']", count: 1
+
+    get frontend_preview_login_path(locale: "ja", state: "invalid_credentials")
+
+    assert_response :success
+    assert_select "#login-credentials-error[role='alert']", text: /正しくありません/, count: 1
+    assert_select "[aria-invalid='true'][aria-describedby='login-credentials-error']", count: 2
+
+    get frontend_preview_register_path(locale: "ja", state: "password_mismatch")
+
+    assert_response :success
+    assert_select "#register-password-error.form-errors[role='alert'][tabindex='-1']", text: /パスワードが一致しません/, count: 1
+    assert_select "#register-password[aria-invalid]", count: 0
+    assert_select "#register-password-confirmation[aria-invalid='true'][aria-describedby='register-password-error']", count: 1
+    assert_select "a[href='#{frontend_preview_register_path(locale: "zh-CN", state: "password_mismatch")}']", count: 1
+
+    get frontend_preview_register_path(locale: "zh-CN", state: "password_mismatch")
+
+    assert_response :success
+    assert_select "#register-password-error[role='alert']", text: /密码不一致/, count: 1
+    assert_select "#register-password[aria-invalid]", count: 0
+    assert_select "#register-password-confirmation[aria-invalid='true']", count: 1
   end
 
   test "connects the static first-slice preview flow" do
@@ -92,8 +126,9 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     assert_select "main h2", count: 1
     assert_select ".bottom-nav__item", count: 3
     assert_select ".bottom-nav__item.is-active", count: 1
-    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 1
+    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 0
     assert_select "a[href='#{frontend_preview_outline_path(locale: "zh-CN")}']", count: 2
+    assert_select "a[href='#{frontend_preview_settings_path(locale: "zh-CN")}']", count: 1
   end
 
   test "renders the non-empty history with derived identification states" do
@@ -109,8 +144,9 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     assert_select ".record-card--confirmed h3", text: "白鹡鸰", count: 1
     assert_select ".bottom-nav__item", count: 3
     assert_select ".bottom-nav__item.is-active", count: 1
-    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 1
+    assert_select "button.bottom-nav__item[aria-disabled='true']", count: 0
     assert_select "a[href='#{frontend_preview_outline_path(locale: "zh-CN")}']", count: 2
+    assert_select "a[href='#{frontend_preview_settings_path(locale: "zh-CN")}']", count: 1
     assert_select "a[href='#']", count: 0
   end
 
@@ -171,6 +207,7 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
       assert_select ".bottom-nav__item.is-active", count: 1
       assert_select "a[href='#{frontend_preview_history_path(locale: "zh-CN")}']", minimum: 2
       assert_select "a[href='#{frontend_preview_editor_path(locale: "zh-CN")}']", count: 1
+      assert_select "a[href='#{frontend_preview_settings_path(locale: "zh-CN")}']", count: 1
       assert_select ".detail-actions", count: 0
       assert_select "[data-identification-target='saveBar'][hidden]", count: 1
       assert_select "[data-identification-target='statusUnsaved'][hidden]", count: 1
@@ -204,6 +241,65 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
 
     %w[candidate confirmed pending].each do |state|
       assert_select "a.record-card-link[href='#{frontend_preview_detail_path(locale: "zh-CN", state: state)}']", count: 1
+    end
+  end
+
+  test "renders settings and connects the authenticated account preview flow" do
+    get frontend_preview_settings_path(locale: "zh-CN")
+
+    assert_response :success
+    assert_select ".setting-card", count: 3
+    assert_select ".setting-card--static", text: /birdwatcher@example.com/, count: 1
+    assert_select "a[href='#{frontend_preview_change_password_path(locale: "zh-CN")}']", count: 1
+    assert_select "a.danger-button[href='#{frontend_preview_login_path(locale: "zh-CN")}']", count: 1
+    assert_select ".language-choice .choice-chip", count: 2
+    assert_select ".language-choice .choice-chip[aria-current='page']", text: "简体中文", count: 1
+    assert_select "a[href='#{frontend_preview_settings_path(locale: "ja")}']", text: "日本語", count: 1
+    assert_select ".bottom-nav__item", count: 3
+    assert_select ".bottom-nav__item.is-active", text: /设置/, count: 1
+    assert_select "a[href='#{frontend_preview_history_path(locale: "zh-CN")}']", count: 1
+    assert_select "a[href='#{frontend_preview_outline_path(locale: "zh-CN")}']", count: 1
+    assert_select "a[href='#']", count: 0
+
+    get frontend_preview_change_password_path(locale: "zh-CN")
+
+    assert_response :success
+    assert_select "form[data-static-preview='true']", count: 1
+    assert_select "input[autocomplete='current-password']", count: 1
+    assert_select "input[autocomplete='new-password']", count: 2
+    assert_select "a[href='#{frontend_preview_settings_path(locale: "zh-CN")}']", minimum: 2
+    assert_select ".bottom-nav", count: 0
+    assert_select "a[href='#']", count: 0
+  end
+
+  test "only shows bottom navigation on history detail and settings previews" do
+    %i[
+      frontend_preview_login_path
+      frontend_preview_register_path
+      frontend_preview_verification_sent_path
+      frontend_preview_verification_success_path
+      frontend_preview_reset_request_path
+      frontend_preview_reset_password_path
+      frontend_preview_reset_success_path
+      frontend_preview_outline_path
+      frontend_preview_editor_path
+      frontend_preview_change_password_path
+    ].each do |path_helper|
+      get public_send(path_helper, locale: "zh-CN")
+
+      assert_select ".bottom-nav", count: 0
+    end
+
+    %i[
+      frontend_preview_history_empty_path
+      frontend_preview_history_path
+      frontend_preview_detail_path
+      frontend_preview_settings_path
+    ].each do |path_helper|
+      get public_send(path_helper, locale: "zh-CN")
+
+      assert_select ".bottom-nav", count: 1
+      assert_select "button.bottom-nav__item[aria-disabled='true']", count: 0
     end
   end
 

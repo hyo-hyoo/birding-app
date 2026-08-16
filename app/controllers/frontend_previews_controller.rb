@@ -25,6 +25,10 @@ class FrontendPreviewsController < ApplicationController
 
   def detail; end
 
+  def settings; end
+
+  def change_password; end
+
   private
 
   def use_preview_locale

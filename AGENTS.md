@@ -22,3 +22,4 @@ Before changing project files:
 18. Write all Git commit messages in English.
 19. When discussing, implementing, or handing off project changes, explicitly distinguish confirmed, provisional, open-question, deferred, rejected, AI-suggested, and observed-only content. Never promote a lower-confidence state into a formal decision without user confirmation.
 20. Produce a change handoff only when a discussion or implementation creates a substantive change to formal project facts, rules, scope, UI decisions, or technical decisions. Routine implementation that follows existing formal documents does not require a handoff.
+21. Before changing Rails frontend Views, ERB, CSS, JavaScript, Stimulus, I18n, or frontend tests, read `docs/frontend-implementation-guide.md` and the relevant stage in `docs/frontend-development-plan.md`.

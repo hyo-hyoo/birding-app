@@ -26,6 +26,8 @@
       new_password_placeholder: "输入新密码"
       new_password_confirmation: "确认新密码"
       new_password_confirmation_placeholder: "再次输入新密码"
+      current_password: "当前密码"
+      current_password_placeholder: "输入当前密码"
     navigation:
       history: "观察历史"
       new_observation: "新建观察"
@@ -39,6 +41,8 @@
       submit: "登录"
       no_account: "还没有账户？"
       register: "创建账户"
+      errors:
+        credentials: "邮箱或密码不正确，请重新输入。"
       preview_note: "仅预览：登录功能尚未连接账户服务。"
       preview_link: "预览登录成功后的空观察历史"
     register:
@@ -50,6 +54,8 @@
       description: "只需要邮箱和密码。验证邮箱后再手动登录。"
       verification_help: "提交后会发送一封 15 分钟内有效的验证邮件。"
       submit: "创建账户"
+      errors:
+        password_mismatch: "两次输入的密码不一致，请重新确认。"
       preview_note: "仅预览：创建账户按钮不会提交信息。"
       preview_link: "预览验证邮件已发送"
     verification_sent:
@@ -130,7 +136,7 @@
         pending: "待确认"
         candidate: "候选中"
         confirmed: "已确认"
-      preview_note: "预览记录仅使用示例数据；三种记录卡均可打开对应的详情状态，设置将在阶段 6 接通。"
+      preview_note: "预览记录仅使用示例数据；三种记录卡均可打开对应详情，底部导航可以进入新建观察和设置。"
     outline:
       page_title: "选择轮廓｜观鸟观察册"
       back: "← 返回"
@@ -324,3 +330,33 @@
         revoked_retained: "已撤销最终确认，并将“%{name}”保留为候选。"
         revoked_replaced: "已用“%{name}”替换候选“%{replaced}”，并撤销最终确认。"
         saved: "待保存的识别修改已保存。"
+    settings:
+      page_title: "设置｜观鸟观察册"
+      eyebrow: "Account"
+      header_title: "设置"
+      title: "你的观察环境"
+      description: "账户信息保持简单，语言偏好只保存在当前浏览器。"
+      account:
+        heading: "账户"
+        email_label: "当前邮箱 · 只读"
+        email_example: "birdwatcher@example.com"
+        change_password: "修改密码"
+        change_password_help: "需要输入当前密码"
+      language:
+        heading: "显示语言"
+        label: "选择显示语言"
+        immediate: "立即生效"
+        help: "不提供“跟随系统”；选择不会绑定账户或跨设备同步。"
+      logout:
+        title: "退出登录"
+        help: "返回登录页面"
+    change_password:
+      page_title: "修改密码｜观鸟观察册"
+      header_title: "修改密码"
+      back: "← 设置"
+      header_action: "账户安全"
+      eyebrow: "Account security"
+      title: "修改密码"
+      description: "确认当前密码，再设置新的登录密码。"
+      submit: "保存新密码"
+      preview_note: "仅预览：保存按钮不会修改真实密码；错误状态将留在本流程内显示。"

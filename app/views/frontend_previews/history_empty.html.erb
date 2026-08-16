@@ -22,6 +22,6 @@
   <%= render "shared/bottom_navigation", items: [
     { icon: "⌂", label: t("frontend_previews.navigation.history"), active: true, path: frontend_preview_history_empty_path(locale: I18n.locale) },
     { icon: "＋", label: t("frontend_previews.navigation.new_observation"), path: frontend_preview_outline_path(locale: I18n.locale) },
-    { icon: "⚙", label: t("frontend_previews.navigation.settings") }
+    { icon: "⚙", label: t("frontend_previews.navigation.settings"), path: frontend_preview_settings_path(locale: I18n.locale) }
   ] %>
 </section>

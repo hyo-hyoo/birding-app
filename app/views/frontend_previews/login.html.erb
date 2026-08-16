@@ -1,6 +1,9 @@
 <% content_for :title, t("frontend_previews.login.page_title") %>
-<% chinese_path = frontend_preview_login_path(locale: "zh-CN") %>
-<% japanese_path = frontend_preview_login_path(locale: :ja) %>
+<% invalid_credentials = params[:state] == "invalid_credentials" %>
+<% preview_state = invalid_credentials ? "invalid_credentials" : nil %>
+<% error_summary_id = "login-credentials-error" %>
+<% chinese_path = frontend_preview_login_path(locale: "zh-CN", state: preview_state) %>
+<% japanese_path = frontend_preview_login_path(locale: :ja, state: preview_state) %>
 
 <section class="app-page auth-view">
   <%= render "shared/auth_header", title: t("application.name"), show_language_switcher: true, chinese_path: chinese_path, japanese_path: japanese_path %>
@@ -9,13 +12,16 @@
     <%= render "shared/auth_intro", eyebrow: t("frontend_previews.login.eyebrow"), title: t("frontend_previews.login.title"), description: t("frontend_previews.login.description") %>
 
     <form class="auth-card form-stack" data-static-preview="true">
+      <% if invalid_credentials %>
+        <%= render "shared/form_errors", messages: [t("frontend_previews.login.errors.credentials")], id: error_summary_id %>
+      <% end %>
       <label class="form-label">
         <span><%= t("frontend_previews.forms.email") %></span>
-        <input class="input-field" type="email" autocomplete="email" placeholder="<%= t("frontend_previews.forms.email_placeholder") %>" required>
+        <%= tag.input class: "input-field", id: "login-email", name: "email", type: "email", autocomplete: "email", placeholder: t("frontend_previews.forms.email_placeholder"), required: true, aria: invalid_credentials ? { invalid: "true", describedby: error_summary_id } : {} %>
       </label>
       <label class="form-label">
         <span><%= t("frontend_previews.forms.password") %></span>
-        <input class="input-field" type="password" autocomplete="current-password" placeholder="<%= t("frontend_previews.forms.password_placeholder") %>" required>
+        <%= tag.input class: "input-field", id: "login-password", name: "password", type: "password", autocomplete: "current-password", placeholder: t("frontend_previews.forms.password_placeholder"), required: true, aria: invalid_credentials ? { invalid: "true", describedby: error_summary_id } : {} %>
       </label>
       <%= link_to t("frontend_previews.login.forgot_password"), frontend_preview_reset_request_path(locale: I18n.locale), class: "text-link text-link--end" %>
       <button class="primary-button full" type="button"><%= t("frontend_previews.login.submit") %></button>
