@@ -1,0 +1,36 @@
+<% variant = local_assigns.fetch(:variant, :perched).to_sym %>
+<% view_box = variant == :perched ? "0 0 260 170" : "0 0 180 110" %>
+<% label = local_assigns.fetch(:label, t("frontend_previews.history.thumbnail_alt")) %>
+
+<svg class="bird-thumbnail" viewBox="<%= view_box %>" role="img" aria-label="<%= label %>">
+  <% case variant %>
+  <% when :water %>
+    <path d="M33 84 C38 64 55 48 78 43 C95 39 111 43 122 52 C132 46 145 49 151 59 C158 70 152 82 142 87 C120 97 78 95 33 84Z" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="3"/>
+    <path d="M150 63 L174 64 L151 72Z" fill="#c5a45a" stroke="currentColor" stroke-width="2"/>
+    <circle cx="140" cy="58" r="3" fill="currentColor"/>
+    <path d="M19 100 C55 96 121 101 167 97" fill="none" stroke="#7fa9b8" stroke-width="3" stroke-linecap="round"/>
+  <% when :round %>
+    <path d="M34 84 C30 64 40 40 62 30 C80 21 99 26 111 39 C120 32 134 33 142 43 C151 54 148 68 138 75 C123 85 105 89 84 91 C64 94 44 94 34 84Z" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="3"/>
+    <path d="M141 49 L164 45 L146 59Z" fill="#c5a45a" stroke="currentColor" stroke-width="2"/>
+    <circle cx="132" cy="44" r="3" fill="currentColor"/>
+    <path d="M40 87 L31 101 M60 90 L56 103" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+  <% when :slender %>
+    <path d="M62 86 C53 71 56 51 70 39 C82 28 97 27 108 35 C117 28 130 30 138 39 C146 49 144 62 135 69 C124 78 110 79 99 77 C92 87 79 92 62 86Z" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="3"/>
+    <path d="M65 78 L23 96 L69 87" fill="currentColor" opacity=".28" stroke="currentColor" stroke-width="3"/>
+    <path d="M137 45 L162 40 L142 53Z" fill="#c5a45a" stroke="currentColor" stroke-width="2"/>
+    <circle cx="128" cy="39" r="3" fill="currentColor"/>
+  <% when :upright %>
+    <path d="M70 90 C57 74 58 50 72 35 C84 23 100 23 110 33 C118 23 132 21 141 30 C150 40 148 54 139 62 C129 70 117 73 108 74 C100 88 88 94 70 90Z" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="3"/>
+    <path d="M140 36 L166 30 L145 45Z" fill="#c5a45a" stroke="currentColor" stroke-width="2"/>
+    <circle cx="131" cy="30" r="3" fill="currentColor"/>
+    <path d="M77 90 L72 105 M95 91 L96 105" fill="none" stroke="currentColor" stroke-width="3"/>
+  <% else %>
+    <path d="M16 142 C72 136 122 141 174 144 C204 146 229 144 246 138" fill="none" stroke="#71887e" stroke-width="4" stroke-linecap="round"/>
+    <path d="M125 139 C112 120 115 101 128 88 C139 77 150 77 155 62 C161 43 174 29 193 28 C217 27 234 43 233 62 C233 74 227 82 217 88 C225 98 220 115 208 122 C192 131 175 126 163 119 C154 135 142 142 125 139Z" fill="#f8faf5" stroke="#284a3e" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M160 67 C181 66 201 76 211 94 C193 95 177 102 162 114 C155 98 154 82 160 67Z" fill="#d2e1de" stroke="#284a3e" stroke-width="2.5"/>
+    <path d="M165 98 C181 99 194 104 204 112" fill="none" stroke="#c5a45a" stroke-width="7" stroke-linecap="round"/>
+    <path d="M232 62 L253 55 L235 72Z" fill="#c5a45a" stroke="#284a3e" stroke-width="2"/>
+    <circle cx="217" cy="52" r="3.3" fill="#284a3e"/>
+    <path d="M155 121 C154 133 158 141 164 146 M166 122 C166 134 170 141 176 145" fill="none" stroke="#284a3e" stroke-width="3" stroke-linecap="round"/>
+  <% end %>
+</svg>

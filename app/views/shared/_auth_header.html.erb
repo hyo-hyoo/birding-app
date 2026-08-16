@@ -1,0 +1,18 @@
+<% back_path = local_assigns.fetch(:back_path, nil) %>
+<% back_label = local_assigns.fetch(:back_label, nil) %>
+<% show_language_switcher = local_assigns.fetch(:show_language_switcher, false) %>
+<% header_action = local_assigns.fetch(:header_action, back_path.present? ? title : nil) %>
+
+<header class="app-header auth-header">
+  <% if back_path.present? %>
+    <%= link_to back_label, back_path, class: "back-button" %>
+  <% else %>
+    <span class="subtle"><%= title %></span>
+  <% end %>
+
+  <% if show_language_switcher %>
+    <%= render "shared/language_switcher", chinese_path: chinese_path, japanese_path: japanese_path %>
+  <% elsif header_action.present? %>
+    <span class="header-action"><%= header_action %></span>
+  <% end %>
+</header>

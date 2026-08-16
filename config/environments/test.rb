@@ -39,6 +39,10 @@ Rails.application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
+  # Static frontend preview tests render no persisted data. Keep the normal
+  # database-backed test behavior unless the explicit preview flag is enabled.
+  config.active_record.maintain_test_schema = false if ENV["STATIC_FRONTEND_PREVIEW"] == "1"
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 

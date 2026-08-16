@@ -1,0 +1,22 @@
+<% icon = local_assigns.fetch(:icon, nil) %>
+<% eyebrow = local_assigns.fetch(:eyebrow, nil) %>
+<% title_tag = local_assigns.fetch(:title_tag, :h1) %>
+<% title_tag = :h1 unless %i[h1 h2].include?(title_tag.to_sym) %>
+
+<section class="auth-card result-card">
+  <% if icon.present? %>
+    <div class="result-icon" aria-hidden="true"><%= icon %></div>
+  <% end %>
+
+  <% if eyebrow.present? %>
+    <p class="eyebrow"><%= eyebrow %></p>
+  <% end %>
+  <%= content_tag title_tag, title, class: "display result-card__title" %>
+  <p class="result-card__body"><%= description %></p>
+
+  <% if block_given? %>
+    <div class="result-card__actions">
+      <%= yield %>
+    </div>
+  <% end %>
+</section>

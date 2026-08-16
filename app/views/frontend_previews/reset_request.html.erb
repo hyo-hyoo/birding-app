@@ -1,0 +1,23 @@
+<% content_for :title, t("frontend_previews.reset_request.page_title") %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("frontend_previews.reset_request.header_title"), back_path: frontend_preview_login_path(locale: I18n.locale), back_label: t("frontend_previews.reset_request.back") %>
+
+  <main class="app-content auth-content">
+    <%= render "shared/auth_intro", show_brand: false, eyebrow: t("frontend_previews.reset_request.eyebrow"), title: t("frontend_previews.reset_request.title"), description: t("frontend_previews.reset_request.description") %>
+
+    <form class="auth-card form-stack" data-static-preview="true">
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.email") %></span>
+        <input class="input-field" type="email" autocomplete="email" placeholder="<%= t("frontend_previews.forms.email_example_placeholder") %>" required>
+      </label>
+      <button class="primary-button full" type="button"><%= t("frontend_previews.reset_request.submit") %></button>
+      <p class="form-help"><%= t("frontend_previews.reset_request.privacy_help") %></p>
+    </form>
+
+    <aside class="preview-note">
+      <p><%= t("frontend_previews.reset_request.preview_note") %></p>
+      <%= link_to t("frontend_previews.reset_request.preview_link"), frontend_preview_reset_password_path(locale: I18n.locale), class: "preview-link" %>
+    </aside>
+  </main>
+</section>

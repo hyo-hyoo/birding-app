@@ -1,0 +1,15 @@
+<% error_object = local_assigns[:object] %>
+<% error_messages = local_assigns.key?(:messages) ? Array(local_assigns[:messages]).compact : error_object&.errors&.full_messages.to_a %>
+<% if error_messages.any? %>
+  <% error_summary_id = local_assigns.fetch(:id, error_object ? "form-errors-#{error_object.object_id}" : "form-errors") %>
+  <% error_heading_id = "#{error_summary_id}-heading" %>
+
+  <section class="form-errors" id="<%= error_summary_id %>" role="alert" aria-labelledby="<%= error_heading_id %>" tabindex="-1">
+    <h2 class="form-errors__title" id="<%= error_heading_id %>"><%= t("shared.form_errors.heading", count: error_messages.count) %></h2>
+    <ul class="form-errors__list">
+      <% error_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

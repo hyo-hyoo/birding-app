@@ -1,0 +1,11 @@
+<% eyebrow = local_assigns.fetch(:eyebrow, nil) %>
+<% show_brand = local_assigns.fetch(:show_brand, true) %>
+
+<section class="auth-intro">
+  <%= render "shared/app_brand" if show_brand %>
+  <% if eyebrow.present? %>
+    <p class="eyebrow"><%= eyebrow %></p>
+  <% end %>
+  <h1 class="display"><%= title %></h1>
+  <p class="lead"><%= description %></p>
+</section>

@@ -1,0 +1,41 @@
+<% content_for :title, t("frontend_previews.history.page_title") %>
+
+<section class="app-page preview-history-page">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow eyebrow--compact"><%= t("frontend_previews.history.eyebrow") %></p>
+      <h2 class="screen-title"><%= t("frontend_previews.history.header_title") %></h2>
+    </div>
+  </header>
+
+  <main class="app-content history-content">
+    <section class="history-intro">
+      <p class="eyebrow"><%= t("frontend_previews.history.intro_eyebrow") %></p>
+      <h1 class="display history-intro__title"><%= t("frontend_previews.history.intro_title_line_one") %><br><%= t("frontend_previews.history.intro_title_line_two") %></h1>
+      <p class="history-intro__body"><%= t("frontend_previews.history.intro_description") %></p>
+      <%= link_to t("frontend_previews.history.new_observation"), frontend_preview_outline_path(locale: I18n.locale), class: "primary-button" %>
+    </section>
+
+    <section class="section-block history-records" aria-labelledby="recent-records-title">
+      <div class="section-head">
+        <h2 class="section-title" id="recent-records-title"><%= t("frontend_previews.history.recent_records") %></h2>
+        <span class="subtle"><%= t("frontend_previews.history.record_count") %></span>
+      </div>
+      <div class="record-list">
+        <%= render "frontend_previews/record_card", status: :candidate, variant: :perched, path: frontend_preview_detail_path(locale: I18n.locale, state: "candidate") %>
+        <%= render "frontend_previews/record_card", status: :confirmed, variant: :water, confirmed_name: t("frontend_previews.history.confirmed_name_example"), path: frontend_preview_detail_path(locale: I18n.locale, state: "confirmed") %>
+        <%= render "frontend_previews/record_card", status: :pending, variant: :round, path: frontend_preview_detail_path(locale: I18n.locale, state: "pending") %>
+      </div>
+    </section>
+
+    <aside class="preview-note history-preview-note">
+      <p><%= t("frontend_previews.history.preview_note") %></p>
+    </aside>
+  </main>
+
+  <%= render "shared/bottom_navigation", items: [
+        { label: t("frontend_previews.navigation.history"), icon: "⌂", path: frontend_preview_history_path(locale: I18n.locale), active: true },
+        { label: t("frontend_previews.navigation.new_observation"), icon: "＋", path: frontend_preview_outline_path(locale: I18n.locale), active: false },
+        { label: t("frontend_previews.navigation.settings"), icon: "⚙", path: frontend_preview_settings_path(locale: I18n.locale), active: false }
+      ] %>
+</section>
