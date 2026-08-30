@@ -2,6 +2,7 @@
 
 > 文档状态：已确认技术路线
 > 记录日期：2026-08-10
+> 最近更新：2026-08-31
 > 本文档只记录用户已经明确确认的技术与实施决定。产品能力以 `requirements.md` 为准，MVP 边界以 `mvp-scope.md` 为准，UI 状态以 `ui-design.md` 为准。
 > 尚未经过安装、运行或测试验证的兼容性结论会明确标记为“实施时验证”，不得视为已经验证通过。
 
@@ -22,6 +23,63 @@
 - Rails View、局部模板、Stimulus Controller、CSS、I18n 和配置数据分别放在各自标准目录中。
 
 MVP 不引入 Java 风格的 Repository／DAO 层，不引入 Pundit、CanCanCan 或 ViewComponent。个人数据访问通过当前用户作用域限制，例如从 `Current.user.observations` 查找记录，而不是直接按全局 ID 查找。
+
+### 1.2 已确认的业务模块职责边界
+
+以下名称用于说明 Rails 模块化单体中的业务职责，不要求创建同名 Ruby Module、Service、Model、Controller 或目录。产品规则由 `requirements.md` 拥有，实体、关联和约束的持久化映射由 `database-design.md` 负责。
+
+#### Account／账户
+
+- 负责用户身份、邮箱规范化与唯一性、密码摘要、密码规则、密码校验、邮箱验证状态和登录资格。
+- 注册提交成功后立即创建未验证 User；未验证 User 不能登录。User 是 Session 和 Observation 的所有者。
+- 使用 `has_secure_password`，只保存密码摘要。注册与账户流程由 Controller 编排，只有流程确实跨越多个对象并变复杂时才提取小型流程对象。
+- 不负责登录 Session 的创建、续期或结束，不负责验证令牌、验证邮件与重发限流，也不负责 Observation、鸟种识别或表现生成。
+
+#### Login Session／登录会话
+
+- 每次成功登录创建一条属于 User 的独立数据库 Session；同一 User 可以同时拥有多个设备或浏览器会话。
+- Rails Cookie 只定位当前 Session，数据库 Session 才是登录状态事实来源。Session 负责恢复 `Current.session` 与 `Current.user`，并判断会话是否存在、有效或过期。
+- 会话从登录成功时起固定有效 30 天，持续访问不自动续期；退出只结束当前浏览器的当前 Session。
+- Session 不负责密码、邮箱验证、Observation 规则、locale 偏好或具体业务授权；个人数据仍由对应 Controller 从 `Current.user` 的关联集合查询。
+
+#### EmailVerification／邮箱验证
+
+- 只为未验证 User 负责安全令牌、15 分钟有效期、最新链接与一次使用规则、令牌校验、验证状态更新及验证邮件重发限流。
+- 注册结果页直接重发与重新输入邮箱重发共用同一流程、令牌规则、邮箱／IP 限流和统计；对外结果不得泄露邮箱是否存在。
+- 验证成功后只更新 User 的验证状态并返回登录页，不创建登录 Session。验证结果必须由服务器判断，不能由查询参数或浏览器状态指定。
+- EmailVerification 决定是否允许发送、使用哪个令牌及业务结果；Mailer 只生成邮件内容和链接，Job 只异步执行发送。当前 locale 在入队时传给邮件任务。
+- EmailVerification 与 PasswordReset 使用不同业务令牌，即使可以复用底层令牌工具、邮件样式或 Job 基础能力。
+
+#### Observation／观察记录
+
+- 是一次完整观察记录的聚合根，属于 User，负责新建、首次保存、历史与详情展示、编辑和再次保存的整体生命周期。
+- 组织 PartImpression、ActivityLocationSelection 和鸟种识别相关数据；负责轮廓稳定键、首次成功保存时间、最后更新时间、可选行为文字等观察级业务含义。
+- 只有有效轮廓和至少一个有效 PartImpression 同时成立时才能产生正式记录；Observation、PartImpression 与 ActivityLocationSelection 在一次编辑提交中以同一数据库事务整体成功或失败。
+- 鸟种候选和最终鸟名是保存后的独立识别操作，不与观察编辑表单共用事务。读取、编辑和更新必须从 `Current.user.observations` 开始查询。
+- 不定义正式配置名单，不判断单个部位内部有效性，不生成或持久化 SVG／文字摘要，也不拥有鸟种识别的具体操作规则。
+
+#### PartImpression／部位印象
+
+- 表示 Observation 内一个身体部位的结构化视觉印象，不能脱离 Observation 存在；同一 Observation、同一身体部位最多一条。
+- 负责部位稳定键、主颜色、补充色、最多一个预设特征、自由文字和一档确定程度，以及单个部位是否有效的判断。
+- 无有效内容时不创建记录；编辑后清空全部有效内容时删除该部位记录。补充色依赖主颜色，主色与补充色不能相同；自由文字按清理首尾空白后的内容判断有效性。
+- 只保存颜色与特征稳定键，不保存本地化名称；不负责整条 Observation 的保存资格、行动位置、行为、识别、授权或表现生成。
+
+#### BirdIdentification／鸟种识别
+
+- 依附于 Observation，负责候选鸟名、最终鸟名和由两者派生的识别状态；该职责名称不代表必须建立独立 `bird_identifications` 表。
+- 鸟名按移除首尾空白后的内容提交；清理后为空不得保存，同一 Observation 不允许规范化后完全相同的重复候选。暂不自动合并同义词、别名、繁简体、日中名称或大小写。
+- 添加候选和确认最终鸟名提交成功后直接持久化；删除候选和修改最终鸟名采用暂存、明确保存和未保存离开保护。识别操作与观察编辑保存流程互不隐式覆盖。
+- 已确认状态保留候选；修改视觉特征或删除一个同时也是最终鸟名的候选，不自动取消最终确认。撤销确认与候选满额替换遵守已确认的显式选择规则。
+- 不负责自动推荐、鸟类数据库、图片、视觉特征、表现生成、Session 或 Observation 所有权判断；识别 Controller 先从 `Current.user.observations` 查找记录。
+
+#### 辅助与跨领域职责
+
+- 行动位置和行为文字属于 Observation 的补充信息，不建立独立顶层业务模块，并与 Observation、PartImpression 在同一观察编辑事务中保存。
+- 轮廓、颜色、花纹／特征和行动位置属于版本控制配置；配置负责稳定键、顺序、适用部位、本地化名称关联和 SVG 映射，已经被记录引用的键必须保持可读取。
+- SVG 与文字摘要是独立的服务器端派生职责；预览只读取未保存表单数据，不写入 Observation，SVG、摘要和缩略图均不持久化。
+- Locale 是 Cookie 与 Rails I18n 的跨领域职责，不写入 User；邮件任务继承入队时的 locale。
+- PasswordManagement 包含 PasswordReset 与 PasswordChange 的流程编排，Account 只执行密码规则并保存密码摘要；Mailer 与 Job 不拥有账户、令牌、限流或验证状态规则。
 
 ## 2. 开发与运行环境
 
