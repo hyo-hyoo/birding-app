@@ -3,7 +3,7 @@
 > 文档性质：Rails 后端开发、纵向切片实施与验收跟踪文档  
 > 当前分支：`codex/backend-development`  
 > 建立日期：2026-08-17  
-> 当前阶段：阶段 1「后端设计快速收口」已完成；下一步进入阶段 2「MVP 领域模型与 ER 图」
+> 当前阶段：阶段 2～5 已完成设计与本地基础设施验证；业务切片阶段 6 尚未开始
 > 当前目标：完成数据库设计基线，并按纵向切片接入真实业务，最终形成可在本地验收的 MVP 闭环
 
 ## 1. 文档职责
@@ -89,7 +89,7 @@
 
 ## 4. 当前开发基线
 
-截至 2026-08-17：
+初始基线（2026-08-17；不是本轮复测结论）：
 
 - Rails 项目骨架、开发库、测试库和 `/up` 健康检查已经完成基础验证；
 - 静态 Rails 前端的 14／14 个计划页面或流程状态，以及前端阶段 1～7，已经通过用户验收；
@@ -133,13 +133,13 @@
 | 阶段 | 交付内容 | 主要依赖 | 当前状态 | 决定状态 |
 | --- | --- | --- | --- | --- |
 | 1 | 后端设计快速收口 | 正式需求、MVP、UI、技术决定 | 已完成 | `confirmed` |
-| 2 | MVP 领域模型与 ER 图 | 阶段 1 | 未开始 | `confirmed` |
-| 3 | 物理数据库设计基线 | 阶段 2 | 未开始 | `confirmed` |
-| 4 | MySQL TLS 解决与验证 | 用户确认解决方式 | 阻塞 | `open-question` |
-| 5 | Migration 实施计划 | 阶段 3、阶段 4 | 未开始 | `confirmed` |
+| 2 | MVP 领域模型与 ER 图 | 阶段 1 | 已完成 | `confirmed` 范围，工程设计已核查 |
+| 3 | 物理数据库设计基线 | 阶段 2 | 已完成 | `confirmed` 范围，工程设计已核查 |
+| 4 | MySQL TLS 解决与验证 | 相同配置本地运行对照与测试 | 已完成（本地） | 实际验证，不改变TLS策略 |
+| 5 | Migration 实施计划 | 阶段 3、阶段 4 | 已完成 | `confirmed` 范围，工程计划已核查 |
 | 6 | 纵向切片 1：可登录的空观察历史 | 阶段 5 | 未开始 | `confirmed` |
 | 7 | Observation 核心闭环 | 阶段 6 | 未开始 | `provisional` |
-| 8 | 部位记录、SVG 与摘要 | 阶段 7、正式配置准备 | 未开始 | `provisional` |
+| 8 | SVG 与摘要渐进增强 | 阶段 7、正式配置准备 | 未开始 | `provisional` |
 | 9 | 鸟种确认、账户辅助与设置 | 前序切片 | 未开始 | `provisional` |
 | 10 | 全 MVP 回归与本地验收 | 全部 MVP 切片 | 未开始 | `provisional` |
 
@@ -198,7 +198,7 @@
 
 ## 8. 阶段 2：MVP 领域模型与 ER 图
 
-**状态：`未开始`**  
+**状态：`已完成`**
 **决定状态：`confirmed`**
 
 ### 8.1 目标
@@ -238,9 +238,17 @@ User
 
 详细设计在 [database-design.md](database-design.md) 中维护。
 
+### 8.5 本轮交付与核查
+
+- 数据库设计第7～8节给出10个实体、8条所有权关系、基数、聚合边界与生命周期；第8.1节逐项覆盖requirements的6.1～6.13。
+- 最终鸟名位于Observation，不以模块名另建BirdIdentification表；令牌用途分表，限流主体不依赖User存在。
+- 明确Observation与识别两个修改范围，所有权FK不替代Current.user授权。
+- 用户接受邮件入队语义、安全数据最少保留与文本上限；其余常规结构为开发Agent设计，不冒充用户逐字段决定。
+- ER图为仓库内Mermaid源，已核对节点、关系及基数说明；不声称完成图像渲染验收。
+
 ## 9. 阶段 3：物理数据库设计基线
 
-**状态：`未开始`**  
+**状态：`已完成`**
 **决定状态：`confirmed`**
 
 ### 9.1 目标
@@ -274,34 +282,60 @@ User
 - 未确认产品规则没有被写成正式字段或约束；
 - 物理设计通过一致性、约束、索引和风险检查，触发升级条件的问题已经处理后进入阶段 5。
 
+### 9.4 本轮交付与验证边界
+
+- 数据库设计第9～10节：10张完整MVP表的职责、字段、类型、长度、NULL、默认值、FK、UNIQUE、CHECK与索引。
+- 第12～15节：Rails与DB分工、查询映射、双版本行锁、令牌入队／消费、限流当前读、清理与隐私。
+- MySQL只读SQL核查26项：两库分别5项精确比较＋8项令牌状态布尔表达式；0失败，无DDL。避免把CHECK中的UNKNOWN误认为false。
+- 本阶段未建表，因此尚不能证明真实FK／CHECK拒绝行为、Migration回滚或schema.rb往返；这些明确映射到对应实施批次，而非从普通静态前端测试推断已覆盖。
+
 ## 10. 阶段 4：MySQL TLS 解决与验证
 
-**状态：`阻塞`**  
-**决定状态：`open-question`**
+**状态：`已完成（本地连接与现有完整测试）`**
+**决定状态：保留现有配置；未发生TLS安全策略或客户端依赖变更**
 
 ### 10.1 当前问题
 
-完整数据库相关测试会在 Windows `mysql2` 与 MySQL 8.4.10 的 TLS 协商阶段中止。此前基础连接和 `/up` 健康检查成功的结论仍然有效，但不能代替业务测试环境验证。
+原问题：沙箱下连接出现2026/HY000、SEC_E_NO_CREDENTIALS。2026-08-31对照显示，相同配置只把执行上下文改为获批准的非沙箱本地环境即可成功；直接阻塞定位在Windows Schannel沙箱执行上下文，尚未证明内部具体缺少哪项权限。不是已证实的数据库密码或CA故障。
 
-### 10.2 当前待确认方案
+### 10.2 实际处理
 
-- 仅在本地 `development`／`test` 环境关闭证书验证；或
-- 让 `mysql2` 使用 Oracle MySQL 客户端库，并正确配置 TLS。
-
-以上两项均未确认，不得由开发 Agent 自行选定。
+- 保留Ruby4.0.6、Rails8.1.3.1、mysql2 0.5.7及MariaDB Connector/C 3.4.9；实际DLL为`D:\Ruby40-x64\msys64\ucrt64\bin\libmariadb.dll`。
+- 只在获工具批准的非沙箱上下文验证连接／测试，不修改database.yml、证书、密码、服务或客户端库。
+- 原先“关闭验证”与“改Oracle客户端”两项均未选用，不写成用户已否决，也不再把二选一作为当前连接前置条件。
+- Rails对development与test均两次成功连接，端口3307、MySQL8.4.10、目标库正确；TLS1.2、cipher `ECDHE-RSA-AES256-GCM-SHA384`。
+- Ssl_cipher证明加密，不证明已验证CA／主机身份。当前服务器require_secure_transport=0是观察事实，未修改；生产TLS策略仍延后。
+- 两库前后均仅有ar_internal_metadata、schema_migrations，迁移数0；没有业务表。MySQL和MySQL84服务均Running；未连接、停止或修改旧MySQL5.7实例及数据。
 
 ### 10.3 完成标准
 
-- 用户确认本地解决方式；
+- 涉及TLS或依赖变更时先由用户批准；本轮无此变更，非沙箱连接／测试均获工具审批；
 - 开发库和测试库均能由 Rails 稳定连接；
 - 测试 Schema 维护和完整 Rails 测试不再因 TLS 中止；
 - 不影响现有 MySQL 5.7 服务和数据；
 - 实际命令、环境差异和验证结果得到报告；
 - 相关正式技术决定由后续文档维护流程同步。
 
+### 10.4 实测记录（2026-08-31）
+
+| 命令／检查 | 结果 | 环境与范围 |
+| --- | --- | --- |
+| guarded mysql2只读连接 | 沙箱2次失败；非沙箱4次成功 | 独立调查的驱动层对照，不计为Minitest |
+| guarded Rails连接／SQL核查 | 两库各2次Rails连接成功；26项SELECT核查通过 | 第一次连接确认基线，第二次在测试后复核；无DDL |
+| `bundle exec ruby bin/rails test` | 15 tests、441 assertions、0 failures/errors/skips；seed46369 | 非沙箱，无STATIC_FRONTEND_PREVIEW；正常Schema维护入口 |
+| `bundle exec ruby bin/rails test:system` | 13 tests、312 assertions、0 failures/errors/skips；seed60572 | 非沙箱，本地headless Chrome |
+| `bundle exec ruby bin/rails zeitwerk:check` | All is good，exit0 | 正常应用加载 |
+| `bundle exec rubocop --format simple` | 33文件，0违规，exit0 | 沙箱缓存目录不可写，仍完成扫描 |
+| `bundle exec rubocop --cache false --format simple` | 33文件，0违规，exit0 | 无缓存复测消除环境噪声 |
+| `bundle exec brakeman --no-pager` | 79检查，0错误、0警告，exit0 | Windows提示fork不支持，但扫描完成 |
+
+合计现有自动测试28个、753个断言，无失败、错误或跳过。不新增业务测试，因为本轮没有实现业务行为；这些测试验证静态前端／健康检查和正常DB入口，不证明认证、授权、Mailers、限流或新Schema已实现。
+
+运行数据库命令前必须检查实际Rails配置，限定`127.0.0.1:3307`、非root `birding_app`、开发／测试两个指定库；遇到DATABASE_URL或其他目标覆盖时停止。测试前确认无业务表和Migration；不得用STATIC_FRONTEND_PREVIEW绕过。无需为了复现修改全局运行配置。
+
 ## 11. 阶段 5：Migration 实施计划
 
-**状态：`未开始`**  
+**状态：`已完成`**
 **决定状态：`confirmed`**
 
 ### 11.1 原则
@@ -313,15 +347,17 @@ User
 - Schema 变化通过新的 Migration 演进；
 - Migration、Model Validation、数据库约束和测试一起设计。
 
-### 11.2 初步映射
+### 11.2 分批映射
 
 | 切片 | 预计涉及的数据范围 | 状态 |
 | --- | --- | --- |
-| 纵向切片 1 | User、Session、邮箱验证和重发限流所需结构 | `confirmed`，具体表结构待设计 |
-| Observation 核心 | Observation 及个人归属 | `provisional` |
-| 部位与补充信息 | PartImpression、ActivityLocationSelection | `provisional` |
-| 鸟种确认 | BirdCandidate 与最终鸟名相关结构 | `provisional` |
-| 密码辅助 | 密码重置所需结构 | `confirmed` 业务范围与失效规则，具体结构待设计 |
+| M1／纵向切片1 | users → sessions | 设计完成后作为阶段6首个任务 |
+| M2／纵向切片1 | email_verification_tokens；rate_limit_keys → send_attempts | M1后接入，共同完成首个纵向切片 |
+| M3／Observation核心 | observations → part_impressions、activity_location_selections | 必须整体具备最低保存条件，不能只保存轮廓 |
+| M4／鸟种识别 | Observation新增最终名／识别版本 → bird_candidates | M3之后，不能覆盖内容版本 |
+| M5／密码辅助 | password_reset_tokens | 结构依赖M1，邮件流程复用M2；不进入首切片 |
+
+表的精确名称、FK、测试映射及回滚风险见database-design第16节。M4与M5没有彼此FK依赖；业务交付顺序可后续细化。SVG／摘要增强不需要新增业务表。
 
 ### 11.3 完成标准
 
@@ -329,6 +365,14 @@ User
 - 迁移顺序、回滚风险、外键依赖和数据生命周期得到说明；
 - 第一个 Migration 小任务范围可以从正式设计追溯，且不存在尚未处理的产品、安全或高迁移成本升级项；
 - 不在本阶段直接执行 Migration。
+
+### 11.4 阶段6首个小任务
+
+范围：M1 User／Session及认证生成器最小接入，不创建观察表、不实现密码重置。先列出生成器将影响的文件，读取前端实施约定后再处理Views／I18n；审查生成器默认密码、会话、限流和重置输出，不让默认行为覆盖正式要求。
+
+配套测试：规范化邮箱唯一性及SQL重复拒绝、密码8～20 ASCII规则、未验证不可登录、独立Session与固定30天、退出当前不影响其他会话、Cookie无效／过期；使用真实MySQL测试库并报告全部计数。尚无完整邮箱验证时不将M1单独包装成首个用户闭环已完成。
+
+M2随后实现注册／验证／重发／Mailer与Job及空历史权限，完成阶段6验收；全程保留当前已验收静态页面为视觉参考，不使用查询参数决定业务结果。
 
 ## 12. 阶段 6：纵向切片 1——可登录的空观察历史
 
@@ -388,13 +432,12 @@ User
 - 空／非空历史；
 - 详情与重新打开；
 - 当前用户作用域授权。
+- 同批接入PartImpression及其最低有效性、ActivityLocationSelection与可选行为；首次保存不得出现仅轮廓记录。
 
-### 13.2 部位记录、SVG 与摘要
+### 13.2 SVG 与摘要渐进增强
 
-- PartImpression；
-- 颜色、特征、确定程度和自由文字；
-- ActivityLocationSelection 与行为文字；
-- 最低保存条件；
+- 复用上一切片已有的部位、颜色、特征、确定程度、自由文字、行动位置与行为数据；
+- 最低保存条件已在Observation首次保存时实现，本阶段不补建这一前置条件；
 - 服务器生成 inline SVG 与本地化文字摘要；
 - 普通 Rails 提交 → Turbo Frame → Stimulus 自动触发的渐进预览。
 
@@ -408,7 +451,7 @@ User
 - 忘记密码、密码重置和登录后修改密码；
 - 设置页真实邮箱、语言和退出行为。
 
-密码重置令牌的具体持久化结构仍待设计；密码重置与修改密码后的 Session 失效规则已经确认。
+密码重置令牌具体结构见database-design；本阶段才按M5实施，密码重置与修改密码后的Session失效规则不变。
 
 ### 13.4 全 MVP 回归与本地验收
 
@@ -493,19 +536,57 @@ User
 | 2026-08-31 | 阶段 1 | 进行中 | 六个业务模块及辅助职责边界已确认；数据流、授权／信任边界、数据分类和阶段验收仍待完成 |
 | 2026-08-31 | 阶段 1 | 已完成 | 主要请求流、授权与信任边界、数据状态分类及下一阶段未决问题已由用户确认；未创建 Model、Migration 或正式 ER 图 |
 | 2026-08-31 | 后端协作方式 | 已确认 | 从阶段 2 起采用默认 Agent 自主、关键决定升级、机械验证和重要纵向节点 walkthrough；阶段 2～5 暂定作为短冲刺连续推进 |
+| 2026-08-31 | 阶段2～3 | 交付核查 | 已形成ER、10表数据字典、约束、查询、事务与生命周期；用户接受邮件／隐私保留／长度三项边界；未创建业务表 |
+| 2026-08-31 | 阶段4 | 本地验证完成 | 相同TLS配置在非沙箱成功；Rails普通与System Test共28个／753断言全通过，前后均无业务表 |
+| 2026-08-31 | 阶段5 | 交付核查 | 完成M1～M5依赖、回滚及测试映射；修正Observation首次保存必须包含部位的实施依赖 |
+| 2026-08-31 | 阶段2～5 | 已完成 | 全需求章节映射核查、26项只读SQL核查、37项文档结构／链接／ER／改动范围检查通过；业务实现、实际建表及约束回归仍按后续切片执行 |
 
 ## 18. 当前阻塞与下一步
 
 ### 当前阻塞
 
-- MySQL TLS 解决方式仍未确认；它不阻塞阶段 1～3 的设计讨论，但阻塞业务 Migration 和真实数据库测试。
+无已知阶段2～5阻塞。Windows沙箱Schannel问题仍可复现，但获批准的正常本地执行已能完成Rails数据库与全部现有测试；不因此修改TLS策略。生产安全、正式鸟类配置和业务代码测试仍在各自后续阶段处理。
 
 ### 当前下一步
 
-进入阶段 2「MVP 领域模型与 ER 图」：
+阶段6从M1开始；本轮目标止于阶段5，不自动生成或执行业务Migration。将新确认的规则、设计交付和TLS证据交给Project Maintainer同步其他正式记录，本任务不自动调用维护Skill。
 
-1. 把阶段 1 的业务职责与数据流映射为领域实体、关系、基数和生命周期；
-2. 明确哪些账户、Session、验证、限流和识别概念需要独立实体，但不以模块名称预设同名表；
-3. 绘制并审查正式 ER 图，继续显式保留并发、清理和物理字段等开放问题；
-4. 按阶段 2～5 短冲刺方式继续推进；只把触发升级条件的真正阻塞问题交给用户；
-5. 阶段 2～3 的设计与阶段 5 的 Migration 映射完成前不创建 Migration。
+### 18.1 阶段2～5完成审计
+
+| 目标 | 当前证据 | 不应误读为 |
+| --- | --- | --- |
+| 完整领域模型／ER／生命周期 | database-design第7～8节；10实体、8关系、13个需求章节映射 | 已创建Model或已实现业务 |
+| 完整物理设计／完整性／安全 | 第9～15节字段、索引、约束与协议；用户接受三项风险问题；26项只读SQL检查 | 已执行DDL或已验证所有运行时并发 |
+| TLS与完整本地回归 | 本计划10.2～10.4；Rails连接、28测试／753断言、质量扫描 | 已配置生产TLS身份验证或已覆盖认证功能 |
+| 迁移批次与首任务 | database-design第16节与本计划11.2～11.4，M1～M5及回滚／测试映射 | 一次性建表或已经开始阶段6 |
+
+37项文档检查核对两份文档章节连续、代码围栏成对、本地Markdown链接存在、ER节点／边数、10表清单，以及Git只修改这两份文件。属于轻量交付核查，不建立额外文档治理工具，也不是图像渲染或业务测试。
+
+### 18.2 只读Rails连接复现
+
+在仓库根目录的正常本地PowerShell执行；在Codex沙箱遇到同类Schannel错误时，先申请相同命令的非沙箱对照，不改TLS选项。不输出密码。
+
+```powershell
+@'
+abort "Preview bypass must be absent" if ENV["STATIC_FRONTEND_PREVIEW"] == "1"
+require_relative "config/environment"
+%w[development test].each do |environment|
+  config = ActiveRecord::Base.configurations.configs_for(env_name: environment, name: "primary")
+  settings = config.configuration_hash
+  abort "Unexpected target" unless settings[:host] == "127.0.0.1" &&
+    settings[:port].to_i == 3307 && settings[:username] == "birding_app" &&
+    settings[:database] == "birding_app_#{environment}"
+  ActiveRecord::Base.establish_connection(config)
+  ActiveRecord::Base.connection_pool.with_connection do |connection|
+    p environment: environment,
+      server: connection.select_one("SELECT VERSION() AS version, @@port AS port, DATABASE() AS db"),
+      tls: connection.select_all("SHOW SESSION STATUS WHERE Variable_name IN ('Ssl_cipher','Ssl_version')").to_a,
+      tables: connection.tables,
+      migrations: connection.select_value("SELECT COUNT(*) FROM schema_migrations")
+  end
+  ActiveRecord::Base.connection_pool.disconnect!
+end
+'@ | bundle exec ruby -
+```
+
+26项只读SQL检查矩阵：每个库分别比较精确排序规则下的`Bird/bird`、`a/a空格`、`e/é`、`é/e+组合重音`应不同，`鳥/鳥`应相同；再对database-design第10.4节原式代入8种令牌状态。合法3种为当前1／无失效、NULL／有时间／consumed、NULL／有时间／superseded；非法5种为三个NULL、当前1但已消费、NULL／有时间／无原因、槽2、未知失效原因。实际SELECT均返回预期0或1而非NULL；未创建临时或业务表。
