@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_secure_password reset_token: false
   has_many :sessions, dependent: :restrict_with_error
+  has_many :email_verification_tokens, dependent: :restrict_with_error
 
   normalizes :email_address, with: ->(email) { email.strip.downcase }
 
