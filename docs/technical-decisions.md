@@ -236,7 +236,7 @@ MVP 不采用 Canvas 作为主生成方案，也不使用 HTML/CSS 拼装完整�
 - 退出／撤销的 Session 立即删除，过期 Session 次日清理；有效性检查不等待清理任务。
 - 账户与 Observation 不自动删除；不因此新增账户注销、观察删除、审计或版本历史功能。
 
-以上为用户已确认的安全与生命周期边界；清理执行方式、索引、并发保护与 Migration 映射由 `database-design.md` 负责，尚未实现或验证实际清理行为。
+以上为用户已确认的安全与生命周期边界；清理执行方式、索引、并发保护与 Migration 映射由 `database-design.md` 负责。M1 已验证认证基础中的当前 Session 退出删除及到期拒绝；过期 Session 次日维护、令牌与限流清理尚未实施，正式页面退出流程仍待 M2 接入。
 
 ## 7. 邮件与后台任务
 
@@ -287,7 +287,7 @@ MVP 不采用 Canvas 作为主生成方案，也不使用 HTML/CSS 拼装完整�
 
 ## 10. 最小数据对象与关系
 
-以下保留六个核心对象的概念起点，不是当前数据库的实际 Schema；完整 10 实体 ER 图、物理设计和 Migration 映射已在 `database-design.md` 形成工程设计基线，但尚未创建业务表：
+以下保留六个核心对象的概念起点，不是当前数据库的实际 Schema；完整 10 实体 ER 图、物理设计和 Migration 映射见 `database-design.md`。M1 已实施 `users`、`sessions` 两表，其余结构仍为后续批次的设计基线：
 
 ```text
 User
@@ -311,7 +311,7 @@ User
 
 ### 10.1 数据状态分类
 
-- **数据库持久化**：User、Session、邮箱验证和密码重置业务状态与令牌摘要、限流证据、Observation、PartImpression、ActivityLocationSelection、候选鸟名和最终鸟名。具体对象和字段映射见 `database-design.md` 的工程设计，尚未实施。
+- **数据库持久化**：User、Session、邮箱验证和密码重置业务状态与令牌摘要、限流证据、Observation、PartImpression、ActivityLocationSelection、候选鸟名和最终鸟名。具体映射见 `database-design.md`；当前仅 M1 User／Session 存储与认证基础已实施，注册验证、密码辅助、限流、观察及识别流程未完成。
 - **请求时派生**：识别状态、SVG、缩略图、文字摘要和观察记录整体有效性；这些结果不得作为新的事实字段持久化。
 - **版本控制配置**：轮廓、颜色、花纹／特征、行动位置及 SVG 映射的稳定键与展示配置；它们不是用户业务数据。
 - **仅浏览器临时状态**：未提交表单、预览输入、当前候选选择、暂存删除或改名、dirty 状态、经过校验的安全返回路径和待验证邮箱流程状态；不能误写入正式记录或恢复登录身份。
@@ -328,6 +328,8 @@ User
 - AI 生成内容只有在运行、审查和测试后才能视为完成。
 
 Rails 初始化阶段的历史验证结果为：Rails 测试 1 个测试、1 个断言，0 失败、0 错误、0 跳过；当时 System Test 为 0 个测试；RuboCop 无违规；Brakeman 无安全警告。2026-08-31 阶段 4 已在正常本地环境复测全部现有测试，详见 `backend-development-plan.md` 第 10.4 节；这些证据仍不代表认证、限流、业务表约束或并发行为已经覆盖。
+
+后续 M1 新增的模型、真实数据库约束、认证请求与并发验证另见同一计划第 12.5 节。其测试 Controller、独立路由和 JSON 仅是验证工具，未挂载正式应用，不代表采用 JSON API 后端；既有静态前端 System Test 也不等于真实账户闭环已验收。
 
 ## 12. 后端设计与纵向切片实施
 
@@ -392,7 +394,7 @@ Rails 初始化阶段的历史验证结果为：Rails 测试 1 个测试、1 个
 
 2026-08-31 阶段 4 的对照证据记录在 [backend-development-plan.md](backend-development-plan.md) 第 10.2～10.4 节：相同配置在沙箱报 `SEC_E_NO_CREDENTIALS`，在获批准的非沙箱本地环境中 Rails 可连接开发／测试两库并运行全部现有测试。已观察到 TLS 1.2 加密连接；没有修改 TLS 配置、客户端依赖或业务代码。两库当时仍只有 Rails 元数据表，无业务表。
 
-此对照支持执行上下文相关的本地连接差异，不证明 Schannel 内部具体权限原因，也不证明生产 CA／主机身份验证已完成。阶段 2～5 的设计和验证交付已完成，但业务 Model、Migration、认证及真实约束验证留在阶段 6 以后。
+此对照支持执行上下文相关的本地连接差异，不证明 Schannel 内部具体权限原因，也不证明生产 CA／主机身份验证已完成。阶段 2～5 已交付；阶段 6 的 M1 已实现 User／Session、两份 Migration、Current 和 Authentication 基础，并有相应约束、Schema 往返及并发验证记录。正式路由、页面和 ApplicationController 尚未接入认证，M2 及整个纵向切片的用户验收未完成。
 
 ### 15.2 延后确认或验证
 
