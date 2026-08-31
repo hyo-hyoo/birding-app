@@ -3,7 +3,7 @@
 > 文档性质：Rails 后端开发、纵向切片实施与验收跟踪文档  
 > 当前分支：`codex/backend-development`  
 > 建立日期：2026-08-17  
-> 当前阶段：阶段 2～5 已完成设计与本地基础设施验证；业务切片阶段 6 尚未开始
+> 当前阶段：阶段 6 进行中；M1 User／Session 工程基础已实现并验证，M2 注册／邮箱验证与正式页面接入尚未开始
 > 当前目标：完成数据库设计基线，并按纵向切片接入真实业务，最终形成可在本地验收的 MVP 闭环
 
 ## 1. 文档职责
@@ -137,7 +137,7 @@
 | 3 | 物理数据库设计基线 | 阶段 2 | 已完成 | `confirmed` 范围，工程设计已核查 |
 | 4 | MySQL TLS 解决与验证 | 相同配置本地运行对照与测试 | 已完成（本地） | 实际验证，不改变TLS策略 |
 | 5 | Migration 实施计划 | 阶段 3、阶段 4 | 已完成 | `confirmed` 范围，工程计划已核查 |
-| 6 | 纵向切片 1：可登录的空观察历史 | 阶段 5 | 未开始 | `confirmed` |
+| 6 | 纵向切片 1：可登录的空观察历史 | 阶段 5 | 进行中：M1 工程基础验证通过 | `confirmed` |
 | 7 | Observation 核心闭环 | 阶段 6 | 未开始 | `provisional` |
 | 8 | SVG 与摘要渐进增强 | 阶段 7、正式配置准备 | 未开始 | `provisional` |
 | 9 | 鸟种确认、账户辅助与设置 | 前序切片 | 未开始 | `provisional` |
@@ -351,7 +351,7 @@ User
 
 | 切片 | 预计涉及的数据范围 | 状态 |
 | --- | --- | --- |
-| M1／纵向切片1 | users → sessions | 设计完成后作为阶段6首个任务 |
+| M1／纵向切片1 | users → sessions | 已实施并验证；正式页面在M2串联 |
 | M2／纵向切片1 | email_verification_tokens；rate_limit_keys → send_attempts | M1后接入，共同完成首个纵向切片 |
 | M3／Observation核心 | observations → part_impressions、activity_location_selections | 必须整体具备最低保存条件，不能只保存轮廓 |
 | M4／鸟种识别 | Observation新增最终名／识别版本 → bird_candidates | M3之后，不能覆盖内容版本 |
@@ -376,7 +376,7 @@ M2随后实现注册／验证／重发／Mailer与Job及空历史权限，完成
 
 ## 12. 阶段 6：纵向切片 1——可登录的空观察历史
 
-**状态：`未开始`**  
+**状态：`进行中`（M1 工程基础验证通过，整个切片未完成／未验收）**
 **决定状态：`confirmed`**
 
 ### 12.1 用户验收流程
@@ -419,6 +419,60 @@ M2随后实现注册／验证／重发／Mailer与Job及空历史权限，完成
 - 测试报告包含命令、tests、assertions、failures、errors、skips 和覆盖缺口；
 - `bin/rails test`、相关 System Test、RuboCop、Brakeman 和实际浏览器流程通过；
 - 用户完成验收并确认进入下一切片。
+
+### 12.5 M1 实施与验证记录（2026-08-31）
+
+**状态：本批工程基础已实现并验证；阶段6仍进行中。** 用户授权“下一步”，按11.4实施；没有扩大MVP或新增产品决定。认证／完整性工作按HIGH处理，关键验证通过后的重复检查和进度记录按LOW处理；未切换当前会话模型、未创建subagent。
+
+#### 实际改动与范围
+
+- `Gemfile`／`Gemfile.lock`：启用既定`has_secure_password`所需bcrypt 3.1.22；未升级其他依赖。
+- `db/migrate/20260831000001_create_users.rb`、`20260831000002_create_sessions.rb`与生成的`db/schema.rb`：按既有设计建User、Session，带精确列比较、NOT NULL、唯一索引、CHECK和限制性FK；没有观察或令牌表。
+- `app/models/user.rb`：统一邮箱规范化、格式／长度／唯一校验、密码8～20 ASCII字母数字及确认校验、验证状态。显式关闭生成器默认无状态password_reset_token，独立用途的密码重置留M5。
+- `app/models/session.rb`：锁外authenticate及同实例digest快照，锁内当前读、digest／验证资格复核后建立Session；服务器同一时刻生成创建时间与固定30天期限，普通更新不可更改所有者、创建时间或期限。
+- `app/models/current.rb`、`app/controllers/concerns/authentication.rb`：请求身份、加密Cookie定位、每请求数据库存在／到期检查、当前Session退出删除；不保存IP／User-Agent。Cookie为HttpOnly／SameSite=Lax，代码仅生产环境启用Secure，本地HTTP不宣称安全传输。
+- 已只读审查本机Rails认证生成器并运行`generate authentication --pretend`，按其结构选取上述最小部分；未生成密码重置Controller／Mailer／Views，未改变正式路由、ApplicationController或现有静态前端。Authentication在M2挂入正式请求链路。
+- 新增Model／约束／并发／认证请求测试及共用测试数据辅助。请求测试使用未挂载到应用的独立测试Controller和路由，只验证真实Cookie中间件、数据库和CSRF；其中JSON、HTTP状态和`/protected`等路径不是产品接口决定。
+- `test/test_helper.rb`：在Rails准备测试表前检查已解析的本地测试库目标；共享MySQL库的普通测试默认单worker，避免全局时间／请求状态和非事务测试数据互扰。真实并发仍由独立连接与线程栅栏执行，不以串行模型测试替代。
+- `script/verify_m1_schema.rb`：带显式`--execute`、库地址／版本、空表和M1版本守卫的往返验证脚本；只重建空测试库的两张业务表，不drop整个库、不处理开发数据。进入后续批次后会拒绝执行，不能当作通用清库命令。
+
+#### 数据库执行与结构往返
+
+执行前两库仅有Rails元数据表、无业务数据。在原连接配置下，按实际配置守卫限定`127.0.0.1:3307`、账号`birding_app`及开发／测试两库，调用Rails MigrationContext和Schema dumper执行M1。两库均完成版本`20260831000001`、`20260831000002`。
+
+空测试库实际执行down（Session先于User）、up及schema.rb load；比较列类型、NULL／默认、时间精度、精确collation、存储引擎、索引、CHECK、FK及迁移版本，并在load后重新运行实际非法写入测试。
+
+**已验证的框架表现，不是新产品决定**：Rails 8.1.3.1 MySQL适配器在dump时省略默认RESTRICT；重建后MySQL元数据显示NO ACTION。当前InnoDB下两者均立即拒绝受引用父记录的删除／键更新，不是级联或延迟校验。[MySQL官方说明](https://dev.mysql.com/doc/refman/8.4/en/create-table-foreign-keys.html)。Migration仍显式写RESTRICT；往返比较只在确认InnoDB后统一这两种等价标记，真实拒绝行为测试保留，未更换schema.rb、修改适配器或关闭外键检查。
+
+最终两库各有`users`、`sessions`及2张Rails元数据表；User／Session均0条。TLS仍为TLS1.2／ECDHE-RSA-AES256-GCM-SHA384。首轮失败并发测试残留的1个专用测试账户和1条Session已精确清除；没有删除开发数据、修改MySQL5.7或提交Git。
+
+#### 命令与结果
+
+数据库／浏览器命令在获批准的正常本地执行上下文运行，未使用STATIC_FRONTEND_PREVIEW绕过Schema维护；环境差异沿用10.4，不修改TLS策略。
+
+| 命令／检查 | 最终结果 |
+| --- | --- |
+| `bundle install` | bcrypt 3.1.22安装／原生扩展通过；仅增加此依赖及校验和 |
+| `bundle exec ruby bin/rails test` | seed64930：48 tests、666 assertions，0 failures／errors／skips；其中33个为本批新增测试 |
+| `bundle exec ruby bin/rails test:system` | seed1831：13 tests、312 assertions，0 failures／errors／skips；既有静态前端回归 |
+| `bundle exec ruby bin/rails test test/models/authentication_concurrency_test.rb --seed N` | N=101～105各5 tests／19 assertions，全部0 failures／errors／skips；这是重复验证，不算25个新增测试 |
+| `bundle exec ruby script/verify_m1_schema.rb --execute` | 空测试库down/up和schema.rb往返通过；属结构验证，不计入Minitest数量 |
+| `bundle exec ruby bin/rails zeitwerk:check` | All is good，exit0 |
+| `bundle exec rubocop --cache false --format simple` | 46文件、0违规，exit0 |
+| `bundle exec brakeman --no-pager` | 79检查、0错误、0安全警告，exit0；Windows仍提示不支持fork但扫描完成 |
+| `git diff --check` | 通过；未执行add／commit／push |
+
+完整普通＋System Test合计61个、978个断言，0失败、错误或跳过。
+
+首轮新增测试为31个／180断言、3失败／5错误／0跳过。已修正测试中的微秒单位、Rack Cookie删除判定／浏览器重置，以及撤销模拟中的CollectionProxy删除语义：有RESTRICT关联时，默认`association.delete_all`可能尝试置空FK；撤销须显式DELETE。随后31个／216断言全通过，并补充真实FOR UPDATE顺序和未过期加密Cookie不能覆盖数据库到期状态，最终得到上表结果。首轮结构脚本也如实发现RESTRICT／NO ACTION元数据差异，核对框架源码和InnoDB语义后按等价行为验证；没有删除或跳过失败用例。
+
+#### 学习链路与剩余边界
+
+本批测试链路：测试请求 → 测试Route／Controller → Authentication → Session.authenticate → User规范化查询与锁外密码校验 → 事务内User锁／当前状态复核 → Session INSERT → 加密Cookie。之后每个请求由Cookie定位数据库Session并检查期限，再恢复Current.user；退出只DELETE当前Session。正式Route／Controller／View或Redirect的用户链路留M2演示，不能把测试响应当作已完成的登录页面。
+
+已覆盖两种密码写入／登录提交顺序、验证资格重读、认证→FOR UPDATE→INSERT顺序、两连接唯一邮箱竞争、真实SQL约束拒绝、Cookie伪造／重放／过期、不续期、独立会话退出、CSRF拒绝和请求身份隔离。密码更新只在测试中模拟已批准原子协议，不代表密码重置功能完成。
+
+尚未覆盖／实施：注册与邮箱验证、M2故障矩阵、真实受保护页面／安全返回路径、locale串联、正式账户System Test、日志与邮件隐私全链路、过期Session次日维护命令、完整密码辅助、生产Secure／TLS部署验证。Session到期已即时不可用，不依赖未来清理命令；次日维护须在阶段6结束前落实。现有静态页面保持原状，不提供绕过验证的临时账户或登录入口。本批没有新的阻塞性产品问题；后续正式页面交付仍需用户验收。
 
 ## 13. 后续纵向切片候选
 
@@ -540,16 +594,17 @@ M2随后实现注册／验证／重发／Mailer与Job及空历史权限，完成
 | 2026-08-31 | 阶段4 | 本地验证完成 | 相同TLS配置在非沙箱成功；Rails普通与System Test共28个／753断言全通过，前后均无业务表 |
 | 2026-08-31 | 阶段5 | 交付核查 | 完成M1～M5依赖、回滚及测试映射；修正Observation首次保存必须包含部位的实施依赖 |
 | 2026-08-31 | 阶段2～5 | 已完成 | 全需求章节映射核查、26项只读SQL核查、37项文档结构／链接／ER／改动范围检查通过；业务实现、实际建表及约束回归仍按后续切片执行 |
+| 2026-08-31 | 阶段6／M1 | 工程基础验证通过 | 开发／测试库执行2个Migration；User、Session、Current与未挂载正式页面的Authentication基础；48个普通测试／666断言、13个System Test／312断言全通过；M2及整切片验收未完成，详见12.5 |
 
 ## 18. 当前阻塞与下一步
 
 ### 当前阻塞
 
-无已知阶段2～5阻塞。Windows沙箱Schannel问题仍可复现，但获批准的正常本地执行已能完成Rails数据库与全部现有测试；不因此修改TLS策略。生产安全、正式鸟类配置和业务代码测试仍在各自后续阶段处理。
+无已知M1交付阻塞。获批准的正常本地执行完成了两库Migration、空测试库结构往返、M1数据库／并发测试和既有回归；未修改TLS策略。M2仍须执行数据库设计14.6的高风险故障／并发矩阵，不能用M1证据代替。
 
 ### 当前下一步
 
-阶段6从M1开始；本轮目标止于阶段5，不自动生成或执行业务Migration。将新确认的规则、设计交付和TLS证据交给Project Maintainer同步其他正式记录，本任务不自动调用维护Skill。
+阶段6继续M2：先实现注册、用途独立的邮箱验证令牌与两步验证，再接入邮件Job、统一重发限流、locale与真实登录／空历史页面；分成可审查的小任务。认证基础尚未挂入ApplicationController或正式路由，M2必须完成受保护页面跳转、安全返回路径和完整用户闭环，并在阶段6结束前落实过期Session维护清理。密码重置／修改密码、观察表与正式部署仍在后续批次。将本轮实施状态和验证证据交给Project Maintainer判断同步范围，本任务不自动调用维护Skill。
 
 ### 18.1 阶段2～5完成审计
 
