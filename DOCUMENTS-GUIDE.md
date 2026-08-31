@@ -50,7 +50,7 @@ birding-app/
 - `docs/technical-decisions.md`：已确认的重要技术选择、背景、理由和影响；仅在存在正式决定时创建和更新。
 - `docs/frontend-development-plan.md`：静态前端页面的实施顺序、阶段状态、依赖、验证证据和进度日志；不拥有产品需求、MVP 范围、UI 决定或技术架构。前端开发 Agent 在每个阶段完成后更新，用户验收后再把阶段标记为“已完成”。
 - `docs/frontend-implementation-guide.md`：当前 Rails 前端实现、维护和学习入口，集中说明渲染链路、文件职责、CSS、Stimulus、I18n、测试、移动端检查及高保真基线与 Rails 实现差异；不拥有产品需求、MVP 范围、UI 决定、技术架构或阶段进度，也不另行拆出设计系统文档。
-- `docs/backend-development-plan.md`：Rails 后端设计与纵向切片的阶段、依赖、状态、验证证据和进度记录；不拥有产品需求、MVP 范围、UI 决定、技术架构或数据库 Schema 细节。后端开发 Agent 按阶段维护，用户验收后再将相应阶段标记为“已完成”。
+- `docs/backend-development-plan.md`：Rails 后端设计与纵向切片的阶段、依赖、状态、验证证据和进度记录；不拥有产品需求、MVP 范围、UI 决定、技术架构或数据库 Schema 细节。后端开发 Agent 按阶段维护；纯工程设计阶段依完成标准、验证证据和升级项处理结果记录完成，用户可见业务阶段仍须用户验收，具体规则见该计划第 3、14 节。
 - `docs/database-design.md`：MVP 领域模型、ER 图、物理 Schema、约束、索引、完整性策略和 Migration 切片映射；不决定产品能力、MVP 范围、UI 交互或阶段进度，未确认方案必须保留明确状态。
 - `.agents/skills/frontend-design/`：UI 设计任务的第一阶段，用于建立有项目辨识度的视觉方向。
 - `.agents/skills/mobile-app-ui-design/`：在视觉方向形成后检查移动端信息层级、操作区域、触控尺寸、状态与整体体验。

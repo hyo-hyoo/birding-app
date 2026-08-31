@@ -80,7 +80,7 @@
 - Rails、Propshaft、Turbo、Stimulus 和 importmap 依赖已经存在；
 - 已建立标准 `app/javascript`、importmap 和 Stimulus 入口，可承载后续局部交互；
 - 静态预览测试可以使用 `STATIC_FRONTEND_PREVIEW=1` 绕过本地数据库依赖；
-- 完整数据库相关测试目前仍受本机 MySQL TLS 凭据问题影响，该问题不阻塞静态前端页面实施。
+- 静态阶段曾受本机 MySQL TLS 沙箱执行上下文问题影响；2026-08-31 后端阶段 4 已在相同配置、获批准的非沙箱环境完成连接与现有完整测试复测，证据见 [backend-development-plan.md](backend-development-plan.md) 第 10 节。本计划的静态前端验收状态不变。
 
 ## 4. 阶段总览
 
@@ -526,7 +526,7 @@
 | 底部导航最终图标 | 未确认 | 使用基线表现，不引入新视觉方向 |
 | 移动端软键盘最终适配 | 待验证 | 在编辑器与账户表单阶段进行浏览器检查 |
 | Rails JavaScript 入口 | 已建立 | 阶段 3 已按标准 importmap/Stimulus 方式补齐 |
-| 本地 MySQL TLS | 已知环境问题 | 不阻塞静态预览；完整数据库测试需后续处理 |
+| 本地 MySQL TLS | 本地连接与现有测试已复测，沙箱差异仍存在 | 相同配置非沙箱验证通过，详见后端计划；不代表生产 TLS 或业务约束已验证 |
 
 ## 9. 进度日志
 

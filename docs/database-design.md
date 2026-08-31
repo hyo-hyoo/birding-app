@@ -205,7 +205,7 @@ erDiagram
 | EmailVerificationToken | 只为未验证 User 生成；摘要、期限、当前槽位 | 验证消费或成功重发替换；GET 不消费；保留失效证据后清理 |
 | PasswordResetToken | 请求重置时生成；用途独立、30 分钟 | 原子修改密码、消费令牌并撤销全部 Session；不修改邮箱验证状态 |
 | VerificationRateLimitKey | 首次遇到邮箱／IP主体时建立；维度、摘要 | 作为统计锁对象，旧尝试清除且无新尝试后可清理 |
-| VerificationSendAttempt | 每次重发请求生成；主体、时间、是否首次邮件、是否进入发送尝试 | 只追加；包括未知邮箱、被限流请求和入队失败；24 小时清理 |
+| VerificationSendAttempt | 每次重发请求生成；主体、时间、是否首次邮件、是否通过限流准入 | 只追加；包括未知邮箱、被限流请求和入队失败；24 小时清理 |
 | Observation | 首次合法保存创建；轮廓、行为、首次保存时间、最终鸟名、两种版本 | 观察编辑与识别分别修改；不自动删除、无草稿 |
 | PartImpression | 聚合提交时有内容且有确定程度才创建 | 整体编辑中更新或清空后删除，不能独立存在 |
 | ActivityLocationSelection | 聚合提交时创建；稳定键、内部槽位 | 随整体编辑更新／取消，不由单独顶层流程保存 |
@@ -325,11 +325,11 @@ OR
 | --- | --- | --- | --- | --- |
 | verification_rate_limit_key_id | BIGINT，FK verification_rate_limit_keys | 否 | 无 | 对应邮箱或 IP 统计维度 |
 | kind | VARCHAR(16)，精确 | 否 | 无 | initial 或 resend；首次注册邮件不占三次重发次数 |
-| dispatch_attempted | BOOLEAN | 否 | false | 本次通过限流进入发送尝试；失败入队也为 true |
+| rate_limit_passed | BOOLEAN | 否 | false | 本次是否通过限流准入；未知邮箱通过限流或随后入队失败时也为 true，不表示实际发信 |
 
-使用通用 created_at 作为尝试时间；无 updated_at，记录追加后不改写。索引 `(verification_rate_limit_key_id,created_at,id)` 用于窗口统计，`(created_at,id)` 用于24小时清理；CHECK kind 及布尔0/1。
+使用通用 created_at 作为尝试时间；无 updated_at，记录追加后不改写。索引 `(verification_rate_limit_key_id,created_at,id)` 用于窗口统计，`(created_at,id)` 用于24小时清理；CHECK kind 限于 initial／resend，`CHECK (rate_limit_passed IN (0, 1))` 配合 NOT NULL 保护准入标记。字段类型、默认值、索引及计数规则均不因重命名改变。
 
-每次重发为两个维度各记一行；同一次请求使用同一个服务器时间。未知／已验证邮箱照常限流和记录，dispatch_attempted 只表示通用流程是否准入，不能泄露实际发送与否。邮箱格式无效的请求仍计 IP，字段错误不创造虚假的有效邮箱主体。
+每次重发为两个维度各记一行；同一次请求使用同一个服务器时间。未知／已验证邮箱照常限流和记录，rate_limit_passed 只表示限流是否准入，不能据此判断账户存在或实际发送与否。邮箱格式无效的请求仍计 IP，字段错误不创造虚假的有效邮箱主体。
 
 ### 10.7 observations
 
@@ -395,9 +395,9 @@ created_at 是第一次成功保存时的应用时间，不是声称精确到数
 - 未验证邮箱不能登录；
 - 邮箱验证链接有效期为 15 分钟；
 - 验证链接第一次 GET 只检查令牌，确认 POST 再次校验，并原子更新 User 验证状态与令牌失效状态；
-- 新验证邮件成功后只有最新链接有效；
+- 新验证令牌保存且邮件任务实际入队成功后只有最新链接有效，入队不等于送达；
 - 验证链接成功使用后不能重复使用；
-- 新邮件发送失败时，仍有效的旧链接继续有效；
+- 新邮件任务入队失败时，仍有效的旧链接继续有效；入队后投递失败通过重试或重发恢复，不恢复旧链接；
 - 注册创建 User 但邮件任务未入队时保留未验证 User，不创建 Session；
 - 同邮箱发送至少间隔 60 秒；
 - 同邮箱 15 分钟最多重发 3 次；
@@ -460,13 +460,13 @@ created_at 是第一次成功保存时的应用时间，不是声称精确到数
 | 规则 | Rails／流程校验 | 数据库保护 | 事务／并发 |
 | --- | --- | --- | --- |
 | 邮箱唯一 | 统一规范化、格式与唯一提示 | 规范化列精确 UNIQUE、NOT NULL | 插入唯一竞争转为重复注册，不重发 |
-| 密码／登录资格 | ASCII密码规则、摘要验证、已验证 | password_digest NOT NULL | 登录与密码重置均锁 User，避免撤销后又插入旧凭证 Session |
+| 密码／登录资格 | 锁外authenticate；锁后复核认证时的digest未变且仍有登录资格 | password_digest NOT NULL | User行锁只保护复核与建立Session；不在锁内执行慢哈希，详见14.5 |
 | 一个部位最多一条 | 部位白名单及唯一 | UNIQUE(observation_id,part_key) | 随观察整体提交 |
 | 有效部位 | 先清理空值、校验内容与确定程度 | CHECK 内容存在、确定程度集合、补充色依赖 | 内容缺确定程度不能按空部位删除 |
 | 最低保存条件 | 有效轮廓＋至少一个有效部位 | FK／行约束只能保证子行，不能保证父至少一子 | 聚合事务验证最终集合；失败全部回滚 |
 | 最多3候选／2行动位置 | 数量、精确去重、允许键 | slot范围CHECK＋父/slot UNIQUE＋父/值 UNIQUE | 父行锁下分配、替换；不能只先COUNT再无锁INSERT |
 | 最终名与候选独立 | 单独名称与撤销规则 | 可空字符串，不FK候选 | 识别命令原子提交，不触及视觉内容 |
-| 防旧页面覆盖 | 必须提供对应 expected_revision | 两个非负版本字段 | 父锁后比较再写，只递增对应版本；冲突返回409并保留输入 |
+| 防旧页面覆盖 | 必须提供对应 expected revision | 两个非负版本字段 | 父锁后比较；缺失／不匹配拒绝写入，匹配才写入并递增对应版本 |
 | 最新与一次使用 | 用途、摘要、期限、账户状态 | 各用途(user_id,active_slot) UNIQUE | User行锁、重读、原子消费／替换 |
 | 30天会话 | 每请求检查过期，不续期 | 到期非空且晚于创建 | 退出删除当前；重置删全部；修改密码删其余 |
 | 重发窗口 | 邮箱60秒／3次15分钟，IP10次15分钟 | 主体唯一、尝试FK与时间索引 | 锁主体后当前读、记尝试独立提交，随后发送 |
@@ -485,7 +485,7 @@ CHECK 不支持跨表业务集合约束，也不能代替动态配置校验。NU
 | 撤销User会话 | sessions.user_id索引；修改密码加id不等于当前条件 |
 | 验证／重置链接 | 各表token_digest唯一索引定位；锁User后重读凭证状态 |
 | 当前令牌 | (user_id,active_slot)唯一索引查slot=1 |
-| 限流主体与窗口 | (scope,subject_digest)唯一定位锁；尝试表(key_id,created_at,id)范围读取 |
+| 限流主体与窗口 | (scope,subject_digest)唯一定位锁；尝试表(key_id,created_at,id)范围读取；15分钟统计全部resend，60秒间隔取最近rate_limit_passed=true的邮箱尝试 |
 | 个人历史 | observations(user_id,created_at,id)按后两项倒序；同时间用id稳定排序 |
 | 个人详情／写入 | Current.user.observations.where(id:...)；主键配所有者谓词，不全局查找后补授权 |
 | 子集合 | 各表以observation_id为首列的组合唯一索引；历史缩略图批量preload部位，避免N+1 |
@@ -517,10 +517,12 @@ CHECK 不支持跨表业务集合约束，也不能代替动态配置校验。NU
 ### 14.2 聚合与识别并发协议
 
 1. 从当前用户作用域加载父记录。对新建先归一化完整表单，校验有效部位后在一个事务内插入父子数据；任何失败整体回滚。
-2. 编辑已有记录，在事务中锁定父Observation，重读当前值并比较请求携带的content_revision。版本缺失／不匹配拒绝，不自动重试覆盖。
+2. 观察编辑请求必须携带对应content_revision的expected revision；在事务中锁定父Observation，重读当前版本后比较。版本缺失／不匹配时拒绝整次写入，不自动重试覆盖。
 3. 用提交后的完整子集合验证最低条件、数量与重复，更新父的允许内容字段及子集合，只递增content_revision；不提交final_bird_name。
-4. 每个识别命令同样锁父，但只比较identification_revision，更新候选／最终名及该版本。不同范围可先后成功；共享短时行锁不会把逻辑冲突范围合并。
-5. 数据库唯一竞争、死锁和锁超时必须转换为可重试／冲突反馈，重试需要重新读版本，不能盲目重放旧表单。禁止无父锁的子记录写通道。
+4. 每个识别命令必须携带对应identification_revision的expected revision，同样锁父后重读比较；缺失／不匹配拒绝整次写入，匹配才更新候选／最终名并递增该版本。不同范围可先后成功；共享短时行锁不会把逻辑冲突范围合并。
+5. 数据库唯一竞争、死锁和锁超时导致当前事务失败时，不得留下部分写入；若重试，必须重新读取并检查对应版本，不能盲目重放旧表单。禁止无父锁的子记录写通道。
+
+本文档只约束旧页面不得覆盖新数据及上述写入协议。冲突对应的HTTP status、页面提示、输入保留或恢复方式由实施阶段的HTTP／UI职责依据其所属正式文档处理；尚未确认的细节保持待定，不由数据库设计升级为产品或UI决定，也不撤销其他文档已确认的通用输入保护要求。
 
 Rails `with_lock`／`lock` 对应数据库行锁；锁对象必须先重读再赋值，不能先把脏对象传给lock!。[Rails 悲观锁 API](https://api.rubyonrails.org/v8.1.3/classes/ActiveRecord/Locking/Pessimistic.html)
 
@@ -533,23 +535,49 @@ Rails `with_lock`／`lock` 对应数据库行锁；锁对象必须先重读再�
 1. 首次注册User先独立提交；限流尝试也先独立提交，不因随后入队失败回滚。
 2. 在User行锁事务中重查资格，将旧令牌标superseded，建立新active_slot=1令牌。令牌期限从生成时起算，队列延迟不延长期限。
 3. 使用专用邮件delivery job，显式`enqueue_after_transaction_commit = false`，调用`deliver_later`并检查实际入队结果；false、enqueue_error、抛异常都使本事务回滚。不能只检查方法未抛异常。
-4. Job只接收标量User ID／令牌ID、locale和带用途的加密令牌载荷，不使用会在锁前反序列化尚未提交Model的GlobalID。worker先锁同一User再查令牌，等待发行事务提交；提交失败、令牌被替换／消费／过期时不发送。
+4. Job只接收标量User ID／令牌ID、locale和带用途的加密令牌载荷，不使用会在锁前反序列化尚未提交Model的GlobalID。worker先锁同一User，重新检查User仍存在且尚未验证，再以锁定当前读检查令牌，等待发行事务提交；User不再符合资格、提交失败、令牌被替换／消费／过期时退出且不发送，不能依赖入队时的旧状态。
 5. worker确认有效后释放数据库锁，再发送邮件，不在数据库事务中等待SMTP。随后发生轮换可能让在途邮件过时，但不能让其链接重新有效。投递失败仅对仍有效的新令牌有限重试，不延长期限、不重启旧令牌。
 6. 若入队成功但数据库提交失败，孤立任务经过第4步检查后退出，不能发送可用链接。数据库先提交、后入队的普通回调无法满足本项目“入队失败保留旧链接”，故不能直接替换本协议。
 7. 本协议适用于当前async／test adapter；inline adapter会导致同线程等待或提前执行，不作为该流程支持配置。测试不要在发行事务内perform_enqueued_jobs；提交后执行或使用独立线程栅栏。
 
 源码核对（本机Rails 8.1.3.1）：ActiveJob `enqueue_after_transaction_commit.rb` 在延迟入队模式下可先把successfully_enqueued设为true，不能当作实际已入队；ActionMailer::MailDeliveryJob继承ActiveJob::Base，不自动继承ApplicationJob的重试／日志策略。专用delivery job应明确这些设置。生产Solid Queue不同数据库及异常类型需部署阶段重新验证，不因本地方案推定生产原子性。
 
-验证POST锁User后以锁定当前读重新校验令牌，然后同事务更新email_verified_at和consumed。重置密码使用独立用途表，同事务改密码、消费重置令牌、删除全部Session。登录也在User锁内重新校验密码和资格后建立Session，避免并发重置撤销后仍用旧密码建立会话；登录后改密码还须锁定当前读重查当前Session仍有效。锁序统一User在前，Session／Token在后；令牌与Session的有效期在取得锁后重新判断，不复用排队等待前的有效结果。
+验证POST锁User后以锁定当前读重新校验令牌，然后同事务更新email_verified_at和consumed。重置密码使用独立用途表，同事务改密码、消费重置令牌、删除全部Session。登录采用14.5节的锁外密码认证、锁内digest复核协议；登录后改密码还须锁定当前读重查当前Session仍有效。锁序统一User在前，Session／Token在后；令牌与Session的有效期在取得锁后重新判断，不复用排队等待前的有效结果。
 
 ### 14.4 限流协议
 
 1. 统一入口先规范化邮箱、可信IP；查建两个限流主体，唯一竞争后重读。主体按固定(scope,subject_digest)顺序加锁，防交叉死锁。
 2. 取得锁后取同一服务器时间t；窗口为`(t-15分钟,t]`。使用锁定的当前读读取窗口尝试，避免MySQL REPEATABLE READ旧快照漏掉刚提交尝试。
-3. 邮箱／IP重发次数统计kind=resend，包括之前被限流及入队失败的请求；本次判断通过的前提是之前邮箱次数<3、IP次数<10。距最近dispatch_attempted=true的邮箱尝试至少60秒（包括initial及失败入队）。被限流请求不延长60秒发送间隔，但仍计入15分钟尝试总数。
-4. 本次为每个维度追加resend证据，通过限流时标dispatch_attempted=true，未通过为false；提交这笔独立事务后才尝试令牌发行。即使不存在账户也执行相同准入与记数，只不生成业务令牌。
+3. 邮箱／IP重发次数统计kind=resend，包括之前被限流及入队失败的请求，不按rate_limit_passed筛掉失败尝试；本次判断通过的前提是之前邮箱次数<3、IP次数<10。距最近rate_limit_passed=true的邮箱尝试至少60秒（包括initial及失败入队）。被限流请求不延长60秒发送间隔，但仍计入15分钟尝试总数。
+4. 本次为每个维度追加resend证据，通过限流时标rate_limit_passed=true，未通过为false；提交这笔独立事务后才尝试令牌发行。即使不存在账户也执行相同准入与记数，只不生成业务令牌。准入标记在后续enqueue失败时不改回false。
 5. 首次注册邮件记邮箱initial准入证据，参与60秒间隔，不占3次重发／IP重发次数；重复注册不创建initial或自动发信。
 6. 不同邮箱／IP各自准确记数；错误和限流响应不透露实际账户状态。日志不记录主体明文或摘要，以免把限流表变成追踪日志。
+
+### 14.5 登录：锁外认证、锁内复核
+
+1. 锁外根据规范化邮箱查询User；锁外执行`authenticate(password)`。不存在User或认证失败时不进入创建Session的事务，对外仍遵循既有认证反馈规则。
+2. 认证成功后，保存该User的ID，并复制该实例实际用于认证的`password_digest`作为本次认证快照；不得在另一次查询或reload之后才取新的digest冒充已认证值。
+3. 进入事务，按同一User ID取得行锁并重新读取User当前状态；仅当当前`password_digest`与认证快照完全相同，且邮箱验证资格仍有效时，才允许创建Session。
+4. User不存在、digest已变化或资格不再成立时，本次不得建立Session。digest变化按认证失败或重新认证处理；如需重新认证，必须先结束事务并释放锁，再在锁外重新执行完整认证流程，不能在锁内补做bcrypt／has_secure_password慢哈希。
+5. 复核和Session创建在同一短事务内完成，密码重置／修改仍使用同一User锁保护密码写入与Session撤销。若重置先提交，登录因digest变化而被拒绝；若登录先提交，随后重置会撤销该新Session，不留下基于旧密码的有效会话。
+
+M1／密码辅助实施时用独立连接和线程栅栏覆盖上述两种提交顺序，并检查authenticate发生在取得User行锁之前；不能仅用单线程“密码正确即可登录”的测试替代并发验证。
+
+### 14.6 M2高风险实现与机械验证门槛
+
+M2属于高风险实现区域。保留email_verification_tokens、verification_rate_limit_keys、verification_send_attempts、User行锁、最新／一次使用、入队失败保旧、入队成功替换旧链接及未知邮箱同等限流的设计，不引入Redis。以下均为后续必须实施的测试要求，不是本轮已通过的业务测试：
+
+| 场景 | 故障注入／并发安排 | 必须验证的结果 |
+| --- | --- | --- |
+| 新token创建过程enqueue失败 | 预置仍有效旧token；分别注入enqueue返回false、enqueue_error或异常 | 发行事务回滚，新token不提交，旧token仍active且可使用；已独立提交的尝试证据保留，rate_limit_passed仍为true |
+| enqueue成功、数据库最终失败 | 先确认任务实际入队，再令发行事务提交失败／回滚，并运行孤立Job | Job不发送可用链接；按当前协议应不投递邮件，旧token恢复有效，不能只断言Job存在 |
+| 两个并发resend | 在允许成功的初始条件下用两个连接同时请求，并等待双方结束 | 最终恰有一个active token，两个有效链接不得并存；另在令牌发行层验证User锁与唯一约束，不仅依赖限流挡住第二请求 |
+| worker处理失效token | 入队后、worker检查前分别将token变为superseded、consumed或expired | 每个worker重新读取后退出，无邮件投递、无令牌复活或有效期延长 |
+| 未知／真实邮箱同等限流 | 对未验证真实邮箱、未知邮箱及已验证邮箱走同一重发入口，包含被限流和enqueue失败路径 | 相同准入与计数规则；通过时rate_limit_passed=true不代表存在账户或实际发信；反馈及可观察差异不得泄露账户状态 |
+| 并发限流边界 | 分别在60秒间隔、邮箱15分钟3次、IP15分钟10次边界交错请求；IP用不同邮箱、邮箱用不同IP隔离验证，并覆盖initial、失败入队与窗口边缘 | 不能超出任一限制；15分钟统计不漏rate_limit_passed=false记录，60秒间隔按准入记录计算；两个入口共用统计 |
+| Job使用旧User／token状态 | 入队后改变User验证资格或令牌状态，再启动或解除worker等待 | Job在User锁内重读User及token，用检查时的资格、期限和当前状态决定退出或发送，不复用入队时判断 |
+
+验证方式必须包含真实MySQL事务、独立连接／线程及明确的栅栏或等效并发同步；不能把同一连接上的顺序调用、仅sleep碰运气或普通单线程Model Test当作并发证据。覆盖worker早于发行事务提交启动并等待的情形；测试数据需在工作线程可见的已提交事务中准备，断言线程异常、最终数据库状态和实际邮件投递记录。故障注入可控制enqueue／提交失败，但不能mock掉被测事务与锁；不得发送真实邮件。具体测试代码与命令、次数和结果在M2实施时交付，未通过前不将M2标记完成。
 
 ## 15. 安全与隐私
 
@@ -568,8 +596,8 @@ Rails `with_lock`／`lock` 对应数据库行锁；锁对象必须先重读再�
 
 | 批次／切片 | 结构与前置依赖 | 必须同批规划的测试 | 回滚与执行门槛 |
 | --- | --- | --- | --- |
-| M1／阶段6账户 | 先users，再sessions；无观察表 | 邮箱规范化／唯一竞态、密码、验证前不可登录、固定30天、多会话及退出、Cookie伪造／过期 | drop sessions再users会永久丢会话／账户；仅空库或明确备份恢复条件下回滚 |
-| M2／阶段6邮箱验证 | M1后建email_verification_tokens；先rate_limit_keys再send_attempts | 两步验证、15分钟、单次／最新、入队失败保旧、worker竞态、注册保User、双入口限流、未知邮箱、HMAC与清理、locale／日志 | 先尝试再主体；令牌表可独立drop但链接全部失效；停止worker避免引用旧结构 |
+| M1／阶段6账户 | 先users，再sessions；无观察表 | 邮箱规范化／唯一竞态、密码、验证前不可登录、固定30天、多会话及退出、Cookie伪造／过期；14.5的锁外认证／digest变化拒绝和密码更新交错验证（完整重置流程由M5回归） | drop sessions再users会永久丢会话／账户；仅空库或明确备份恢复条件下回滚 |
+| M2／阶段6邮箱验证 | M1后建email_verification_tokens；先rate_limit_keys再send_attempts，准入字段采用rate_limit_passed | 高风险：必须通过14.6故障注入／真实并发矩阵及准入标记CHECK；另覆盖两步验证、15分钟、单次／最新、注册保User、HMAC与清理、locale／日志 | 先尝试再主体；令牌表可独立drop但链接全部失效；停止worker避免引用旧结构；本次仅修正设计字段名，尚无已执行的列重命名迁移 |
 | M3／阶段7观察核心 | M1后先observations基础字段，再part_impressions及activity_location_selections | 有效轮廓＋至少1部位、回滚、空部位删除、确定程度／补色、2标签、授权、内容版本冲突、首次时间不可变 | 先两个子表再父表；会永久丢观察；正式配置名单必须在接入前确认 |
 | M4／鸟种识别 | M3后添加final_bird_name、identification_revision，再bird_candidates | 3槽上限、精确去重、并发命令、独立版本、候选与最终名互不删除、撤销明确替换 | drop候选及删除最终名列会丢识别数据；新增可空最终名不改旧观察内容 |
 | M5／密码辅助 | M1后建password_reset_tokens；业务接入依赖M2邮件能力 | 30分钟、最新单用、全会话撤销、登录竞态、当前会话保留、测试不真实发信 | drop表使重置链接失效；不回退已更新密码，不恢复已撤销Session |
@@ -613,7 +641,7 @@ Rails `with_lock`／`lock` 对应数据库行锁；锁对象必须先重读再�
 以下为后续实施门槛，不是已经验证通过的功能：
 
 - M1～M5按各批次验证Migration up/down、schema.rb往返、真实FK／CHECK／唯一索引拒绝行为；本阶段禁止业务建表，故未执行这些测试。
-- M2验证真实async队列与User行锁竞态、入队失败回滚、日志过滤、并发限流及维护清理；不能只用test adapter的成功入队记录作为证明。
+- M2作为高风险实现区域，必须执行14.6全部故障注入／并发检查，以及日志过滤与维护清理；不能只用test adapter的成功入队记录作为证明。M1及密码辅助阶段按14.5验证锁外认证与并发密码更新。
 - M3前确认正式配置名单，并以真实数据EXPLAIN和授权／并发测试验证查询。
 - 部署前确定CA／主机身份验证、可信代理、队列持久性、真实邮件供应商、密钥与备份；当前本地连接成功不代替这些决定。
 - MySQL TLS沙箱差异、Rails与完整测试证据见后端计划；未更换客户端或降低验证配置。
