@@ -4,6 +4,15 @@ require "timeout"
 module VerificationTestSupport
   include AccountTestSupport
 
+  def with_singleton_method(target, name, replacement)
+    singleton = target.singleton_class
+    original = target.method(name)
+    singleton.define_method(name, replacement)
+    yield
+  ensure
+    singleton.define_method(name, original)
+  end
+
   # A committed, already-issued token fixture. Actual issuance/enqueue is M2-B.
   def token_for(user)
     secret = EmailVerificationToken.generate_secret

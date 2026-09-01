@@ -1,4 +1,11 @@
 "zh-CN":
+  email_verification_mailer:
+    verification:
+      subject: "确认你的观鸟观察册邮箱"
+      greeting: "你好！"
+      instructions: "请打开下面的链接，确认这是你注册时使用的邮箱。打开链接后仍需要在确认页面提交一次，账户才会完成验证。"
+      action: "确认邮箱"
+      expiry: "此链接将在 15 分钟后失效。如果你没有注册，可以忽略这封邮件。"
   application:
     name: "观鸟观察册"
     title: "观鸟观察册｜记录鸟类印象"

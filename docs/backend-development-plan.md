@@ -3,7 +3,7 @@
 > 文档性质：Rails 后端开发、纵向切片实施与验收跟踪文档  
 > 当前分支：`codex/backend-development`  
 > 建立日期：2026-08-17  
-> 当前阶段：阶段 6 进行中；M1 与 M2-A 令牌／数据库限流基础已实现并验证；M2-B 注册／邮件投递与 M2-C 正式页面接入尚未完成
+> 当前阶段：阶段 6 进行中；M1、M2-A 与 M2-B 注册／邮件后台流程已实现并验证；M2-C 正式页面、完整闭环与维护清理尚未完成
 > 当前目标：完成数据库设计基线，并按纵向切片接入真实业务，最终形成可在本地验收的 MVP 闭环
 
 ## 1. 文档职责
@@ -137,7 +137,7 @@
 | 3 | 物理数据库设计基线 | 阶段 2 | 已完成 | `confirmed` 范围，工程设计已核查 |
 | 4 | MySQL TLS 解决与验证 | 相同配置本地运行对照与测试 | 已完成（本地） | 实际验证，不改变TLS策略 |
 | 5 | Migration 实施计划 | 阶段 3、阶段 4 | 已完成 | `confirmed` 范围，工程计划已核查 |
-| 6 | 纵向切片 1：可登录的空观察历史 | 阶段 5 | 进行中：M1、M2-A 工程基础验证通过 | `confirmed` |
+| 6 | 纵向切片 1：可登录的空观察历史 | 阶段 5 | 进行中：M1、M2-A、M2-B 工程基础验证通过 | `confirmed` |
 | 7 | Observation 核心闭环 | 阶段 6 | 未开始 | `provisional` |
 | 8 | SVG 与摘要渐进增强 | 阶段 7、正式配置准备 | 未开始 | `provisional` |
 | 9 | 鸟种确认、账户辅助与设置 | 前序切片 | 未开始 | `provisional` |
@@ -352,7 +352,7 @@ User
 | 切片 | 预计涉及的数据范围 | 状态 |
 | --- | --- | --- |
 | M1／纵向切片1 | users → sessions | 已实施并验证；正式页面在M2串联 |
-| M2／纵向切片1 | email_verification_tokens；rate_limit_keys → send_attempts | M2-A 三表及核心验证通过；注册／邮件、正式页面留 M2-B／C |
+| M2／纵向切片1 | email_verification_tokens；rate_limit_keys → send_attempts | M2-A 三表与 M2-B 注册／邮件后台流程通过；正式页面与维护留 M2-C |
 | M3／Observation核心 | observations → part_impressions、activity_location_selections | 必须整体具备最低保存条件，不能只保存轮廓 |
 | M4／鸟种识别 | Observation新增最终名／识别版本 → bird_candidates | M3之后，不能覆盖内容版本 |
 | M5／密码辅助 | password_reset_tokens | 结构依赖M1，邮件流程复用M2；不进入首切片 |
@@ -376,7 +376,7 @@ M2随后实现注册／验证／重发／Mailer与Job及空历史权限，完成
 
 ## 12. 阶段 6：纵向切片 1——可登录的空观察历史
 
-**状态：`进行中`（M1、M2-A 工程基础验证通过，整个切片未完成／未验收）**
+**状态：`进行中`（M1、M2-A、M2-B 工程基础验证通过，整个切片未完成／未验收）**
 **决定状态：`confirmed`**
 
 ### 12.1 用户验收流程
@@ -534,6 +534,58 @@ M2-A／B／C 是本次开发的工程拆分，不改变既定 Migration 批次�
 
 没有发现新的阻塞性产品或数据库问题。M2-B 可继续；当前还不能请用户验收完整“注册→验证→登录→空历史”闭环。
 
+### 12.7 M2-B 实施与验证记录（2026-09-01）
+
+**状态：注册、令牌实际签发／轮换、邮件 Job 与 worker 重检的后台流程已实现并验证；不是正式页面或整个 M2 完成。** 本批按认证、安全、事务和并发 HIGH 处理；验证稳定后的重复并发、静态检查和记录按 LOW 处理，未切换会话模型、未创建 subagent。未改变产品需求、MVP范围、ER图、表数量或依赖。
+
+#### 实际改动与请求边界
+
+- `AccountRegistration`：注册校验成功后先独立提交未验证 User，再独立提交邮箱 initial 准入证据，之后调用令牌发行；入队失败仍保留 User 与准入记录，不创建 Session。无效注册不写 User／限流／令牌；重复规范化邮箱不创建第二个 User、initial 记录或自动重发。
+- `EmailVerificationRequest`：真实邮箱、已验证邮箱和未知邮箱使用 M2-A 的同一邮箱／IP 准入入口和统一公开结果；仅当前未验证 User 才进入发行。通过限流但入队失败仍不改变对外账户无关结果；正式 Controller 仍须使用 `request.remote_ip`，不能接收表单 IP。
+- `EmailVerificationIssuer`：统一按 User → token 锁序，在 User 行锁事务中重读资格、将旧 active token 标为 superseded、创建新 active token，并立即调用专用 Job 入队。Job 显式关闭提交后延迟；只有返回实际已入队、无 enqueue_error 才提交。false、enqueue_error或异常均回滚新 token 与旧 token 替换，错误日志只记录异常类。
+- `EmailVerificationDeliveryPayload`：队列只保存 User ID、token ID、locale与带用途、认证加密、按令牌期限过期的载荷；载荷内原始 secret 还会与标量参数及数据库摘要交叉核对。普通 Job 日志关闭参数输出。
+- `EmailVerificationDeliveryJob`：先锁 User，再以锁定当前读重查 token；User不存在／已验证，token不存在／已替代／消费／过期，参数不一致、载荷篡改或过期时均退出。有效时复制最小邮件地址后结束事务，再交给邮件传输，不在数据库锁内等待。投递错误转换为无底层 cause 的固定错误，最多重试3次；每次重试都重新读取当前状态，不恢复旧 token 或延长期限。
+- `EmailVerificationMailer` 与中日文 multipart 模板：本地 test adapter 下生成15分钟确认邮件，不发送到外部。正文不包含完整邮箱；原始 secret 只出现在确认链接，邮件处理日志被局部屏蔽。`/email-verification` 是为 M2-C 准备的当前代码路径，尚未挂载正式 Route／Controller，精确路径和邮件微文案不因本批测试通过升级为正式 UI 决定。
+- 新增 Payload、注册、统一重发、发行、Mailer、Job及真实并发测试；扩展定向测试清理与兼容 Minitest 6 的可恢复方法替换辅助。未修改数据库结构或 Migration。
+
+本批后台链路：未来注册 Controller → `AccountRegistration` 保存 User → `VerificationRateLimiter.initial` 独立记账 → `EmailVerificationIssuer` 锁 User、轮换 token并实际入队 → `EmailVerificationDeliveryJob` 重新锁定／校验 → 释放数据库事务 → `EmailVerificationMailer` 交给本地邮件传输。未来重发 Controller → `EmailVerificationRequest` 统一限流 → 只有符合资格的 User 进入同一发行链路。当前没有正式 Route／Controller／View／Redirect，因此不能由用户操作或验收。
+
+#### 高风险验证证据
+
+- false、enqueue_error和抛异常三种入队失败均回滚新 token，旧链接保持 active；initial／resend 准入证据因已独立提交而保留。
+- 模拟 adapter 已记录 Job 后发行事务回滚：数据库不存在新 token，孤立 Job 执行后退出且不发送，旧链接继续有效。
+- 两个独立 MySQL 连接并发发行，最终只有一个 active token；两个 Job 都运行时仅当前 token 的 Job 发信。固定 seed 301～305 各4 tests／17 assertions均通过。
+- worker 在发行事务提交前开始、等待 User 锁后重读已提交状态；另验证交给邮件传输时数据库事务已结束。
+- superseded、consumed、expired、User已验证、记录删除、标量参数不匹配、载荷篡改或过期全部不发送。
+- unknown、已验证与未验证邮箱的统一请求均走相同准入和公开结果；只有未验证 User 创建业务 token。正式页面／HTTP的响应时间和可观察差异仍由 M2-C 做端到端检查。
+- 加密队列载荷不含可见原始 secret／邮箱；Job与邮件日志不出现原始 secret、加密载荷、收件邮箱或底层SMTP错误。投递失败固定错误最多重试3次。
+
+首轮20 tests／67 assertions出现1 failure／9 errors：测试事务与限流根事务冲突、`assert_enqueued_with`返回值误用、Minitest 6不再提供旧mock helper以及过期测试写入只读字段。改为真实非事务数据库测试、显式结果捕获、自有可恢复故障注入和只推进时钟。扩展并发后23 tests／140 assertions出现1 failure／2 errors，修正测试方法替换的接收者及有限重试执行方式。安全日志调整后24 tests／123 assertions出现1 failure／4 errors，发现false不是nil，不能用安全导航读取enqueue_error；同时把“锁外投递”移到无外层测试事务的真实连接验证。没有删除、跳过或弱化测试。最终本批24个新增测试／157个断言全部通过。
+
+#### 命令与结果
+
+| 命令／检查 | 最终结果 |
+| --- | --- |
+| `bundle exec ruby bin/rails test` | seed32686：109 tests、1114 assertions，0 failures／errors／skips；较 M2-A 新增24 tests／157 assertions |
+| `bundle exec ruby bin/rails test:system` | seed65382：13 tests、312 assertions，0 failures／errors／skips；既有静态浏览器回归，不是正式账户页面验收 |
+| `bundle exec ruby bin/rails test test/models/email_verification_delivery_concurrency_test.rb --seed N` | N=301～305各4 tests／17 assertions，全部0 failures／errors／skips；重复验证，不算20个新增测试 |
+| `bundle exec ruby bin/rails zeitwerk:check` | All is good，exit0 |
+| `bundle exec rubocop --cache false --format simple` | 73文件、0违规，exit0 |
+| `bundle exec brakeman --no-pager` | 79检查、0错误、0安全警告，exit0；Windows提示不支持fork但扫描完成 |
+| `git diff --check` | 待最终复核；未执行add／commit／push |
+
+完整普通＋System Test 合计122个、1426个断言，0失败、错误或跳过；并发5轮单独计数。
+
+#### 剩余 M2-C 门槛
+
+- 接入正式注册、重发、两步验证、登录、受保护空历史和退出的 Route／Controller／Rails View／Redirect；真实表单启用 CSRF、使用可信 `request.remote_ip`，接入加密待验证邮箱状态、语言 Cookie与安全返回路径。
+- 正式页面必须保持未知／已验证／未验证邮箱的响应与可观察反馈一致；不能把内部 `accepted`、`ineligible` 或入队结果直接暴露为账户状态。注册已创建但初次邮件未入队的专属结果只适用于刚创建的账户。
+- 把邮件链接接到正式两步验证入口，并按已确认结果体系处理有效、过期、无效、已消费、被替代和已验证；精确路径、微文案、提交后焦点与字段保留在 M2-C 按 owning document 处理。
+- 实现失效 token 7天、attempt 24小时、孤立限流键及过期 Session 次日清理；完成正式账户 Integration／System Test、双语浏览器流程和用户验收。
+- 当前只用 test adapter 验证，不发送真实邮件；开发 async adapter支持本协议但进程退出可丢任务的风险已确认。生产队列、真实供应商、发件域名、HTTPS URL、Secret轮换和投递可观测性仍延后到部署准备。
+
+没有新的阻塞性产品、数据库或安全决定。M2-C可以继续；阶段6和第一个纵向切片仍未完成。
+
 ## 13. 后续纵向切片候选
 
 **总体决定状态：`provisional`**
@@ -656,16 +708,17 @@ M2-A／B／C 是本次开发的工程拆分，不改变既定 Migration 批次�
 | 2026-08-31 | 阶段2～5 | 已完成 | 全需求章节映射核查、26项只读SQL核查、37项文档结构／链接／ER／改动范围检查通过；业务实现、实际建表及约束回归仍按后续切片执行 |
 | 2026-08-31 | 阶段6／M1 | 工程基础验证通过 | 开发／测试库执行2个Migration；User、Session、Current与未挂载正式页面的Authentication基础；48个普通测试／666断言、13个System Test／312断言全通过；M2及整切片验收未完成，详见12.5 |
 | 2026-08-31 | 阶段6／M2-A | 令牌与限流基础验证通过 | 开发／测试库新增3表；确认事务、共用限流、SQL约束、真实并发及结构往返通过；85个普通测试／957断言、13个System Test／312断言全通过；注册／邮件与正式页面留M2-B／C，详见12.6 |
+| 2026-09-01 | 阶段6／M2-B | 注册与邮件后台流程验证通过 | 注册独立提交、真实令牌轮换、加密Job载荷、worker状态重检、孤立Job、有限重试与隐私日志通过；109个普通测试／1114断言、13个System Test／312断言全通过；正式页面和维护清理留M2-C，详见12.7 |
 
 ## 18. 当前阻塞与下一步
 
 ### 当前阻塞
 
-无已知 M2-A 交付阻塞。两库已应用五个 Migration，空测试库结构往返、令牌／限流并发及既有回归通过；未修改 TLS 策略。M2-B／C 仍须完成数据库设计14.6的邮件投递、Job 状态重检和全链路隐私故障矩阵，不能用本批令牌夹具或限流测试代替。
+无已知 M2-B 交付阻塞。数据库仍为既有五表；注册、实际令牌轮换、邮件入队、孤立Job、worker状态重检、有限重试、日志隐私和真实并发已通过。M2-C仍须以正式Route／Controller／页面和浏览器流程验证账户状态不泄露、CSRF、locale、两步确认、登录／空历史及维护清理，不能用后台服务测试代替用户闭环。
 
 ### 当前下一步
 
-阶段6继续 M2-B：接入正式注册流程及初次发信、User 锁内 token 切换与 enqueue、邮件 Job 状态重检，优先用真实事务故障注入覆盖失败保留旧链接和孤立 Job 不投递可用链接。之后 M2-C 串联正式两步验证／登录／空历史、locale、受保护页面与安全返回路径，落实 token／限流／Session 维护清理，完成浏览器闭环并交用户验收。当前基础尚未挂入 ApplicationController 或正式路由。密码重置／修改密码、观察表与正式部署仍在后续批次。将实施状态和验证证据交给 Project Maintainer 判断同步范围，本任务不自动调用维护 Skill。
+阶段6继续 M2-C：把现有 M1、M2-A、M2-B 后台能力接入正式注册、重发、两步验证、登录、空历史和退出页面；串联locale、加密待验证邮箱状态、受保护页面与安全返回路径，落实token／限流／Session维护清理，完成双语浏览器闭环并交用户验收。当前邮件中的`/email-verification`路径尚无正式端点，必须在串联后才可点击完成流程。密码重置／修改密码、Observation表与正式部署仍在后续批次。将实施状态和验证证据交给Project Maintainer判断同步范围，本任务不自动调用维护Skill。
 
 ### 18.1 阶段2～5完成审计
 

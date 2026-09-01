@@ -562,4 +562,4 @@
 
 ## 10. 下一步
 
-静态前端实施计划已完成 7／7 阶段、14／14 页面或流程状态，本文件不新增后端接入阶段。后端阶段 6 的 M1 User／Session 两表及认证基础已实现并验证，正式账户页面、注册和邮箱验证仍待 M2，完整切片尚未验收。后续实施进度与验证证据由 [backend-development-plan.md](backend-development-plan.md) 维护，项目摘要见 [current-status.md](current-status.md)；不把后端基础完成误记为新的静态前端阶段或后端 MVP 完成。
+静态前端实施计划已完成 7／7 阶段、14／14 页面或流程状态，本文件不新增后端接入阶段。后端基础已有分批实施与验证，注册／邮件及正式账户页面的完整闭环仍待完成和验收；变化中的 M1、M2 子批次进度与验证证据统一由 [backend-development-plan.md](backend-development-plan.md) 维护，项目摘要见 [current-status.md](current-status.md)。不在本静态前端计划重复逐批登记，也不把后端基础完成误记为新的静态前端阶段或后端 MVP 完成。
