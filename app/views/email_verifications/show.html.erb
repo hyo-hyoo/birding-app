@@ -1,0 +1,24 @@
+<% content_for :title, t("account_flow.email_verification.page_title") %>
+<% status = @result.status %>
+<% presentation = t("account_flow.email_verification.results.#{status}") %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("frontend_previews.verification_success.header_title"), header_action: t("account_flow.email_verification.header_action") %>
+
+  <main class="app-content auth-content auth-content--centered">
+    <%= render "shared/result_card", icon: presentation[:icon], eyebrow: presentation[:eyebrow], title: presentation[:title], description: presentation[:description] do %>
+      <% if status == :valid %>
+        <p class="notice"><%= t("account_flow.email_verification.masked_email", email: @result.masked_email) %></p>
+        <%= form_with url: email_verification_path, method: :post do %>
+          <%= hidden_field_tag :token, @token %>
+          <%= submit_tag t("account_flow.email_verification.confirm"), class: "primary-button full" %>
+        <% end %>
+      <% elsif status == :verified || status == :already_verified %>
+        <%= link_to t("account_flow.common.back_to_login"), new_session_path, class: "primary-button full" %>
+      <% else %>
+        <%= link_to t("account_flow.email_verification.request_another"), new_verification_email_path, class: "secondary-button full" %>
+        <%= link_to t("account_flow.common.back_to_login"), new_session_path, class: "text-link result-card__text-link" %>
+      <% end %>
+    <% end %>
+  </main>
+</section>

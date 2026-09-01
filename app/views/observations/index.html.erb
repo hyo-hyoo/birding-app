@@ -1,0 +1,22 @@
+<% content_for :title, t("frontend_previews.history_empty.page_title") %>
+
+<section class="app-page preview-history-page">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow eyebrow--compact"><%= t("frontend_previews.history_empty.eyebrow") %></p>
+      <h1 class="screen-title"><%= t("frontend_previews.history_empty.header_title") %></h1>
+    </div>
+  </header>
+
+  <main class="app-content preview-history-content">
+    <%= render "shared/result_card", icon: "⌁", eyebrow: t("frontend_previews.history_empty.result_eyebrow"), title_tag: :h2, title: t("frontend_previews.history_empty.title"), description: t("frontend_previews.history_empty.description") do %>
+      <span class="primary-button full" aria-disabled="true"><%= t("frontend_previews.history_empty.new_observation") %></span>
+    <% end %>
+  </main>
+
+  <%= render "shared/bottom_navigation", items: [
+    { icon: "⌂", label: t("frontend_previews.navigation.history"), active: true, path: observations_path },
+    { icon: "＋", label: t("frontend_previews.navigation.new_observation"), path: nil },
+    { icon: "⚙", label: t("frontend_previews.navigation.settings"), path: settings_path }
+  ] %>
+</section>

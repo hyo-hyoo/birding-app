@@ -3,7 +3,7 @@
 > 文档性质：Rails 后端开发、纵向切片实施与验收跟踪文档  
 > 当前分支：`codex/backend-development`  
 > 建立日期：2026-08-17  
-> 当前阶段：阶段 6 进行中；M1、M2-A 与 M2-B 注册／邮件后台流程已实现并验证；M2-C 正式页面、完整闭环与维护清理尚未完成
+> 当前阶段：阶段 6 待用户验收；M1、M2-A、M2-B 与 M2-C 已实现并通过机械验证，“注册→验证→登录→空历史→退出”闭环待用户确认
 > 当前目标：完成数据库设计基线，并按纵向切片接入真实业务，最终形成可在本地验收的 MVP 闭环
 
 ## 1. 文档职责
@@ -137,7 +137,7 @@
 | 3 | 物理数据库设计基线 | 阶段 2 | 已完成 | `confirmed` 范围，工程设计已核查 |
 | 4 | MySQL TLS 解决与验证 | 相同配置本地运行对照与测试 | 已完成（本地） | 实际验证，不改变TLS策略 |
 | 5 | Migration 实施计划 | 阶段 3、阶段 4 | 已完成 | `confirmed` 范围，工程计划已核查 |
-| 6 | 纵向切片 1：可登录的空观察历史 | 阶段 5 | 进行中：M1、M2-A、M2-B 工程基础验证通过 | `confirmed` |
+| 6 | 纵向切片 1：可登录的空观察历史 | 阶段 5 | 待验收：M1、M2-A、M2-B、M2-C 实现与机械验证通过 | `confirmed` |
 | 7 | Observation 核心闭环 | 阶段 6 | 未开始 | `provisional` |
 | 8 | SVG 与摘要渐进增强 | 阶段 7、正式配置准备 | 未开始 | `provisional` |
 | 9 | 鸟种确认、账户辅助与设置 | 前序切片 | 未开始 | `provisional` |
@@ -352,7 +352,7 @@ User
 | 切片 | 预计涉及的数据范围 | 状态 |
 | --- | --- | --- |
 | M1／纵向切片1 | users → sessions | 已实施并验证；正式页面在M2串联 |
-| M2／纵向切片1 | email_verification_tokens；rate_limit_keys → send_attempts | M2-A 三表与 M2-B 注册／邮件后台流程通过；正式页面与维护留 M2-C |
+| M2／纵向切片1 | email_verification_tokens；rate_limit_keys → send_attempts | M2-A～C 已实施并验证；未新增表，完整闭环待用户验收 |
 | M3／Observation核心 | observations → part_impressions、activity_location_selections | 必须整体具备最低保存条件，不能只保存轮廓 |
 | M4／鸟种识别 | Observation新增最终名／识别版本 → bird_candidates | M3之后，不能覆盖内容版本 |
 | M5／密码辅助 | password_reset_tokens | 结构依赖M1，邮件流程复用M2；不进入首切片 |
@@ -376,7 +376,7 @@ M2随后实现注册／验证／重发／Mailer与Job及空历史权限，完成
 
 ## 12. 阶段 6：纵向切片 1——可登录的空观察历史
 
-**状态：`进行中`（M1、M2-A、M2-B 工程基础验证通过，整个切片未完成／未验收）**
+**状态：`待验收`（M1、M2-A、M2-B、M2-C 实现与机械验证通过；等待用户验收完整闭环）**
 **决定状态：`confirmed`**
 
 ### 12.1 用户验收流程
@@ -586,6 +586,49 @@ M2-A／B／C 是本次开发的工程拆分，不改变既定 Migration 批次�
 
 没有新的阻塞性产品、数据库或安全决定。M2-C可以继续；阶段6和第一个纵向切片仍未完成。
 
+### 12.8 M2-C 实施与验证记录（2026-09-01）
+
+**状态：正式账户页面、完整浏览器闭环与维护清理已实现并通过机械验证；阶段6等待用户验收。** 认证、安全、隐私与端到端串联按 HIGH 处理；核心实现通过后，并发重复、质量扫描、数据清理复核与记录降为 MEDIUM。未切换当前会话模型、未创建 subagent。未改变产品需求、MVP范围、ER图、表数量、Migration或依赖。
+
+#### 实际改动与请求边界
+
+- `ApplicationController` 接入 M1 `Authentication` 与 locale 选择：显式的有效 locale 参数写入加密、HttpOnly、SameSite=Lax 的浏览器 Cookie；没有显式选择时先读 Cookie，再把浏览器首选 `zh*` 映射为简体中文，其余映射为日文。开发环境静态预览显式允许匿名访问，避免被正式认证边界误伤。
+- 正式账户 Route／Controller／Rails View 接通注册、统一重发、两步邮箱验证、登录、退出、受保护空观察历史与设置页；复用 B′ 已验收的 Rails partial、CSS 与 I18n 结构，没有引入新前端框架或重做视觉方向。
+- 无效注册不写业务数据，密码字段不回显，邮箱在服务入口先规范化；重复注册不创建第二个 User、不自动重发。注册成功保留未验证 User，并用加密、HttpOnly、一天有效的临时 Cookie 记住当前浏览器的待验证邮箱。
+- 重发 Controller 始终使用服务器取得的 `request.remote_ip`，未知、已验证和未验证邮箱进入同一 M2-A 限流入口并显示账户无关结果；只有符合条件的未验证 User 进入 M2-B token 发行。内部详细结果不作为账户存在状态公开。
+- 邮件链接正式指向 `GET /email-verification`。GET 只检查 token并显示脱敏邮箱；POST 再锁定并确认，成功时原子验证 User、消费 token，不创建 Session。POST 使用标准 Post／Redirect／Get，结果状态暂存在加密 Rails session，避免 Turbo 成功提交后停留在旧确认页面。
+- 登录继续使用 M1 的锁外慢哈希、锁内摘要／资格重检协议。凭证错误显示统一失败；凭证正确但未验证不创建 Session，并提供重发入口。认证前访问的 GET HTML 站内路径暂存在加密 Rails session；登录后只接受合法站内相对路径，否则进入空观察历史。退出只删除当前数据库 Session。
+- 空观察历史与设置页需要有效 Session；设置页显示真实当前邮箱和浏览器语言选择。Observation 新建、密码重置与修改密码仍保持不可操作／延后状态，没有创建观察数据或扩大当前切片。
+- 新增 `MaintenanceCleanup` 与 `maintenance:cleanup`：删除本日之前已过期的 Session、保留期超过7天的失效／过期验证 token、超过24小时的限流尝试，以及删除尝试后形成的孤立限流键。删除边界用真实数据库记录测试，任务不引入额外调度或基础设施。
+
+完整用户链路：浏览器提交注册表单 → Route → `RegistrationsController` → `AccountRegistration`／限流／token发行 → 五张既有账户表 → 结果页；邮件 Job 重检后生成本地验证邮件 → GET确认页只读检查 → POST确认在事务中验证User并消费token → 登录Controller调用`Session.authenticate` → 数据库Session＋加密Cookie → 受保护空历史；退出请求只删除当前Session并返回登录页。主要校验点是服务器密码规则、规范化邮箱唯一性、token当前状态、User资格、CSRF、站内返回路径和受保护页面认证。
+
+#### 测试、失败修正与验证证据
+
+- 新增正式账户 Integration Test、完整浏览器 System Test、维护清理测试及测试数据清理辅助；既有静态 System Test继续回归14个页面／流程状态。CSRF 测试明确验证注册、重发与登录在开启防伪保护时拒绝缺少 token 的请求。
+- 首轮全量普通测试109个／1059断言出现9个失败：全局认证正确拦截了既有测试专用Controller的公开探针。仅为该测试Controller声明匿名访问，保留其自身受保护页面与CSRF断言，没有放宽正式Controller或删除测试。
+- 定向测试随后发现两项测试构造问题：Session测试把到期时间写到创建时间之前，正确触发数据库CHECK；清理测试在同一User下直接创建多个active token，正确触发组合唯一。测试数据改为符合真实约束的历史时间与独立User，不修改生产约束。
+- 浏览器测试先后发现邮件链接解析调用错误、Turbo 对成功表单直接render不会替换旧页面，以及断言使用了不存在的示例文案。分别改正Nokogiri取值、把确认成功改为Post／Redirect／Get，并让断言读取已有I18n文案；没有通过延长等待、跳过或弱化测试取得通过。
+
+| 命令／检查 | 最终结果 |
+| --- | --- |
+| `bundle exec ruby bin/rails test` | seed1422：120 tests、1259 assertions，0 failures／errors／skips；较 M2-B 新增11 tests／145 assertions |
+| `bundle exec ruby bin/rails test:system` | seed18084：14 tests、330 assertions，0 failures／errors／skips；新增1个完整账户浏览器流程／18断言 |
+| 3份认证／验证并发测试，固定5个seed | 104729、130363、155921、181081、206369各19 tests／88 assertions，全部0 failures／errors／skips；重复验证，不并入新增测试数 |
+| `bundle exec ruby bin/rails zeitwerk:check` | All is good，exit0 |
+| `bundle exec rubocop` | 86文件、0违规，exit0；沙箱缓存目录不可写但不影响完整扫描 |
+| `bundle exec brakeman --no-pager` | 79检查、0错误、0安全警告，exit0；Windows提示不支持fork但扫描完成 |
+| 两库只读收尾复核 | MySQL 8.4.10；TLS cipher `ECDHE-RSA-AES256-GCM-SHA384`；开发／测试库的5张业务表各0行 |
+| `git diff --check` | 通过；未执行add／commit／push |
+
+完整普通＋System Test 合计134个、1589个断言，0失败、错误或跳过；并发5轮单独计数。M2-C没有新增或修改 Migration，开发／测试库仍只有 M1＋M2-A 的五张账户业务表。
+
+#### 验收与剩余边界
+
+- 自动测试已证明本地 test adapter 下的“注册→邮件→只读确认→提交验证→手动登录→受保护空历史→语言切换→退出”闭环；用户仍需在本地页面验收业务行为和可见反馈，阶段6在此之前保持`待验收`。
+- 正式路径命名、当前中日文服务器反馈微文案、确认结果使用Post／Redirect／Get、加密临时Cookie键名与维护类／任务名称是本轮工程实现事实，不因代码出现自动升级为不可调整的产品或UI决定。
+- 密码重置／修改密码、Observation业务与表、真实邮件服务、生产Job持久化与调度、生产TLS身份验证和部署仍按既有计划延后。当前没有新的阻塞性产品、数据库或安全问题。
+
 ## 13. 后续纵向切片候选
 
 **总体决定状态：`provisional`**
@@ -709,16 +752,17 @@ M2-A／B／C 是本次开发的工程拆分，不改变既定 Migration 批次�
 | 2026-08-31 | 阶段6／M1 | 工程基础验证通过 | 开发／测试库执行2个Migration；User、Session、Current与未挂载正式页面的Authentication基础；48个普通测试／666断言、13个System Test／312断言全通过；M2及整切片验收未完成，详见12.5 |
 | 2026-08-31 | 阶段6／M2-A | 令牌与限流基础验证通过 | 开发／测试库新增3表；确认事务、共用限流、SQL约束、真实并发及结构往返通过；85个普通测试／957断言、13个System Test／312断言全通过；注册／邮件与正式页面留M2-B／C，详见12.6 |
 | 2026-09-01 | 阶段6／M2-B | 注册与邮件后台流程验证通过 | 注册独立提交、真实令牌轮换、加密Job载荷、worker状态重检、孤立Job、有限重试与隐私日志通过；109个普通测试／1114断言、13个System Test／312断言全通过；正式页面和维护清理留M2-C，详见12.7 |
+| 2026-09-01 | 阶段6／M2-C | 实现与机械验证通过，待用户验收 | 正式注册／重发／两步验证／登录／空历史／设置／退出、locale、安全返回路径及维护清理接通；120个普通测试／1259断言、14个System Test／330断言全通过；详见12.8 |
 
 ## 18. 当前阻塞与下一步
 
 ### 当前阻塞
 
-无已知 M2-B 交付阻塞。数据库仍为既有五表；注册、实际令牌轮换、邮件入队、孤立Job、worker状态重检、有限重试、日志隐私和真实并发已通过。M2-C仍须以正式Route／Controller／页面和浏览器流程验证账户状态不泄露、CSRF、locale、两步确认、登录／空历史及维护清理，不能用后台服务测试代替用户闭环。
+无已知 M2 或阶段6工程阻塞。数据库仍为既有五表；M1、M2-A、M2-B、M2-C 及完整浏览器闭环、CSRF、并发、维护清理和质量扫描均已通过。阶段6当前只等待用户验收业务行为与页面反馈，不把机械测试通过替代用户验收。
 
 ### 当前下一步
 
-阶段6继续 M2-C：把现有 M1、M2-A、M2-B 后台能力接入正式注册、重发、两步验证、登录、空历史和退出页面；串联locale、加密待验证邮箱状态、受保护页面与安全返回路径，落实token／限流／Session维护清理，完成双语浏览器闭环并交用户验收。当前邮件中的`/email-verification`路径尚无正式端点，必须在串联后才可点击完成流程。密码重置／修改密码、Observation表与正式部署仍在后续批次。将实施状态和验证证据交给Project Maintainer判断同步范围，本任务不自动调用维护Skill。
+请用户本地验收阶段6的“注册→验证→登录→空历史→退出”闭环和中日文反馈。验收通过后，阶段6可由 Project Maintainer 同步为已完成，再按既有计划进入阶段7 Observation 核心闭环；密码重置／修改密码、Observation表与正式部署仍在后续批次。将 M2-A～C 的统一实施状态、验证证据和 observed-only 实现细节交给 Project Maintainer 判断同步范围，本任务不自动调用维护Skill。
 
 ### 18.1 阶段2～5完成审计
 

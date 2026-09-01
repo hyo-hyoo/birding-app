@@ -1,4 +1,114 @@
 "zh-CN":
+  errors:
+    format: "%{attribute}%{message}"
+    messages:
+      blank: "不能为空"
+      invalid: "格式不正确"
+      taken: "已经被使用"
+      too_short: "至少需要 %{count} 个字符"
+      too_long: "最多只能有 %{count} 个字符"
+      confirmation: "与确认内容不一致"
+  activerecord:
+    attributes:
+      user:
+        email_address: "邮箱"
+        password: "密码"
+        password_confirmation: "确认密码"
+  account_flow:
+    common:
+      back_to_login: "返回登录"
+    login:
+      resend: "重新发送验证邮件"
+      errors:
+        invalid_credentials: "邮箱或密码不正确，请重新输入。"
+        unverified: "邮箱尚未验证。请先完成验证，再重新登录。"
+    registration:
+      password_help: "密码为 8～20 个英文字母或数字，且至少包含一个字母和一个数字。"
+    verification_email:
+      page_title: "邮箱验证｜观鸟观察册"
+      request_page_title: "重新发送验证邮件｜观鸟观察册"
+      request_eyebrow: "Email verification"
+      request_title: "重新发送验证邮件"
+      request_description: "输入注册邮箱。无论账户状态如何，页面都会使用相同的安全反馈。"
+      request_submit: "请求发送验证邮件"
+      errors:
+        missing_email: "请输入邮箱。"
+        invalid_email: "请输入有效的邮箱。"
+      results:
+        created_email_queued:
+          icon: "✉"
+          eyebrow: "Check your inbox"
+          title: "账户已创建"
+          description: "验证邮件任务已加入队列。请查看收件箱，并在 15 分钟内打开链接。"
+        created_email_unavailable:
+          icon: "!"
+          eyebrow: "Try again"
+          title: "账户已创建"
+          description: "邮件暂时无法发送。账户已经保留，请稍后使用重新发送功能。"
+        accepted:
+          icon: "✉"
+          eyebrow: "Request accepted"
+          title: "请求已受理"
+          description: "如果该邮箱符合发送条件，系统会发送一封验证邮件。"
+        rate_limited:
+          icon: "…"
+          eyebrow: "Please wait"
+          title: "请求过于频繁"
+          description: "请稍后再试。此反馈不会说明邮箱是否存在。"
+        temporarily_unavailable:
+          icon: "!"
+          eyebrow: "Try again"
+          title: "暂时无法发送"
+          description: "邮件服务暂时不可用，请稍后再试。"
+        duplicate:
+          icon: "i"
+          eyebrow: "Account"
+          title: "无法创建账户"
+          description: "请返回登录，或通过重新验证入口请求验证邮件。"
+    email_verification:
+      page_title: "确认邮箱｜观鸟观察册"
+      header_action: "15 分钟内有效"
+      masked_email: "准备验证：%{email}"
+      confirm: "确认这是我的邮箱"
+      request_another: "重新发送验证邮件"
+      results:
+        valid:
+          icon: "✉"
+          eyebrow: "Confirm email"
+          title: "确认你的邮箱"
+          description: "打开链接不会自动验证。请确认下方脱敏邮箱，再提交一次。"
+        verified:
+          icon: "✓"
+          eyebrow: "Email verified"
+          title: "邮箱已验证"
+          description: "账户现在可以登录。本页不会自动创建登录状态。"
+        already_verified:
+          icon: "✓"
+          eyebrow: "Already verified"
+          title: "邮箱已经验证"
+          description: "请返回登录页，使用邮箱和密码登录。"
+        expired:
+          icon: "…"
+          eyebrow: "Link expired"
+          title: "验证链接已过期"
+          description: "请重新发送验证邮件，再使用最新链接。"
+        invalid:
+          icon: "!"
+          eyebrow: "Invalid link"
+          title: "验证链接无效"
+          description: "链接可能不完整或已经被清理。请重新请求验证邮件。"
+        consumed:
+          icon: "i"
+          eyebrow: "Link used"
+          title: "验证链接已经使用"
+          description: "该链接不能再次使用。请返回登录或重新请求验证邮件。"
+        superseded:
+          icon: "i"
+          eyebrow: "Older link"
+          title: "这不是最新链接"
+          description: "请打开最近一封验证邮件中的链接。"
+    settings:
+      password_deferred: "密码修改将在后续账户辅助切片接入"
   email_verification_mailer:
     verification:
       subject: "确认你的观鸟观察册邮箱"

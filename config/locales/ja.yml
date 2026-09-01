@@ -1,4 +1,114 @@
 ja:
+  errors:
+    format: "%{attribute}%{message}"
+    messages:
+      blank: "を入力してください"
+      invalid: "の形式が正しくありません"
+      taken: "はすでに使用されています"
+      too_short: "は %{count} 文字以上で入力してください"
+      too_long: "は %{count} 文字以内で入力してください"
+      confirmation: "が確認用の内容と一致しません"
+  activerecord:
+    attributes:
+      user:
+        email_address: "メールアドレス"
+        password: "パスワード"
+        password_confirmation: "確認用パスワード"
+  account_flow:
+    common:
+      back_to_login: "ログインに戻る"
+    login:
+      resend: "確認メールを再送する"
+      errors:
+        invalid_credentials: "メールアドレスまたはパスワードが正しくありません。"
+        unverified: "メールアドレスが未確認です。確認後、もう一度ログインしてください。"
+    registration:
+      password_help: "パスワードは半角英数字 8～20 文字で、英字と数字をそれぞれ 1 文字以上含めてください。"
+    verification_email:
+      page_title: "メール確認｜野鳥観察ノート"
+      request_page_title: "確認メールを再送｜野鳥観察ノート"
+      request_eyebrow: "Email verification"
+      request_title: "確認メールを再送"
+      request_description: "登録したメールアドレスを入力してください。アカウントの状態にかかわらず、安全な共通の結果を表示します。"
+      request_submit: "確認メールをリクエスト"
+      errors:
+        missing_email: "メールアドレスを入力してください。"
+        invalid_email: "有効なメールアドレスを入力してください。"
+      results:
+        created_email_queued:
+          icon: "✉"
+          eyebrow: "Check your inbox"
+          title: "アカウントを作成しました"
+          description: "確認メールのタスクをキューに追加しました。受信箱を確認し、15 分以内にリンクを開いてください。"
+        created_email_unavailable:
+          icon: "!"
+          eyebrow: "Try again"
+          title: "アカウントを作成しました"
+          description: "現在メールを送信できません。アカウントは保存されています。しばらくしてから再送してください。"
+        accepted:
+          icon: "✉"
+          eyebrow: "Request accepted"
+          title: "リクエストを受け付けました"
+          description: "送信条件を満たすメールアドレスには、確認メールが送信されます。"
+        rate_limited:
+          icon: "…"
+          eyebrow: "Please wait"
+          title: "リクエストが多すぎます"
+          description: "しばらくしてからお試しください。この表示からメールアドレスの登録状況は分かりません。"
+        temporarily_unavailable:
+          icon: "!"
+          eyebrow: "Try again"
+          title: "現在送信できません"
+          description: "メールサービスを一時的に利用できません。しばらくしてからお試しください。"
+        duplicate:
+          icon: "i"
+          eyebrow: "Account"
+          title: "アカウントを作成できません"
+          description: "ログインに戻るか、確認メールの再送から手続きを続けてください。"
+    email_verification:
+      page_title: "メールアドレスを確認｜野鳥観察ノート"
+      header_action: "15 分間有効"
+      masked_email: "確認するメール：%{email}"
+      confirm: "自分のメールアドレスとして確認"
+      request_another: "確認メールを再送"
+      results:
+        valid:
+          icon: "✉"
+          eyebrow: "Confirm email"
+          title: "メールアドレスを確認"
+          description: "リンクを開いただけでは認証されません。下の伏せ字のメールを確認し、もう一度送信してください。"
+        verified:
+          icon: "✓"
+          eyebrow: "Email verified"
+          title: "メールアドレスを確認しました"
+          description: "アカウントにログインできます。この画面では自動的にログインしません。"
+        already_verified:
+          icon: "✓"
+          eyebrow: "Already verified"
+          title: "メールアドレスは確認済みです"
+          description: "ログイン画面に戻り、メールアドレスとパスワードでログインしてください。"
+        expired:
+          icon: "…"
+          eyebrow: "Link expired"
+          title: "確認リンクの期限が切れています"
+          description: "確認メールを再送し、最新のリンクを使用してください。"
+        invalid:
+          icon: "!"
+          eyebrow: "Invalid link"
+          title: "確認リンクが無効です"
+          description: "リンクが不完全か、すでに削除されています。確認メールを再送してください。"
+        consumed:
+          icon: "i"
+          eyebrow: "Link used"
+          title: "このリンクは使用済みです"
+          description: "同じリンクは再利用できません。ログインに戻るか、確認メールを再送してください。"
+        superseded:
+          icon: "i"
+          eyebrow: "Older link"
+          title: "このリンクは最新ではありません"
+          description: "最後に届いた確認メールのリンクを開いてください。"
+    settings:
+      password_deferred: "パスワード変更は今後のアカウント補助スライスで接続します"
   email_verification_mailer:
     verification:
       subject: "野鳥観察ノートのメールアドレスを確認してください"

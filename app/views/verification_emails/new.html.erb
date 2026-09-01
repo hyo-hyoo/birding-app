@@ -1,0 +1,22 @@
+<% content_for :title, t("account_flow.verification_email.request_page_title") %>
+<% error_summary_id = "verification-email-error" %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("frontend_previews.verification_sent.header_title"), back_path: new_session_path, back_label: t("frontend_previews.verification_sent.back"), show_language_switcher: true, chinese_path: new_verification_email_path(locale: "zh-CN"), japanese_path: new_verification_email_path(locale: :ja) %>
+
+  <main class="app-content auth-content">
+    <%= render "shared/auth_intro", show_brand: false, eyebrow: t("account_flow.verification_email.request_eyebrow"), title: t("account_flow.verification_email.request_title"), description: t("account_flow.verification_email.request_description") %>
+
+    <%= form_with url: verification_email_path, class: "auth-card form-stack" do %>
+      <% if @input_error %>
+        <%= render "shared/form_errors", messages: [t("account_flow.verification_email.errors.#{@input_error}")], id: error_summary_id %>
+      <% end %>
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.email") %></span>
+        <%= email_field_tag :email_address, @email_address, class: "input-field", autocomplete: "email", placeholder: t("frontend_previews.forms.email_example_placeholder"), required: true, aria: (@input_error ? { invalid: "true", describedby: error_summary_id } : {}) %>
+      </label>
+      <%= submit_tag t("account_flow.verification_email.request_submit"), class: "primary-button full" %>
+      <p class="form-help"><%= t("frontend_previews.verification_sent.privacy_notice") %></p>
+    <% end %>
+  </main>
+</section>

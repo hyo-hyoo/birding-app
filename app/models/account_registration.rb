@@ -3,7 +3,7 @@ class AccountRegistration
 
   def self.register(email_address:, password:, password_confirmation:, locale:)
     user = User.new(
-      email_address: email_address,
+      email_address: User.normalize_value_for(:email_address, email_address),
       password: password,
       password_confirmation: password_confirmation
     )

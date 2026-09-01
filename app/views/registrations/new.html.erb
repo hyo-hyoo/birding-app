@@ -1,0 +1,28 @@
+<% content_for :title, t("frontend_previews.register.page_title") %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("frontend_previews.register.header_title"), back_path: new_session_path, back_label: t("frontend_previews.register.back"), show_language_switcher: true, chinese_path: new_registration_path(locale: "zh-CN"), japanese_path: new_registration_path(locale: :ja) %>
+
+  <main class="app-content auth-content">
+    <%= render "shared/auth_intro", show_brand: false, eyebrow: t("frontend_previews.register.eyebrow"), title: t("frontend_previews.register.title"), description: t("frontend_previews.register.description") %>
+
+    <%= form_with model: @user, url: registration_path, class: "auth-card form-stack" do |form| %>
+      <%= render "shared/form_errors", object: @user %>
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.email") %></span>
+        <%= form.email_field :email_address, class: "input-field", autocomplete: "email", placeholder: t("frontend_previews.forms.email_placeholder"), required: true %>
+      </label>
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.password") %></span>
+        <%= form.password_field :password, value: nil, class: "input-field", autocomplete: "new-password", placeholder: t("frontend_previews.forms.password_placeholder"), required: true %>
+      </label>
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.password_confirmation") %></span>
+        <%= form.password_field :password_confirmation, value: nil, class: "input-field", autocomplete: "new-password", placeholder: t("frontend_previews.forms.password_confirmation_placeholder"), required: true %>
+      </label>
+      <p class="form-help"><%= t("account_flow.registration.password_help") %></p>
+      <p class="form-help"><%= t("frontend_previews.register.verification_help") %></p>
+      <%= form.submit t("frontend_previews.register.submit"), class: "primary-button full" %>
+    <% end %>
+  </main>
+</section>

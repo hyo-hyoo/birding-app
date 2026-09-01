@@ -35,11 +35,12 @@ class AccountRegistrationTest < PersistentVerificationTestCase
     email_subject(email)
 
     result = AccountRegistration.register(
-      email_address: email, password: "short", password_confirmation: "different", locale: :ja
+      email_address: "  #{email.upcase} ", password: "short", password_confirmation: "different", locale: :ja
     )
 
     assert_equal :invalid, result.status
     assert_not result.user.persisted?
+    assert_equal email, result.user.email_address
     assert_nil User.find_by(email_address: email)
     assert_nil VerificationRateLimitKey.find_by(VerificationRateLimitKey.subject("email", email))
     assert_no_enqueued_jobs

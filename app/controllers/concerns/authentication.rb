@@ -1,10 +1,19 @@
-# Rails authentication-generator foundation; business routes are connected in M2.
+require "uri"
+
+# Rails authentication-generator foundation connected to formal account routes in M2.
 module Authentication
   extend ActiveSupport::Concern
 
   included do
     before_action :resume_session
+    before_action :require_authentication
     helper_method :authenticated?
+  end
+
+  class_methods do
+    def allow_unauthenticated_access(**options)
+      skip_before_action :require_authentication, **options
+    end
   end
 
   private
@@ -38,5 +47,26 @@ module Authentication
       Current.session&.destroy!
       Current.session = nil
       cookies.delete(:session_id, path: "/")
+    end
+
+    def require_authentication
+      return if authenticated?
+
+      session[:return_to_after_authenticating] = request.fullpath if request.get? && request.format.html?
+      redirect_to new_session_path
+    end
+
+    def after_authentication_url
+      path = session.delete(:return_to_after_authenticating)
+      safe_internal_path?(path) ? path : observations_path
+    end
+
+    def safe_internal_path?(path)
+      return false unless path.is_a?(String) && path.start_with?("/") && !path.start_with?("//") && !path.include?("\\")
+
+      uri = URI.parse(path)
+      uri.relative? && uri.host.nil?
+    rescue URI::InvalidURIError
+      false
     end
 end

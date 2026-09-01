@@ -22,6 +22,13 @@ Rails.application.routes.draw do
     get "previews/change-password", to: "frontend_previews#change_password", as: :frontend_preview_change_password
   end
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  resource :registration, only: %i[new create]
+  resource :session, only: %i[new create destroy]
+  resource :verification_email, path: "verification-email", only: %i[show new create]
+  get "email-verification", to: "email_verifications#show", as: :email_verification
+  post "email-verification", to: "email_verifications#update"
+  resources :observations, only: :index
+  resource :settings, only: :show
+
+  root "sessions#new"
 end

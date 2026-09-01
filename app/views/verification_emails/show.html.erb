@@ -1,0 +1,18 @@
+<% content_for :title, t("account_flow.verification_email.page_title") %>
+<% presentation = t("account_flow.verification_email.results.#{@result}") %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("frontend_previews.verification_sent.header_title"), back_path: new_session_path, back_label: t("frontend_previews.verification_sent.back") %>
+
+  <main class="app-content auth-content auth-content--centered">
+    <%= render "shared/result_card", icon: presentation[:icon], eyebrow: presentation[:eyebrow], title: presentation[:title], description: presentation[:description] do %>
+      <% if @can_resend %>
+        <%= button_to t("frontend_previews.verification_sent.resend"), verification_email_path, method: :post, class: "secondary-button full" %>
+      <% end %>
+      <%= link_to t("frontend_previews.verification_sent.use_another_email"), new_verification_email_path, class: "text-link result-card__text-link" %>
+      <%= link_to t("account_flow.common.back_to_login"), new_session_path, class: "text-link result-card__text-link" %>
+    <% end %>
+
+    <p class="notice"><%= t("frontend_previews.verification_sent.privacy_notice") %></p>
+  </main>
+</section>

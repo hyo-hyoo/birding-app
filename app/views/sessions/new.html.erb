@@ -1,0 +1,31 @@
+<% content_for :title, t("frontend_previews.login.page_title") %>
+<% error_summary_id = "login-error" %>
+
+<section class="app-page auth-view">
+  <%= render "shared/auth_header", title: t("application.name"), show_language_switcher: true, chinese_path: new_session_path(locale: "zh-CN"), japanese_path: new_session_path(locale: :ja) %>
+
+  <main class="app-content auth-content">
+    <%= render "shared/auth_intro", eyebrow: t("frontend_previews.login.eyebrow"), title: t("frontend_previews.login.title"), description: t("frontend_previews.login.description") %>
+
+    <%= form_with url: session_path, class: "auth-card form-stack" do %>
+      <% if @login_error %>
+        <%= render "shared/form_errors", messages: [t("account_flow.login.errors.#{@login_error}")], id: error_summary_id %>
+      <% end %>
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.email") %></span>
+        <%= email_field_tag :email_address, @email_address, class: "input-field", id: "login-email", autocomplete: "email", placeholder: t("frontend_previews.forms.email_placeholder"), required: true, aria: (@login_error ? { invalid: "true", describedby: error_summary_id } : {}) %>
+      </label>
+      <label class="form-label">
+        <span><%= t("frontend_previews.forms.password") %></span>
+        <%= password_field_tag :password, nil, class: "input-field", id: "login-password", autocomplete: "current-password", placeholder: t("frontend_previews.forms.password_placeholder"), required: true, aria: (@login_error ? { invalid: "true", describedby: error_summary_id } : {}) %>
+      </label>
+      <span class="text-link text-link--end" aria-disabled="true"><%= t("frontend_previews.login.forgot_password") %></span>
+      <%= submit_tag t("frontend_previews.login.submit"), class: "primary-button full" %>
+      <% if @login_error == :unverified %>
+        <%= link_to t("account_flow.login.resend"), verification_email_path, class: "text-link result-card__text-link" %>
+      <% end %>
+    <% end %>
+
+    <p class="auth-footer"><%= t("frontend_previews.login.no_account") %> <%= link_to t("frontend_previews.login.register"), new_registration_path, class: "text-link" %></p>
+  </main>
+</section>

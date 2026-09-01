@@ -4,6 +4,7 @@ require_relative "../support/account_test_support"
 # Test-only HTTP harness: not mounted in the application and not a product API.
 class AuthenticationProbeController < ActionController::Base
   include Authentication
+  allow_unauthenticated_access
   protect_from_forgery with: :exception
   self.allow_forgery_protection = true
 

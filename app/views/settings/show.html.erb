@@ -1,0 +1,67 @@
+<% content_for :title, t("frontend_previews.settings.page_title") %>
+
+<section class="app-page settings-page">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow eyebrow--compact"><%= t("frontend_previews.settings.eyebrow") %></p>
+      <h1 class="screen-title"><%= t("frontend_previews.settings.header_title") %></h1>
+    </div>
+  </header>
+
+  <main class="app-content settings-content">
+    <section class="settings-intro">
+      <h2 class="display settings-intro__title"><%= t("frontend_previews.settings.title") %></h2>
+      <p><%= t("frontend_previews.settings.description") %></p>
+    </section>
+
+    <section class="section-block" aria-labelledby="settings-account-title">
+      <div class="section-head"><h2 class="section-title" id="settings-account-title"><%= t("frontend_previews.settings.account.heading") %></h2></div>
+      <div class="settings-list">
+        <div class="setting-card setting-card--static">
+          <span class="setting-card__copy">
+            <small><%= t("frontend_previews.settings.account.email_label") %></small>
+            <strong><%= Current.user.email_address %></strong>
+          </span>
+          <span class="setting-card__indicator" aria-hidden="true">—</span>
+        </div>
+        <div class="setting-card setting-card--static" aria-disabled="true">
+          <span class="setting-card__copy">
+            <strong><%= t("frontend_previews.settings.account.change_password") %></strong>
+            <small><%= t("account_flow.settings.password_deferred") %></small>
+          </span>
+          <span class="setting-card__indicator" aria-hidden="true">—</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block" aria-labelledby="settings-language-title">
+      <div class="section-head">
+        <h2 class="section-title" id="settings-language-title"><%= t("frontend_previews.settings.language.heading") %></h2>
+        <span class="subtle"><%= t("frontend_previews.settings.language.immediate") %></span>
+      </div>
+      <div class="language-choice-card">
+        <nav class="language-choice" aria-label="<%= t("frontend_previews.settings.language.label") %>">
+          <%= link_to t("frontend_previews.shared.language.zh_cn"), settings_path(locale: "zh-CN"), class: ["choice-chip", ("is-selected" if I18n.locale == :"zh-CN")].compact.join(" "), aria: { current: ("page" if I18n.locale == :"zh-CN") } %>
+          <%= link_to t("frontend_previews.shared.language.ja"), settings_path(locale: :ja), class: ["choice-chip", ("is-selected" if I18n.locale == :ja)].compact.join(" "), aria: { current: ("page" if I18n.locale == :ja) } %>
+        </nav>
+        <p class="form-help"><%= t("frontend_previews.settings.language.help") %></p>
+      </div>
+    </section>
+
+    <section class="section-block settings-logout">
+      <%= button_to session_path, method: :delete, class: "setting-card danger-button" do %>
+        <span class="setting-card__copy">
+          <strong><%= t("frontend_previews.settings.logout.title") %></strong>
+          <small><%= t("frontend_previews.settings.logout.help") %></small>
+        </span>
+        <span class="setting-card__indicator" aria-hidden="true">›</span>
+      <% end %>
+    </section>
+  </main>
+
+  <%= render "shared/bottom_navigation", items: [
+    { label: t("frontend_previews.navigation.history"), icon: "⌂", path: observations_path, active: false },
+    { label: t("frontend_previews.navigation.new_observation"), icon: "＋", path: nil, active: false },
+    { label: t("frontend_previews.navigation.settings"), icon: "⚙", path: settings_path, active: true }
+  ] %>
+</section>

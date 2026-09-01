@@ -1,4 +1,5 @@
 class FrontendPreviewsController < ApplicationController
+  allow_unauthenticated_access
   around_action :use_preview_locale
 
   def login; end
