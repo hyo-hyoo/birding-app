@@ -42,6 +42,9 @@ group :development, :test do
 end
 
 group :development do
+  # Preview sent mail locally and keep a browser-accessible development inbox.
+  gem "letter_opener_web", "~> 3.0"
+
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 end

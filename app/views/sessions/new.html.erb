@@ -7,6 +7,10 @@
   <main class="app-content auth-content">
     <%= render "shared/auth_intro", eyebrow: t("frontend_previews.login.eyebrow"), title: t("frontend_previews.login.title"), description: t("frontend_previews.login.description") %>
 
+    <% if flash[:notice] %>
+      <p class="notice" role="status"><%= flash[:notice] %></p>
+    <% end %>
+
     <%= form_with url: session_path, class: "auth-card form-stack" do %>
       <% if @login_error %>
         <%= render "shared/form_errors", messages: [t("account_flow.login.errors.#{@login_error}")], id: error_summary_id %>

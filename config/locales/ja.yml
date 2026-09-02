@@ -19,6 +19,7 @@ ja:
       back_to_login: "ログインに戻る"
     login:
       resend: "確認メールを再送する"
+      verification_success: "メールアドレスを確認しました。メールアドレスとパスワードでログインしてください。"
       errors:
         invalid_credentials: "メールアドレスまたはパスワードが正しくありません。"
         unverified: "メールアドレスが未確認です。確認後、もう一度ログインしてください。"

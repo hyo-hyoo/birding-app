@@ -31,10 +31,10 @@ class AccountFlowSystemTest < ApplicationSystemTestCase
     assert_not user.reload.email_verified?
     click_button "确认这是我的邮箱"
 
-    assert_text "邮箱已验证"
+    assert_current_path new_session_path
+    assert_text "邮箱验证成功"
     assert user.reload.email_verified?
     assert_empty user.sessions
-    click_link "返回登录"
 
     fill_in "邮箱", with: email
     fill_in "密码", with: AccountTestSupport::PASSWORD

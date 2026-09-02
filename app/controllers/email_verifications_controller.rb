@@ -15,8 +15,12 @@ class EmailVerificationsController < ApplicationController
   def update
     @token = params[:token]
     @result = EmailVerificationToken.confirm(@token)
-    forget_pending_email if @result.status == :verified
-    session[:email_verification_result] = @result.status.to_s
-    redirect_to email_verification_path
+    if @result.status == :verified
+      forget_pending_email
+      redirect_to new_session_path, notice: t("account_flow.login.verification_success")
+    else
+      session[:email_verification_result] = @result.status.to_s
+      redirect_to email_verification_path
+    end
   end
 end

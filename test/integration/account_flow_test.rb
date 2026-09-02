@@ -130,9 +130,10 @@ class AccountFlowTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "***@example.test"
 
     post email_verification_path, params: { token: secret }
-    assert_redirected_to email_verification_path
+    assert_redirected_to new_session_path
     follow_redirect!
     assert_response :ok
+    assert_select "[role=status]", text: I18n.t("account_flow.login.verification_success", locale: :ja)
     assert user.reload.email_verified?
     assert_equal "consumed", token.reload.invalidation_reason
     assert_empty user.sessions
