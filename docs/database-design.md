@@ -2,7 +2,7 @@
 
 > 文档性质：MVP 领域模型、ER 图与物理数据库设计文档  
 > 建立日期：2026-08-17  
-> 当前状态：完整设计基线未变；M1 与 M2-A 的五张账户表已实施，M2-B／C 的邮件流程、正式页面和维护清理已通过机械验证；阶段 6 已通过用户验收，当前进入阶段 7 配置收口，M3 尚未实施
+> 当前状态：完整设计基线未变；M1、M2 的五张账户表与 M3 的三张观察表已实施；阶段 7 工程实现和机械验证完成，等待用户验收
 > 实施计划：[backend-development-plan.md](backend-development-plan.md)
 
 ## 1. 文档职责
@@ -246,9 +246,9 @@ erDiagram
 | bird_candidates | BirdCandidate／自由输入候选 | M4 鸟种识别 |
 | password_reset_tokens | PasswordResetToken／密码辅助凭证 | M5 密码辅助 |
 
-M1、M2 都属于第一个纵向切片。Solid Queue 等生产基础设施表不属于上述业务 Schema，部署准备阶段另行处理。
+M1、M2 都属于第一个纵向切片，M3 属于阶段 7 Observation 核心闭环。Solid Queue 等生产基础设施表不属于上述业务 Schema，部署准备阶段另行处理。
 
-实际落地范围：M1 已有 [CreateUsers](../db/migrate/20260831000001_create_users.rb)、[CreateSessions](../db/migrate/20260831000002_create_sessions.rb)；M2-A 新增 [CreateEmailVerificationTokens](../db/migrate/20260831000003_create_email_verification_tokens.rb)、[CreateVerificationRateLimitKeys](../db/migrate/20260831000004_create_verification_rate_limit_keys.rb)、[CreateVerificationSendAttempts](../db/migrate/20260831000005_create_verification_send_attempts.rb)。当前 [schema.rb](../db/schema.rb) 包含上述五张业务表，版本为 `20260831000005`；其余五表仍是设计。M2-B／C 没有新增或修改 Migration。两库执行、M2-only 回滚／重建与五表全新 Schema 加载证据见 [backend-development-plan.md](backend-development-plan.md) 12.6 节，邮件流程与正式页面的机械验证见 12.7～12.8 节；阶段 6 后续已通过用户验收。
+实际落地范围：M1 已有 [CreateUsers](../db/migrate/20260831000001_create_users.rb)、[CreateSessions](../db/migrate/20260831000002_create_sessions.rb)；M2-A 新增 [CreateEmailVerificationTokens](../db/migrate/20260831000003_create_email_verification_tokens.rb)、[CreateVerificationRateLimitKeys](../db/migrate/20260831000004_create_verification_rate_limit_keys.rb)、[CreateVerificationSendAttempts](../db/migrate/20260831000005_create_verification_send_attempts.rb)；M3 新增 [CreateObservations](../db/migrate/20260905000001_create_observations.rb)、[CreatePartImpressions](../db/migrate/20260905000002_create_part_impressions.rb)、[CreateActivityLocationSelections](../db/migrate/20260905000003_create_activity_location_selections.rb)。当前 [schema.rb](../db/schema.rb) 包含上述八张业务表，版本为 `20260905000003`；`bird_candidates` 与 `password_reset_tokens` 仍是设计。M3 在开发／测试库的迁移、回滚、重新迁移和 Schema 加载证据见 [backend-development-plan.md](backend-development-plan.md) 13.1.1 节。
 
 ## 10. 数据字典
 
@@ -476,7 +476,7 @@ created_at 是第一次成功保存时的应用时间，不是声称精确到数
 
 CHECK 不支持跨表业务集合约束，也不能代替动态配置校验。NULL 会让某些表达式成为 UNKNOWN，MySQL CHECK 不拒绝 UNKNOWN，故可空分支必须显式建模。[MySQL CHECK 说明](https://dev.mysql.com/doc/refman/8.4/en/create-table-check-constraints.html)
 
-这些是完整 MVP 的设计约束。M1 与 M2-A 已验证当前五表的真实 SQL 非法写入拒绝及各自相关并发；M2-A 包含令牌确认原子性、限流键竞争、双维度计数和窗口边界，M2-B／C 已补齐真实签发／重发、邮件 Job、正式页面与维护清理验证。上述证据只覆盖当前五张账户业务表；其余五表及 M3～M5 仍须逐批验证数据库保护。
+这些是完整 MVP 的设计约束。M1 与 M2-A 已验证五张账户表的真实 SQL 非法写入拒绝及相关并发；M2-B／C 已补齐真实签发／重发、邮件 Job、正式页面与维护清理验证。M3 已验证三张观察表、最低保存条件、聚合事务、所有者作用域、expected revision 与父记录行锁；其余 `bird_candidates`、`password_reset_tokens` 及 M4～M5 仍须逐批验证数据库保护。
 
 ## 13. 查询与索引分析
 
@@ -612,7 +612,7 @@ M2-A 已验证令牌确认、账户无关限流入口、真实限流并发与 SQ
 
 每个批次中按表拆成小Migration，FK、UNIQUE、CHECK随表创建；执行前审查预计Schema变化，执行后dump并在受控测试库验证schema.rb load往返，确认精确列collation、CHECK及FK保留。MySQL DDL不能假定事务回滚，失败后先检查实际结构和schema_migrations再修复；已合并迁移不改写历史。存在数据时优先向前修复，回滚需要备份和明确的数据丢失批准。
 
-阶段6的M1与M2-A五表已落地，迁移文件对应见第9节，未改变完整设计与原Migration批次；M2-B／C只是后端计划中的工程实施分组，没有新增表。正式“注册→验证→手动登录→空历史→退出”链路已通过机械验证和用户验收，阶段6已经完成。测试专用入口、令牌夹具或跳过验证的临时登录不能替代正式切片；密码重置仍延后。
+阶段6的M1与M2-A五表已经落地；M2-B／C只是工程实施分组，没有新增表。阶段7的M3三表也已按第9节设计落地，并完成迁移往返、聚合事务、授权与并发验证；用户可见 Observation 流程仍待验收。M4／M5 尚未实施，密码重置仍延后。
 
 ## 17. 数据库设计完成标准
 
@@ -648,8 +648,8 @@ M2-A 已验证令牌确认、账户无关限流入口、真实限流并发与 SQ
 
 - M1已验证两份Migration、空测试库up/down及schema.rb往返、真实FK／CHECK／唯一索引拒绝行为和14.5的认证并发。密码更新在测试中模拟，不代表密码辅助功能已实现；具体命令与结果只在后端计划12.5节维护。
 - M2-A已验证三份新Migration、M2-only回滚／重建、五表schema.rb全新加载、令牌确认原子性、限流并发与局部日志防护；M2-B／C已补齐14.6剩余故障矩阵、正式页面链路、邮件／日志防护和维护清理。命令、结果与覆盖边界见后端计划12.6～12.8节。
-- 阶段6业务行为和中日文可见反馈已通过用户验收；M3～M5继续逐批验证结构与业务约束，密码辅助还须回归14.5的登录竞态。
-- M3前确认正式配置名单，并以真实数据EXPLAIN和授权／并发测试验证查询。
+- 阶段6业务行为和中日文可见反馈已通过用户验收；M3 已完成结构、聚合事务、授权与并发验证，阶段 7 用户可见流程仍待验收；M4～M5 继续逐批验证，密码辅助还须回归14.5的登录竞态。
+- M3 已使用正式配置稳定键，并完成授权／并发测试；后续仍需按实际数据量复核查询表现，不能把当前测试外推为生产容量结论。
 - 部署前确定CA／主机身份验证、可信代理、队列持久性、真实邮件供应商、密钥与备份；当前本地连接成功不代替这些决定。
 - MySQL TLS沙箱差异、Rails与完整测试证据见后端计划；未更换客户端或降低验证配置。
 
@@ -671,4 +671,4 @@ M2-A 已验证令牌确认、账户无关限流入口、真实限流并发与 SQ
 
 ## 20. 当前下一步
 
-M1与M2-A～C已完成实现、机械验证和阶段6用户验收，当前五张账户业务表不变。当前处于阶段7A-1，正式产品配置清单已经确认，内部稳定键和素材映射仍待实施；M3 尚未实施。每批继续先审查最小改动及测试，不一次性创建其余表；阶段状态与验证计数只在后端计划维护。
+M1与M2-A～C已完成实现、机械验证和阶段6用户验收；M3 三张观察表及阶段 7B-1a～7E 的工程实现与机械验证也已完成。当前共八张业务表，阶段 7 等待用户验收；M4 鸟种识别、M5 密码辅助和生产部署仍未实施。阶段状态与完整验证计数只在后端计划维护。
