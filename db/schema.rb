@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_31_000005) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_05_000003) do
+  create_table "activity_location_selections", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "location_key", limit: 64, null: false, collation: "utf8mb4_0900_bin"
+    t.bigint "observation_id", null: false
+    t.integer "slot", limit: 1, null: false
+    t.datetime "updated_at", null: false
+    t.index ["observation_id", "location_key"], name: "uq_activity_locations_key", unique: true
+    t.index ["observation_id", "slot"], name: "uq_activity_locations_slot", unique: true
+    t.check_constraint "`slot` between 1 and 2", name: "chk_activity_locations_slot"
+    t.check_constraint "char_length(`location_key`) > 0", name: "chk_activity_locations_key"
+  end
+
   create_table "email_verification_tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "active_slot", limit: 1
     t.datetime "created_at", null: false
@@ -27,6 +39,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_31_000005) do
     t.check_constraint "((`active_slot` is not null) and (`active_slot` = 1) and (`invalidated_at` is null) and (`invalidation_reason` is null)) or ((`active_slot` is null) and (`invalidated_at` is not null) and (`invalidation_reason` is not null) and (`invalidation_reason` in (_utf8mb4'consumed',_utf8mb4'superseded')))", name: "chk_email_verification_state"
     t.check_constraint "`expires_at` > `created_at`", name: "chk_email_verification_expiry"
     t.check_constraint "regexp_like(`token_digest`,_utf8mb4'^[0-9a-f]{64}$',_utf8mb4'c')", name: "chk_email_verification_digest"
+  end
+
+  create_table "observations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.text "behavior_text"
+    t.bigint "content_revision", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.string "outline_key", limit: 64, null: false, collation: "utf8mb4_0900_bin"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "created_at", "id"], name: "ix_observations_history"
+    t.check_constraint "(`behavior_text` is null) or (char_length(`behavior_text`) between 1 and 2000)", name: "chk_observations_behavior"
+    t.check_constraint "`content_revision` >= 0", name: "chk_observations_content_revision"
+    t.check_constraint "char_length(`outline_key`) > 0", name: "chk_observations_outline"
+  end
+
+  create_table "part_impressions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "certainty_key", limit: 16, null: false, collation: "utf8mb4_0900_bin"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "feature_key", limit: 64, collation: "utf8mb4_0900_bin"
+    t.bigint "observation_id", null: false
+    t.string "part_key", limit: 64, null: false, collation: "utf8mb4_0900_bin"
+    t.string "primary_color_key", limit: 64, collation: "utf8mb4_0900_bin"
+    t.string "secondary_color_key", limit: 64, collation: "utf8mb4_0900_bin"
+    t.datetime "updated_at", null: false
+    t.index ["observation_id", "part_key"], name: "uq_part_impressions_part", unique: true
+    t.check_constraint "((`primary_color_key` is null) or (char_length(`primary_color_key`) > 0)) and ((`secondary_color_key` is null) or (char_length(`secondary_color_key`) > 0)) and ((`feature_key` is null) or (char_length(`feature_key`) > 0))", name: "chk_part_impressions_optional_keys"
+    t.check_constraint "(`description` is null) or (char_length(`description`) between 1 and 2000)", name: "chk_part_impressions_description"
+    t.check_constraint "(`primary_color_key` is not null) or (`feature_key` is not null) or (`description` is not null)", name: "chk_part_impressions_content"
+    t.check_constraint "(`secondary_color_key` is null) or ((`primary_color_key` is not null) and (`secondary_color_key` <> `primary_color_key`))", name: "chk_part_impressions_secondary_color"
+    t.check_constraint "`certainty_key` in (_utf8mb4'certain',_utf8mb4'probable',_utf8mb4'vague')", name: "chk_part_impressions_certainty"
+    t.check_constraint "`part_key` in (_utf8mb4'head',_utf8mb4'chest_belly',_utf8mb4'wing',_utf8mb4'tail')", name: "chk_part_impressions_part"
   end
 
   create_table "sessions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -71,7 +115,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_31_000005) do
     t.check_constraint "`rate_limit_passed` in (0,1)", name: "chk_verification_attempt_admission"
   end
 
+  add_foreign_key "activity_location_selections", "observations"
   add_foreign_key "email_verification_tokens", "users"
+  add_foreign_key "observations", "users"
+  add_foreign_key "part_impressions", "observations"
   add_foreign_key "sessions", "users"
   add_foreign_key "verification_send_attempts", "verification_rate_limit_keys"
 end
