@@ -1,0 +1,64 @@
+<% content_for :title, t("observations.show.page_title") %>
+
+<section class="app-page detail-page">
+  <header class="app-header">
+    <%= link_to t("observations.common.back"), observations_path, class: "back-button" %>
+    <%= link_to t("observations.show.edit"), edit_observation_path(@observation), class: "header-action detail-edit-link" %>
+  </header>
+
+  <main class="app-content detail-content">
+    <section class="detail-hero">
+      <div class="detail-meta">
+        <span class="status-pill"><%= t("observations.status.pending") %></span>
+        <span class="subtle"><%= l(@observation.created_at, format: :short) %></span>
+      </div>
+      <%= image_tag @outline.fetch(:asset), class: "outline-asset outline-asset--detail", alt: "" %>
+      <span class="detail-concept-label"><%= t("observations.show.outline_note") %></span>
+    </section>
+
+    <section class="detail-section">
+      <p class="eyebrow"><%= t("observations.show.eyebrow") %></p>
+      <h1 class="display detail-title"><%= t("observations.show.title") %></h1>
+      <p class="lead detail-lead"><%= t("observations.show.description") %></p>
+    </section>
+
+    <section class="section-block" aria-labelledby="recorded-parts-title">
+      <div class="section-head"><h2 class="section-title" id="recorded-parts-title"><%= t("observations.show.parts_heading") %></h2></div>
+      <dl class="detail-facts">
+        <% ObservationOptions.parts.each do |part| %>
+          <% impression = @part_impressions[part[:key]] %>
+          <% next unless impression %>
+          <% details = [] %>
+          <% details << observation_option_label(:colors, impression.primary_color_key) if impression.primary_color_key %>
+          <% details << t("observations.show.secondary", value: observation_option_label(:colors, impression.secondary_color_key)) if impression.secondary_color_key %>
+          <% details << observation_option_label(:features, impression.feature_key) if impression.feature_key %>
+          <% details << impression.description if impression.description %>
+          <div>
+            <dt><%= observation_option_label(:parts, part[:key]) %></dt>
+            <dd><%= details.join(" · ") %><br><small><%= observation_option_label(:certainties, impression.certainty_key) %></small></dd>
+          </div>
+        <% end %>
+      </dl>
+    </section>
+
+    <section class="section-block" aria-labelledby="supplement-title">
+      <div class="section-head"><h2 class="section-title" id="supplement-title"><%= t("observations.show.supplement_heading") %></h2></div>
+      <dl class="detail-facts">
+        <div>
+          <dt><%= t("observations.show.locations") %></dt>
+          <dd><%= @activity_locations.any? ? @activity_locations.map { |selection| observation_option_label(:activity_locations, selection.location_key) }.join(" · ") : t("observations.show.not_recorded") %></dd>
+        </div>
+        <div>
+          <dt><%= t("observations.show.behavior") %></dt>
+          <dd><%= @observation.behavior_text.presence || t("observations.show.not_recorded") %></dd>
+        </div>
+      </dl>
+    </section>
+  </main>
+
+  <%= render "shared/bottom_navigation", items: [
+    { label: t("frontend_previews.navigation.history"), icon: "⌂", path: observations_path, active: true },
+    { label: t("frontend_previews.navigation.new_observation"), icon: "＋", path: new_observation_path, active: false },
+    { label: t("frontend_previews.navigation.settings"), icon: "⚙", path: settings_path, active: false }
+  ] %>
+</section>

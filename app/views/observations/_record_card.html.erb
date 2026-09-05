@@ -1,0 +1,15 @@
+<% outline = ObservationOptions.outlines.find { |entry| entry.fetch(:key) == observation.outline_key } %>
+
+<%= link_to observation_path(observation), class: "record-card-link", aria: { label: t("observations.index.open_record") } do %>
+  <article class="record-card record-card--pending">
+    <div class="bird-thumb">
+      <%= image_tag outline.fetch(:asset), class: "outline-asset outline-asset--thumb", alt: "" %>
+    </div>
+    <div class="record-card__content">
+      <span class="status-pill"><%= t("observations.status.pending") %></span>
+      <h3><%= l(observation.created_at, format: :short) %></h3>
+      <small class="record-card__meta"><%= t("observations.index.parts_count", count: observation.part_impressions.size) %></small>
+    </div>
+    <span class="chevron" aria-hidden="true">›</span>
+  </article>
+<% end %>

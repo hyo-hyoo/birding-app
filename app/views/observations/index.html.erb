@@ -1,22 +1,41 @@
-<% content_for :title, t("frontend_previews.history_empty.page_title") %>
+<% content_for :title, t("observations.index.page_title") %>
 
 <section class="app-page preview-history-page">
   <header class="app-header">
     <div>
-      <p class="eyebrow eyebrow--compact"><%= t("frontend_previews.history_empty.eyebrow") %></p>
-      <h1 class="screen-title"><%= t("frontend_previews.history_empty.header_title") %></h1>
+      <p class="eyebrow eyebrow--compact"><%= t("observations.index.eyebrow") %></p>
+      <h1 class="screen-title"><%= t("observations.index.header_title") %></h1>
     </div>
   </header>
 
-  <main class="app-content preview-history-content">
-    <%= render "shared/result_card", icon: "⌁", eyebrow: t("frontend_previews.history_empty.result_eyebrow"), title_tag: :h2, title: t("frontend_previews.history_empty.title"), description: t("frontend_previews.history_empty.description") do %>
-      <span class="primary-button full" aria-disabled="true"><%= t("frontend_previews.history_empty.new_observation") %></span>
+  <main class="app-content history-content">
+    <% if @observations.empty? %>
+      <%= render "shared/result_card", icon: "⌁", eyebrow: t("observations.index.empty_eyebrow"), title_tag: :h2, title: t("observations.index.empty_title"), description: t("observations.index.empty_description") do %>
+        <%= link_to t("observations.index.new_observation"), new_observation_path, class: "primary-button full" %>
+      <% end %>
+    <% else %>
+      <section class="history-intro">
+        <p class="eyebrow"><%= t("observations.index.intro_eyebrow") %></p>
+        <h2 class="display history-intro__title"><%= t("observations.index.intro_title") %></h2>
+        <p class="history-intro__body"><%= t("observations.index.intro_description") %></p>
+        <%= link_to t("observations.index.new_observation"), new_observation_path, class: "primary-button" %>
+      </section>
+
+      <section class="section-block history-records" aria-labelledby="recent-records-title">
+        <div class="section-head">
+          <h2 class="section-title" id="recent-records-title"><%= t("observations.index.recent_records") %></h2>
+          <span class="subtle"><%= t("observations.index.record_count", count: @observations.size) %></span>
+        </div>
+        <div class="record-list">
+          <%= render partial: "record_card", collection: @observations, as: :observation %>
+        </div>
+      </section>
     <% end %>
   </main>
 
   <%= render "shared/bottom_navigation", items: [
     { icon: "⌂", label: t("frontend_previews.navigation.history"), active: true, path: observations_path },
-    { icon: "＋", label: t("frontend_previews.navigation.new_observation"), path: nil },
+    { icon: "＋", label: t("frontend_previews.navigation.new_observation"), path: new_observation_path },
     { icon: "⚙", label: t("frontend_previews.navigation.settings"), path: settings_path }
   ] %>
 </section>

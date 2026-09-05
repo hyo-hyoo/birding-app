@@ -1,0 +1,5 @@
+<% if @show_editor %>
+  <%= render "form", form_url: observations_path, form_method: :post, back_url: new_observation_path %>
+<% else %>
+  <%= render "outline_selector" %>
+<% end %>

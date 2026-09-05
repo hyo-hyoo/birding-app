@@ -895,6 +895,113 @@ select:focus-visible {
   font-weight: 750;
 }
 
+/* Formal Observation flow: real form controls reuse the approved preview surface. */
+.outline-asset {
+  display: block;
+  width: 100%;
+  height: 76px;
+  object-fit: contain;
+  filter: sepia(0.12) saturate(0.72) contrast(0.92);
+}
+
+.outline-asset--group { height: 86px; }
+.outline-asset--thumb { width: 88px; height: 68px; }
+
+.outline-asset--specimen,
+.outline-asset--detail {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  width: calc(100% - 24px);
+  height: 168px;
+}
+
+.outline-asset--detail { height: 190px; }
+
+.formal-outline-section + .formal-outline-section { margin-top: 20px; }
+
+.formal-outline-section h3 {
+  margin: 0 0 9px;
+  color: var(--quiet);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.record-card__meta {
+  display: block;
+  margin-top: 5px;
+  color: var(--quiet);
+  font-size: 10px;
+}
+
+.editor-page form {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+}
+
+fieldset.field-group {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+.swatch-option {
+  position: relative;
+  display: grid;
+  flex: 0 0 52px;
+  justify-items: center;
+  gap: 5px;
+  color: var(--quiet);
+  cursor: pointer;
+  font-size: 9px;
+}
+
+.swatch-option input,
+.choice-chip input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.swatch-dot,
+.swatch-clear {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(40, 74, 62, 0.2);
+  border-radius: 50%;
+  background: var(--swatch);
+  color: var(--quiet);
+  font-size: 16px;
+}
+
+.swatch-clear { background: var(--paper-strong); }
+
+.swatch-option:has(input:checked) .swatch-dot,
+.swatch-option:has(input:checked) .swatch-clear {
+  border-color: var(--paper);
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px var(--ginkgo);
+  transform: scale(0.93);
+}
+
+.choice-chip:has(input:checked) {
+  border-color: var(--pine);
+  background: var(--selection);
+  color: var(--pine);
+  font-weight: 750;
+}
+
+.choice-chip:focus-within,
+.swatch-option:focus-within {
+  outline: 3px solid rgba(63, 113, 155, 0.38);
+  outline-offset: 2px;
+}
+
 .text-field {
   width: 100%;
   min-height: 92px;

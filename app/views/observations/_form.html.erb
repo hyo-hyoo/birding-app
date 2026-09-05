@@ -1,0 +1,168 @@
+<% editing = form_method == :patch %>
+<% content_for :title, t(editing ? "observations.form.edit_page_title" : "observations.form.new_page_title") %>
+<% selected_locations = submission_location_keys(@submission) %>
+
+<section class="app-page editor-page"
+         data-controller="observation-form"
+         data-observation-form-exit-url-value="<%= back_url %>"
+         data-observation-form-empty-message-value="<%= t("observations.form.save_empty") %>"
+         data-observation-form-certainty-message-value="<%= t("observations.form.save_certainty") %>"
+         data-observation-form-ready-message-value="<%= t("observations.form.save_ready") %>"
+         data-observation-form-location-limit-message-value="<%= t("observations.form.location_limit") %>">
+  <%= form_with scope: :observation, url: form_url, method: form_method, html: { data: { observation_form_target: "form", action: "input->observation-form#changed submit->observation-form#submit" } } do |form| %>
+    <%= form.hidden_field :outline_key, value: @submission.outline_key %>
+    <% if editing %>
+      <%= form.hidden_field :expected_revision, value: @submission.expected_revision %>
+    <% end %>
+
+    <header class="app-header">
+      <button class="back-button" type="button" data-action="observation-form#requestExit"><%= t("observations.common.back") %></button>
+      <span class="header-action"><%= t(editing ? "observations.form.edit_action" : "observations.form.new_action") %></span>
+    </header>
+
+    <main class="app-content editor-content spine">
+      <section class="hero-copy spine-node">
+        <p class="eyebrow"><%= t("observations.form.eyebrow") %></p>
+        <h1 class="display"><%= t(editing ? "observations.form.edit_title" : "observations.form.new_title") %></h1>
+        <p class="lead"><%= t("observations.form.description") %></p>
+      </section>
+
+      <% if @submission.errors.any? %>
+        <% message = @submission.errors.of_kind?(:expected_revision, :stale) ? t("observations.form.stale_error") : t("observations.form.invalid_error") %>
+        <%= render "shared/form_errors", messages: [ message ], id: "observation-form-errors" %>
+      <% end %>
+
+      <section class="specimen-card spine-node" aria-labelledby="specimen-heading">
+        <div class="specimen-label">
+          <span id="specimen-heading"><%= t("observations.form.selected_outline") %></span>
+          <strong><%= observation_option_label(:outlines, @outline[:key]) %></strong>
+        </div>
+        <%= image_tag @outline.fetch(:asset), class: "outline-asset outline-asset--specimen", alt: "" %>
+      </section>
+
+      <section class="section-block spine-node">
+        <div class="section-head">
+          <h2 class="section-title"><%= t("observations.form.parts_heading") %></h2>
+          <span class="subtle"><%= t("observations.form.parts_help") %></span>
+        </div>
+        <div class="part-tabs" role="tablist" aria-label="<%= t("observations.form.parts_heading") %>">
+          <% ObservationOptions.parts.each_with_index do |part, index| %>
+            <button class="part-tab<%= " is-active" if index.zero? %>" type="button" role="tab"
+                    aria-selected="<%= index.zero? %>" data-part-key="<%= part[:key] %>"
+                    data-observation-form-target="partTab" data-action="observation-form#choosePart">
+              <%= observation_option_label(:parts, part[:key]) %>
+            </button>
+          <% end %>
+        </div>
+      </section>
+
+      <% ObservationOptions.parts.each_with_index do |part, index| %>
+        <% part_key = part[:key] %>
+        <% values = submission_part_values(@submission, part_key) %>
+        <section class="section-block spine-node" data-part-key="<%= part_key %>"
+                 data-observation-form-target="partPanel" <%= "hidden" unless index.zero? %>>
+          <div class="section-head">
+            <h2 class="section-title"><%= t("observations.form.part_title", part: observation_option_label(:parts, part_key)) %></h2>
+            <span class="subtle"><%= t("observations.form.skippable") %></span>
+          </div>
+          <div class="editor-panel">
+            <fieldset class="field-group">
+              <legend class="field-label"><%= t("observations.form.primary_color") %></legend>
+              <div class="swatch-row">
+                <label class="swatch-option">
+                  <%= radio_button_tag "observation[parts][#{part_key}][primary_color_key]", "", values[:primary_color_key].blank? %>
+                  <span class="swatch-clear">—</span><small><%= t("observations.form.none") %></small>
+                </label>
+                <% ObservationOptions.colors.each do |color| %>
+                  <label class="swatch-option">
+                    <%= radio_button_tag "observation[parts][#{part_key}][primary_color_key]", color[:key], values[:primary_color_key] == color[:key] %>
+                    <span class="swatch-dot" style="--swatch:<%= color[:hex] %>"></span>
+                    <small><%= observation_option_label(:colors, color[:key]) %></small>
+                  </label>
+                <% end %>
+              </div>
+            </fieldset>
+
+            <fieldset class="field-group">
+              <legend class="field-label"><%= t("observations.form.secondary_color") %> <small><%= t("observations.form.optional") %></small></legend>
+              <div class="swatch-row">
+                <label class="swatch-option">
+                  <%= radio_button_tag "observation[parts][#{part_key}][secondary_color_key]", "", values[:secondary_color_key].blank? %>
+                  <span class="swatch-clear">—</span><small><%= t("observations.form.none") %></small>
+                </label>
+                <% ObservationOptions.colors.each do |color| %>
+                  <label class="swatch-option">
+                    <%= radio_button_tag "observation[parts][#{part_key}][secondary_color_key]", color[:key], values[:secondary_color_key] == color[:key] %>
+                    <span class="swatch-dot" style="--swatch:<%= color[:hex] %>"></span>
+                    <small><%= observation_option_label(:colors, color[:key]) %></small>
+                  </label>
+                <% end %>
+              </div>
+            </fieldset>
+
+            <fieldset class="field-group">
+              <legend class="field-label"><%= t("observations.form.feature") %></legend>
+              <div class="chip-row">
+                <label class="choice-chip"><%= radio_button_tag "observation[parts][#{part_key}][feature_key]", "", values[:feature_key].blank? %><%= t("observations.form.none") %></label>
+                <% ObservationOptions.features_for(part_key).each do |feature| %>
+                  <label class="choice-chip"><%= radio_button_tag "observation[parts][#{part_key}][feature_key]", feature[:key], values[:feature_key] == feature[:key] %><%= observation_option_label(:features, feature[:key]) %></label>
+                <% end %>
+              </div>
+            </fieldset>
+
+            <fieldset class="field-group">
+              <legend class="field-label"><%= t("observations.form.certainty") %></legend>
+              <div class="chip-row">
+                <label class="choice-chip"><%= radio_button_tag "observation[parts][#{part_key}][certainty_key]", "", values[:certainty_key].blank? %><%= t("observations.form.none") %></label>
+                <% ObservationOptions.certainties.each do |certainty| %>
+                  <label class="choice-chip"><%= radio_button_tag "observation[parts][#{part_key}][certainty_key]", certainty[:key], values[:certainty_key] == certainty[:key] %><%= observation_option_label(:certainties, certainty[:key]) %></label>
+                <% end %>
+              </div>
+            </fieldset>
+
+            <div class="field-group">
+              <label class="field-label" for="observation-part-<%= part_key %>-description"><%= t("observations.form.note") %> <small><%= t("observations.form.optional") %></small></label>
+              <%= text_area_tag "observation[parts][#{part_key}][description]", values[:description], id: "observation-part-#{part_key}-description", maxlength: 2000, class: "text-field", placeholder: t("observations.form.note_placeholder") %>
+            </div>
+          </div>
+        </section>
+      <% end %>
+
+      <section class="section-block spine-node supplement-section">
+        <div class="section-head">
+          <h2 class="section-title"><%= t("observations.form.supplement_heading") %></h2>
+          <span class="subtle"><%= t("observations.form.optional") %></span>
+        </div>
+        <fieldset class="field-group">
+          <legend class="field-label"><%= t("observations.form.locations_label") %> <small><%= t("observations.form.locations_help") %></small></legend>
+          <div class="chip-row">
+            <% ObservationOptions.activity_locations.each do |location| %>
+              <label class="choice-chip">
+                <%= check_box_tag "observation[activity_location_keys][]", location[:key], selected_locations.include?(location[:key]), id: "observation-location-#{location[:key]}", data: { observation_form_target: "location" } %>
+                <%= observation_option_label(:activity_locations, location[:key]) %>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+        <label class="field-label behavior-label" for="observation-behavior"><%= t("observations.form.behavior") %> <small><%= t("observations.form.optional") %></small></label>
+        <%= form.text_area :behavior_text, value: @submission.behavior_text, id: "observation-behavior", maxlength: 2000, class: "text-field text-field--compact", placeholder: t("observations.form.behavior_placeholder") %>
+      </section>
+    </main>
+
+    <footer class="editor-dock">
+      <p class="save-state" role="status" aria-live="polite" data-observation-form-target="saveStatus"><%= t("observations.form.save_ready") %></p>
+      <%= form.submit t(editing ? "observations.form.update" : "observations.form.save"), class: "primary-button full", data: { observation_form_target: "save" } %>
+    </footer>
+
+    <dialog class="confirm-dialog" aria-labelledby="observation-leave-title" data-observation-form-target="dialog">
+      <div class="dialog-content">
+        <h2 id="observation-leave-title"><%= t("observations.form.leave_title") %></h2>
+        <p><%= t("observations.form.leave_description") %></p>
+        <div class="dialog-actions">
+          <button class="primary-button full" type="button" data-action="observation-form#continueEditing"><%= t("observations.form.continue_editing") %></button>
+          <button class="secondary-button full" type="button" data-action="observation-form#discard"><%= t("observations.form.discard") %></button>
+        </div>
+      </div>
+    </dialog>
+  <% end %>
+</section>

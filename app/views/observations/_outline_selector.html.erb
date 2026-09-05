@@ -1,0 +1,91 @@
+<% content_for :title, t("observations.outline.page_title") %>
+
+<section class="app-page outline-page"
+         data-controller="observation-outline"
+         data-observation-outline-editor-url-value="<%= new_observation_path %>"
+         data-observation-outline-groups-progress-value="<%= t("observations.outline.groups_progress") %>"
+         data-observation-outline-outlines-progress-value="<%= t("observations.outline.outlines_progress") %>">
+  <header class="app-header">
+    <%= link_to t("observations.common.back"), observations_path, class: "back-button" %>
+    <span class="header-action"><%= t("observations.outline.header_action") %></span>
+  </header>
+
+  <main class="app-content outline-content">
+    <section class="outline-intro">
+      <p class="eyebrow"><%= t("observations.outline.eyebrow") %></p>
+      <h1 class="display"><%= t("observations.outline.title") %></h1>
+      <p class="lead"><%= t("observations.outline.description") %></p>
+    </section>
+
+    <div class="progress-row" aria-label="<%= t("observations.outline.progress_label") %>">
+      <span class="is-active" data-observation-outline-target="progressStep"></span>
+      <span data-observation-outline-target="progressStep"></span>
+      <small data-observation-outline-target="progressLabel"><%= t("observations.outline.groups_progress") %></small>
+    </div>
+
+    <section class="outline-stage is-active" data-observation-outline-target="groupsStage">
+      <div class="group-grid">
+        <% ObservationOptions.outline_groups.each do |group| %>
+          <% representative = ObservationOptions.outlines.find { |outline| outline[:group_key] == group[:key] } %>
+          <button class="group-card" type="button" aria-pressed="false"
+                  data-group-key="<%= group[:key] %>"
+                  data-observation-outline-target="groupCard"
+                  data-action="observation-outline#chooseGroup">
+            <%= image_tag representative.fetch(:asset), class: "outline-asset outline-asset--group", alt: "" %>
+            <strong><%= ObservationOptions.label(:outline_groups, group[:key]) %></strong>
+            <small><%= t("observations.outline.group_help") %></small>
+          </button>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="outline-stage" data-observation-outline-target="outlinesStage" hidden>
+      <div class="section-head">
+        <h2 class="section-title"><%= t("observations.outline.outline_title") %></h2>
+        <button class="back-button" type="button" data-action="observation-outline#returnToGroups"><%= t("observations.outline.choose_group_again") %></button>
+      </div>
+
+      <% ObservationOptions.outline_groups.each do |group| %>
+        <div data-observation-outline-target="groupOutlines" data-group-key="<%= group[:key] %>" hidden>
+          <% ObservationOptions.orders.each do |order| %>
+            <% outlines = ObservationOptions.outlines.select { |outline| outline[:group_key] == group[:key] && outline[:order_key] == order[:key] } %>
+            <% next if outlines.empty? %>
+            <section class="formal-outline-section">
+              <h3><%= ObservationOptions.label(:orders, order[:key]) %></h3>
+              <div class="shape-grid">
+                <% outlines.each do |outline| %>
+                  <button class="shape-card" type="button" aria-pressed="false"
+                          data-outline-key="<%= outline[:key] %>"
+                          data-observation-outline-target="selection"
+                          data-action="observation-outline#chooseOutline">
+                    <%= image_tag outline.fetch(:asset), class: "outline-asset", alt: "" %>
+                    <strong><%= ObservationOptions.label(:outlines, outline[:key]) %></strong>
+                  </button>
+                <% end %>
+              </div>
+            </section>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% fallback = ObservationOptions.outlines.find { |outline| outline.fetch(:fallback, false) } %>
+      <button class="fallback-card" type="button" aria-pressed="false"
+              data-outline-key="<%= fallback[:key] %>"
+              data-observation-outline-target="selection"
+              data-action="observation-outline#chooseOutline">
+        <span>
+          <strong><%= ObservationOptions.label(:outlines, fallback[:key]) %></strong>
+          <small><%= t("observations.outline.fallback_description") %></small>
+        </span>
+        <span aria-hidden="true">›</span>
+      </button>
+
+      <p class="outline-example-note"><%= t("observations.outline.disclaimer") %></p>
+      <div class="selection-dock">
+        <button class="primary-button full" type="button" disabled aria-disabled="true"
+                data-observation-outline-target="continue"
+                data-action="observation-outline#continue"><%= t("observations.outline.continue") %></button>
+      </div>
+    </section>
+  </main>
+</section>
