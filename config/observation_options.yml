@@ -1,0 +1,305 @@
+version: 1
+
+outline_groups:
+  - key: water_surface
+  - key: water_edge
+  - key: large_bird
+  - key: small_bird
+
+orders:
+  - key: anseriformes
+  - key: podicipediformes
+  - key: suliformes
+  - key: gruiformes
+  - key: pelecaniformes
+  - key: charadriiformes
+  - key: coraciiformes
+  - key: accipitriformes
+  - key: columbiformes
+  - key: piciformes
+  - key: falconiformes
+  - key: passeriformes
+
+outlines:
+  - key: anatidae
+    group_key: water_surface
+    order_key: anseriformes
+    family_keys: [anatidae]
+    asset: observation_outlines/anatidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: d20848dc-7587-4a4e-8abd-3cc69c7a0f23
+      representative_taxon: Anas platyrhynchos
+      creator: Sharon Wegner-Larsen
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/d20848dc-7587-4a4e-8abd-3cc69c7a0f23/anas-platyrhynchos
+      vector_url: https://images.phylopic.org/images/d20848dc-7587-4a4e-8abd-3cc69c7a0f23/vector.svg
+  - key: podicipedidae
+    group_key: water_surface
+    order_key: podicipediformes
+    family_keys: [podicipedidae]
+    asset: observation_outlines/podicipedidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: a8702ec9-7846-46f6-a6ef-be35737b8f68
+      representative_taxon: Podiceps auritus
+      creator: Andy Wilson
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/a8702ec9-7846-46f6-a6ef-be35737b8f68/podiceps-auritus
+      vector_url: https://images.phylopic.org/images/a8702ec9-7846-46f6-a6ef-be35737b8f68/vector.svg
+  - key: phalacrocoracidae
+    group_key: water_surface
+    order_key: suliformes
+    family_keys: [phalacrocoracidae]
+    asset: observation_outlines/phalacrocoracidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: b901c16b-7a36-4533-81cc-e8e38b387c86
+      representative_taxon: Phalacrocorax carbo
+      creator: Andy Wilson
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/b901c16b-7a36-4533-81cc-e8e38b387c86/phalacrocorax-carbo
+      vector_url: https://images.phylopic.org/images/b901c16b-7a36-4533-81cc-e8e38b387c86/vector.svg
+  - key: rallidae
+    group_key: water_surface
+    order_key: gruiformes
+    family_keys: [rallidae]
+    asset: observation_outlines/rallidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: 5aaa4378-de29-4a20-bdaa-41a8b9b7ad54
+      representative_taxon: Fulica atra
+      creator: Andy Wilson
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/5aaa4378-de29-4a20-bdaa-41a8b9b7ad54/fulica-atra
+      vector_url: https://images.phylopic.org/images/5aaa4378-de29-4a20-bdaa-41a8b9b7ad54/vector.svg
+  - key: ardeidae
+    group_key: water_edge
+    order_key: pelecaniformes
+    family_keys: [ardeidae]
+    asset: observation_outlines/ardeidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: 5d38ae89-8938-427d-ba49-3ae4cde0016c
+      representative_taxon: Ardea cinerea
+      creator: Guillaume Dera
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/5d38ae89-8938-427d-ba49-3ae4cde0016c/ardea-cinerea
+      vector_url: https://images.phylopic.org/images/5d38ae89-8938-427d-ba49-3ae4cde0016c/vector.svg
+  - key: laridae
+    group_key: water_edge
+    order_key: charadriiformes
+    family_keys: [laridae]
+    asset: observation_outlines/laridae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: 1e45eae7-b1eb-4a08-9e1f-4f34f2fb7710
+      representative_taxon: Larus argentatus
+      creator: Andy Wilson
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/1e45eae7-b1eb-4a08-9e1f-4f34f2fb7710/larus-argentatus
+      vector_url: https://images.phylopic.org/images/1e45eae7-b1eb-4a08-9e1f-4f34f2fb7710/vector.svg
+  - key: scolopacidae
+    group_key: water_edge
+    order_key: charadriiformes
+    family_keys: [scolopacidae]
+    asset: observation_outlines/scolopacidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: 9e9780c0-baaf-4c83-a2d5-58c62a62135e
+      representative_taxon: Actitis hypoleucos
+      creator: Ferran Sayol
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/9e9780c0-baaf-4c83-a2d5-58c62a62135e/actitis-hypoleucos
+      vector_url: https://images.phylopic.org/images/9e9780c0-baaf-4c83-a2d5-58c62a62135e/vector.svg
+  - key: alcedinidae
+    group_key: water_edge
+    order_key: coraciiformes
+    family_keys: [alcedinidae]
+    asset: observation_outlines/alcedinidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: 6209c9be-060e-4d7f-bc74-a75f3ccf4629
+      representative_taxon: Alcedinidae
+      creator: Ferran Sayol
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/6209c9be-060e-4d7f-bc74-a75f3ccf4629/alcedinidae
+      vector_url: https://images.phylopic.org/images/6209c9be-060e-4d7f-bc74-a75f3ccf4629/vector.svg
+  - key: hawk_like
+    group_key: large_bird
+    order_key: accipitriformes
+    family_keys: [accipitridae, pandionidae]
+    asset: observation_outlines/hawk_like.svg
+    source:
+      provider: PhyloPic
+      image_uuid: 52b004bc-28cb-4bcd-8a99-f4a0add5c815
+      representative_taxon: Milvus migrans
+      creator: Andy Wilson
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/52b004bc-28cb-4bcd-8a99-f4a0add5c815/milvus-migrans
+      vector_url: https://images.phylopic.org/images/52b004bc-28cb-4bcd-8a99-f4a0add5c815/vector.svg
+  - key: falconidae
+    group_key: large_bird
+    order_key: falconiformes
+    family_keys: [falconidae]
+    asset: observation_outlines/falconidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: 2a94bd08-2911-4173-a6b8-11ec42594b77
+      representative_taxon: Falco peregrinus
+      creator: Andy Wilson
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/2a94bd08-2911-4173-a6b8-11ec42594b77/falco-peregrinus
+      vector_url: https://images.phylopic.org/images/2a94bd08-2911-4173-a6b8-11ec42594b77/vector.svg
+  - key: columbidae
+    group_key: large_bird
+    order_key: columbiformes
+    family_keys: [columbidae]
+    asset: observation_outlines/columbidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: 72b244df-e746-4109-83c0-a21d8de309f0
+      representative_taxon: Columba livia
+      creator: Caleb M. Gordon
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/72b244df-e746-4109-83c0-a21d8de309f0/columba-livia
+      vector_url: https://images.phylopic.org/images/72b244df-e746-4109-83c0-a21d8de309f0/vector.svg
+  - key: corvidae
+    group_key: large_bird
+    order_key: passeriformes
+    family_keys: [corvidae]
+    asset: observation_outlines/corvidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: a8b7e68a-6c32-4088-aac7-913849bc9e5c
+      representative_taxon: Corvus corax
+      creator: Anthony Caravaggi
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/a8b7e68a-6c32-4088-aac7-913849bc9e5c/corvus-corax
+      vector_url: https://images.phylopic.org/images/a8b7e68a-6c32-4088-aac7-913849bc9e5c/vector.svg
+  - key: picidae
+    group_key: large_bird
+    order_key: piciformes
+    family_keys: [picidae]
+    asset: observation_outlines/picidae.svg
+    source:
+      provider: PhyloPic
+      image_uuid: ddd5783c-ded5-48f2-a07d-cc37c83b227b
+      representative_taxon: Dendrocopos major
+      creator: Steven Traver
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/ddd5783c-ded5-48f2-a07d-cc37c83b227b/dendrocopos-major
+      vector_url: https://images.phylopic.org/images/ddd5783c-ded5-48f2-a07d-cc37c83b227b/vector.svg
+  - key: compact_passerine
+    group_key: small_bird
+    order_key: passeriformes
+    family_keys: [paridae, zosteropidae, passeridae]
+    asset: observation_outlines/compact_passerine.svg
+    source:
+      provider: PhyloPic
+      image_uuid: 069c4833-e1ac-48e7-90d5-f7bd11000588
+      representative_taxon: Cyanistes caeruleus
+      creator: Wouter Koch
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/069c4833-e1ac-48e7-90d5-f7bd11000588/cyanistes-caeruleus
+      vector_url: https://images.phylopic.org/images/069c4833-e1ac-48e7-90d5-f7bd11000588/vector.svg
+  - key: upright_passerine
+    group_key: small_bird
+    order_key: passeriformes
+    family_keys: [muscicapidae, turdidae, sturnidae]
+    asset: observation_outlines/upright_passerine.svg
+    source:
+      provider: PhyloPic
+      image_uuid: b0d54194-4105-4694-b670-b693df1640cf
+      representative_taxon: Erithacus rubecula
+      creator: Anthony Caravaggi
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/b0d54194-4105-4694-b670-b693df1640cf/erithacus-rubecula
+      vector_url: https://images.phylopic.org/images/b0d54194-4105-4694-b670-b693df1640cf/vector.svg
+  - key: long_tailed_passerine
+    group_key: small_bird
+    order_key: passeriformes
+    family_keys: [motacillidae, aegithalidae, pycnonotidae]
+    asset: observation_outlines/long_tailed_passerine.svg
+    source:
+      provider: PhyloPic
+      image_uuid: f4327bb3-76b9-4f60-b407-45e2c9ac602b
+      representative_taxon: Motacilla alba
+      creator: Andy Wilson
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/f4327bb3-76b9-4f60-b407-45e2c9ac602b/motacilla-alba
+      vector_url: https://images.phylopic.org/images/f4327bb3-76b9-4f60-b407-45e2c9ac602b/vector.svg
+  - key: generic
+    fallback: true
+    asset: observation_outlines/generic.svg
+    source:
+      provider: PhyloPic
+      image_uuid: e55d26b9-d7f8-4603-b71f-ab4a4a536e56
+      representative_taxon: Passeridae
+      creator: Ferran Sayol
+      license: CC0-1.0
+      page_url: https://www.phylopic.org/images/e55d26b9-d7f8-4603-b71f-ab4a4a536e56/passeridae
+      vector_url: https://images.phylopic.org/images/e55d26b9-d7f8-4603-b71f-ab4a4a536e56/vector.svg
+
+colors:
+  - { key: white, hex: "#F5F3EA" }
+  - { key: black, hex: "#252729" }
+  - { key: gray, hex: "#8B8E8C" }
+  - { key: blue_gray, hex: "#718797" }
+  - { key: brown, hex: "#79513A" }
+  - { key: buff, hex: "#C6A66B" }
+  - { key: rufous, hex: "#A65332" }
+  - { key: red, hex: "#B43D3D" }
+  - { key: orange, hex: "#D67A32" }
+  - { key: yellow, hex: "#D2B13E" }
+  - { key: green, hex: "#5E7B4D" }
+  - { key: blue, hex: "#3F719B" }
+
+parts:
+  - { key: head }
+  - { key: chest_belly }
+  - { key: wing }
+  - { key: tail }
+
+features:
+  - { key: streaked, parts: [head, chest_belly, wing, tail] }
+  - { key: barred, parts: [head, chest_belly, wing, tail] }
+  - { key: spotted, parts: [head, chest_belly, wing, tail] }
+  - { key: large_patch, parts: [head, chest_belly, wing, tail] }
+  - { key: mottled, parts: [head, chest_belly, wing, tail] }
+  - { key: iridescent, parts: [head, chest_belly, wing, tail] }
+  - { key: eye_ring, parts: [head] }
+  - { key: eye_stripe, parts: [head] }
+  - { key: eyebrow_stripe, parts: [head] }
+  - { key: cheek_patch, parts: [head] }
+  - { key: crest, parts: [head] }
+  - { key: throat_patch, parts: [head] }
+  - { key: neck_ring, parts: [head] }
+  - { key: breast_band, parts: [chest_belly] }
+  - { key: wing_bars, parts: [wing] }
+  - { key: wing_patch, parts: [wing] }
+  - { key: pale_feather_edges, parts: [wing] }
+  - { key: speculum, parts: [wing] }
+  - { key: tail_band, parts: [tail] }
+  - { key: pale_tail_tip, parts: [tail] }
+  - { key: white_outer_tail, parts: [tail] }
+  - { key: forked_tail, parts: [tail] }
+  - { key: long_tail, parts: [tail] }
+
+certainties:
+  - { key: certain }
+  - { key: probable }
+  - { key: vague }
+
+activity_locations:
+  - { key: water_surface }
+  - { key: shallow_water }
+  - { key: waterside }
+  - { key: ground }
+  - { key: grass_reeds }
+  - { key: shrub }
+  - { key: tree_branch }
+  - { key: tree_trunk }
+  - { key: building }
+  - { key: wire_pole }
+  - { key: air }
