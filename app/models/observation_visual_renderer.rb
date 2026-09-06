@@ -2,21 +2,21 @@ class ObservationVisualRenderer
   include ActionView::Helpers::OutputSafetyHelper
   include ActionView::Helpers::TagHelper
 
-  PATTERN_FEATURES = %w[streaked barred spotted mottled iridescent].freeze
+  PART_DRAW_ORDER = %w[chest_belly tail wing head].freeze
   ELEMENT_ATTRIBUTES = {
-    "d" => :d,
-    "cx" => :cx,
-    "cy" => :cy,
-    "r" => :r,
-    "rx" => :rx,
-    "ry" => :ry,
-    "x1" => :x1,
-    "x2" => :x2,
-    "y1" => :y1,
-    "y2" => :y2,
-    "points" => :points,
-    "fill" => :fill,
-    "stroke_width" => :stroke_width
+    "d" => "d",
+    "cx" => "cx",
+    "cy" => "cy",
+    "r" => "r",
+    "rx" => "rx",
+    "ry" => "ry",
+    "x1" => "x1",
+    "x2" => "x2",
+    "y1" => "y1",
+    "y2" => "y2",
+    "points" => "points",
+    "fill" => "fill",
+    "stroke_width" => "stroke-width"
   }.freeze
 
   attr_reader :impression, :id_prefix, :label
@@ -31,7 +31,7 @@ class ObservationVisualRenderer
     raise KeyError, "outline has no stage 8 visual mapping" unless impression.mapped?
 
     tag.svg(
-      safe_join([ definitions, scene, parts, details ]),
+      safe_join([ definitions, scene, parts, silhouette_outline, details ]),
       class: "observation-impression-svg",
       viewBox: ObservationVisualCatalog.view_box,
       role: "img",
@@ -48,36 +48,8 @@ class ObservationVisualRenderer
 
   def definitions
     tag.defs do
-      safe_join(pattern_definitions + gradient_definitions + clip_definitions)
+      safe_join(clip_definitions + [ silhouette_clip_definition ].compact)
     end
-  end
-
-  def pattern_definitions
-    [
-      tag.pattern(tag.path(d: "M3 -2 V12", stroke: ObservationVisualCatalog.outline_color, stroke_width: 2, opacity: 0.58),
-        id: pattern_id("streaked"), width: 10, height: 10, patternUnits: "userSpaceOnUse", patternTransform: "rotate(-12)"),
-      tag.pattern(tag.path(d: "M-2 5 H14", stroke: ObservationVisualCatalog.outline_color, stroke_width: 2, opacity: 0.58),
-        id: pattern_id("barred"), width: 12, height: 12, patternUnits: "userSpaceOnUse", patternTransform: "rotate(-4)"),
-      tag.pattern(tag.circle(cx: 5, cy: 5, r: 2.2, fill: ObservationVisualCatalog.outline_color, opacity: 0.58),
-        id: pattern_id("spotted"), width: 12, height: 12, patternUnits: "userSpaceOnUse"),
-      tag.pattern(safe_join([
-        tag.circle(cx: 4, cy: 5, r: 2.8, fill: ObservationVisualCatalog.outline_color, opacity: 0.34),
-        tag.circle(cx: 13, cy: 12, r: 3.6, fill: ObservationVisualCatalog.detail_color, opacity: 0.28)
-      ]), id: pattern_id("mottled"), width: 18, height: 18, patternUnits: "userSpaceOnUse")
-    ]
-  end
-
-  def gradient_definitions
-    [
-      tag.linearGradient(
-        safe_join([
-          tag.stop(offset: "0%", stop_color: "#3F719B", stop_opacity: 0.62),
-          tag.stop(offset: "48%", stop_color: "#7F9660", stop_opacity: 0.48),
-          tag.stop(offset: "100%", stop_color: "#A6537C", stop_opacity: 0.6)
-        ]),
-        id: pattern_id("iridescent"), x1: "0%", y1: "0%", x2: "100%", y2: "100%"
-      )
-    ]
   end
 
   def clip_definitions
@@ -92,7 +64,10 @@ class ObservationVisualRenderer
   end
 
   def parts
-    safe_join(ObservationOptions.part_keys.map { |part_key| render_part(part_key) })
+    content = safe_join(PART_DRAW_ORDER.map { |part_key| render_part(part_key) })
+    return content unless source_frame
+
+    tag.g(content, "clip-path" => "url(##{silhouette_clip_id})")
   end
 
   def render_part(part_key)
@@ -102,12 +77,19 @@ class ObservationVisualRenderer
     mapping = outline.fetch(:parts).fetch(part_key.to_sym)
 
     layers = base_elements_for(part_key, part).map do |element|
-      element_tag(element, fill: base_color, class: "observation-impression__part", data: { part_key: })
+      element_tag(
+        element,
+        fill: base_color,
+        stroke: ObservationVisualCatalog.outline_color,
+        stroke_width: 2,
+        class: "observation-impression__part",
+        data: { part_key: }
+      )
     end
 
     if secondary_color
       layers.concat(mapping.fetch(:secondary).map do |element|
-        element_tag(element, fill: secondary_color, class: "observation-impression__secondary", data: { part_key: })
+        element_tag(element, fill: secondary_color, stroke: "none", class: "observation-impression__secondary", data: { part_key: })
       end)
     end
 
@@ -128,24 +110,52 @@ class ObservationVisualRenderer
     return [] unless part.feature_key
 
     layers = []
-    if PATTERN_FEATURES.include?(part.feature_key)
-      fill = "url(##{pattern_id(part.feature_key)})"
-      layers << tag.rect(
-        x: 0,
-        y: 0,
-        width: 320,
-        height: 220,
-        fill:,
-        "clip-path" => "url(##{clip_id(part_key)})",
-        class: "observation-impression__pattern",
-        data: { feature_key: part.feature_key }
-      )
-    end
-
     mapping.fetch(:features, {}).fetch(part.feature_key.to_sym, []).each do |element|
       layers << painted_element(element, accent_color, data: { feature_key: part.feature_key })
     end
     layers
+  end
+
+  def silhouette_clip_definition
+    return unless source_frame
+
+    tag.clipPath(
+      source_shape({ fill: "#000000", stroke: "none" }),
+      id: silhouette_clip_id,
+      clipPathUnits: "userSpaceOnUse"
+    )
+  end
+
+  def silhouette_outline
+    return "" unless source_frame
+
+    source_shape(
+      {
+      fill: "none",
+      stroke: ObservationVisualCatalog.outline_color,
+      stroke_width: 2.5,
+      stroke_linejoin: "round",
+      vector_effect: "non-scaling-stroke"
+      }
+    )
+  end
+
+  def source_shape(path_attributes)
+    geometry = ObservationVisualCatalog.source_geometry(impression.outline_key)
+    _, _, source_width, source_height = geometry.fetch(:view_box)
+    frame = source_frame
+    scale = [ frame.fetch(:width).to_f / source_width, frame.fetch(:height).to_f / source_height ].min
+    x = frame.fetch(:x).to_f + ((frame.fetch(:width).to_f - (source_width * scale)) / 2)
+    y = frame.fetch(:y).to_f + ((frame.fetch(:height).to_f - (source_height * scale)) / 2)
+    normalized_attributes = path_attributes.to_h { |key, value| [ key.to_s.tr("_", "-"), value ] }
+    transform = [
+      "translate(#{format_number(x)} #{format_number(y)})",
+      "scale(#{format_number(scale)})",
+      geometry.fetch(:transform)
+    ].join(" ")
+    safe_join(geometry.fetch(:paths).map do |path|
+      tag.path(**normalized_attributes.merge("d" => path, "transform" => transform))
+    end)
   end
 
   def details
@@ -164,7 +174,11 @@ class ObservationVisualRenderer
     when "eye"
       { fill: ObservationVisualCatalog.outline_color }
     when "accent"
-      { fill: accent_color, stroke: ObservationVisualCatalog.outline_color, stroke_width: 1.5, stroke_linejoin: "round" }
+      if element.dig(:attrs, :fill).to_s == "none"
+        { fill: "none", stroke: accent_color, stroke_width: 2.5, stroke_linejoin: "round" }
+      else
+        { fill: accent_color, stroke: "none" }
+      end
     when "accent_stroke"
       { fill: "none", stroke: accent_color, stroke_width: 2.5 }
     when "light"
@@ -179,11 +193,14 @@ class ObservationVisualRenderer
   def element_tag(element, extra_attributes)
     attributes = element.fetch(:attrs).each_with_object({}) do |(key, value), result|
       result[ELEMENT_ATTRIBUTES.fetch(key.to_s)] = value
-    end.merge(extra_attributes.compact)
+    end
+    extra_attributes.compact.each do |key, value|
+      normalized_key = %i[class data].include?(key) ? key : key.to_s.tr("_", "-")
+      attributes[normalized_key] = value
+    end
 
-    attributes[:stroke] ||= ObservationVisualCatalog.outline_color if attributes[:fill] && attributes[:fill] != "none"
-    attributes[:stroke_width] ||= 2 if attributes[:stroke]
-    attributes[:stroke_linejoin] ||= "round" if attributes[:stroke]
+    attributes["stroke-width"] ||= 2 if attributes["stroke"]
+    attributes["stroke-linejoin"] ||= "round" if attributes["stroke"]
 
     case element.fetch(:element)
     when "path" then tag.path(**attributes)
@@ -195,8 +212,13 @@ class ObservationVisualRenderer
     end
   end
 
-  def pattern_id(feature_key) = "#{id_prefix}-pattern-#{feature_key}"
   def clip_id(part_key) = "#{id_prefix}-clip-#{part_key}"
+  def silhouette_clip_id = "#{id_prefix}-clip-silhouette"
+  def source_frame = outline[:source_frame]
+
+  def format_number(value)
+    format("%.6f", value).sub(/0+\z/, "").sub(/\.\z/, "")
+  end
 
   def sanitize_prefix(value)
     prefix = value.to_s

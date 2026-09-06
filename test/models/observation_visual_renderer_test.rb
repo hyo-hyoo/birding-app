@@ -14,9 +14,27 @@ class ObservationVisualRendererTest < ActiveSupport::TestCase
     assert_empty document.xpath("//@href | //@*[local-name()='href']")
     assert_not_includes svg, "alert('no')"
     assert_includes svg, "sample-one-clip-head"
-    assert_includes svg, "sample-one-pattern-streaked"
-    assert_includes svg, %(clip-path="url(#sample-one-clip-chest_belly)")
+    assert_not_includes svg, "sample-one-pattern-streaked"
+    assert_empty document.xpath("//*[local-name()='pattern' or local-name()='linearGradient']")
+    assert_equal 4, document.xpath("//*[local-name()='clipPath']").count
     assert_not_includes svg, "clip_path="
+    assert_not_includes svg, "stroke_width="
+  end
+
+  test "clips source-based samples to their registered PhyloPic silhouette" do
+    impression = ObservationImpression.new(
+      outline_key: "anatidae",
+      parts: { chest_belly: { primary_color_key: "white", certainty_key: "certain" } }
+    )
+    svg = ObservationVisualRenderer.new(impression, id_prefix: "source-duck", label: "water duck").render.to_s
+    document = Nokogiri::XML(svg)
+
+    assert_empty document.errors
+    assert_equal 1, document.xpath("//*[@id='source-duck-clip-silhouette']").count
+    assert_includes svg, %(clip-path="url(#source-duck-clip-silhouette)")
+    assert_includes svg, "translate(0.000000,653.000000) scale(0.100000,-0.100000)"
+    assert_no_match(/(?:href|src)=["']https?:/i, svg)
+    assert_no_match(/url\(["']?https?:/i, svg)
   end
 
   test "keeps definition ids isolated between inline birds" do

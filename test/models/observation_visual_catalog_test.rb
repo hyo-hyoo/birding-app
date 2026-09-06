@@ -34,4 +34,16 @@ class ObservationVisualCatalogTest < ActiveSupport::TestCase
     assert_equal "#F5F3EA", ObservationVisualCatalog.color_hex("white")
     assert_nil ObservationVisualCatalog.color_hex("url(https://example.test/paint)")
   end
+
+  test "loads trusted source geometry for the replaced water duck and standing heron" do
+    duck = ObservationVisualCatalog.source_geometry("anatidae")
+    heron = ObservationVisualCatalog.source_geometry("ardeidae")
+
+    assert_equal [ 0.0, 0.0, 1536.0, 653.0 ], duck.fetch(:view_box)
+    assert_equal [ 0.0, 0.0, 699.0, 1536.0 ], heron.fetch(:view_box)
+    assert_equal "translate(0.000000,653.000000) scale(0.100000,-0.100000)", duck.fetch(:transform)
+    assert_equal "translate(0.000000,1536.000000) scale(0.100000,-0.100000)", heron.fetch(:transform)
+    assert_equal 1, duck.fetch(:paths).length
+    assert_equal 1, heron.fetch(:paths).length
+  end
 end

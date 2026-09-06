@@ -28,12 +28,12 @@ outlines:
     asset: observation_outlines/anatidae.svg
     source:
       provider: PhyloPic
-      image_uuid: d20848dc-7587-4a4e-8abd-3cc69c7a0f23
+      image_uuid: 1c044a03-f1ba-49fd-857e-f10aa8778e30
       representative_taxon: Anas platyrhynchos
-      creator: Sharon Wegner-Larsen
+      creator: Andy Wilson
       license: CC0-1.0
-      page_url: https://www.phylopic.org/images/d20848dc-7587-4a4e-8abd-3cc69c7a0f23/anas-platyrhynchos
-      vector_url: https://images.phylopic.org/images/d20848dc-7587-4a4e-8abd-3cc69c7a0f23/vector.svg
+      page_url: https://www.phylopic.org/images/1c044a03-f1ba-49fd-857e-f10aa8778e30/anas-platyrhynchos
+      vector_url: https://images.phylopic.org/images/1c044a03-f1ba-49fd-857e-f10aa8778e30/vector.svg
   - key: podicipedidae
     group_key: water_surface
     order_key: podicipediformes
@@ -80,12 +80,12 @@ outlines:
     asset: observation_outlines/ardeidae.svg
     source:
       provider: PhyloPic
-      image_uuid: 5d38ae89-8938-427d-ba49-3ae4cde0016c
-      representative_taxon: Ardea cinerea
-      creator: Guillaume Dera
+      image_uuid: b415196d-355a-408d-a73b-1567c87a1721
+      representative_taxon: Ardea goliath
+      creator: Kai Caspar
       license: CC0-1.0
-      page_url: https://www.phylopic.org/images/5d38ae89-8938-427d-ba49-3ae4cde0016c/ardea-cinerea
-      vector_url: https://images.phylopic.org/images/5d38ae89-8938-427d-ba49-3ae4cde0016c/vector.svg
+      page_url: https://www.phylopic.org/images/b415196d-355a-408d-a73b-1567c87a1721/ardea-goliath
+      vector_url: https://images.phylopic.org/images/b415196d-355a-408d-a73b-1567c87a1721/vector.svg
   - key: laridae
     group_key: water_edge
     order_key: charadriiformes

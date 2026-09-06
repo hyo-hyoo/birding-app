@@ -11,115 +11,110 @@ detail_color: "#526D61"
 outlines:
   anatidae:
     source_asset: observation_outlines/anatidae.svg
+    source_frame: { x: 18, y: 58, width: 284, height: 124 }
     scene:
-      - { element: path, paint: scene, attrs: { d: "M24 184 C84 174 142 190 206 179 C246 172 276 176 302 171" } }
-      - { element: path, paint: scene_light, attrs: { d: "M42 198 C100 190 164 202 226 193 C255 189 279 190 298 187" } }
+      - { element: path, paint: scene, attrs: { d: "M22 181 C84 174 145 186 210 179 C248 175 279 177 299 173" } }
+      - { element: path, paint: scene_light, attrs: { d: "M38 194 C101 188 162 198 224 191 C255 188 279 189 299 186" } }
     parts:
       tail:
         base:
-          - { element: path, attrs: { d: "M104 143 C84 142 61 136 40 124 C58 123 79 118 105 111 C113 121 113 134 104 143 Z" } }
+          - { element: path, attrs: { d: "M249 101 C269 105 290 116 309 133 V184 H245 C256 159 258 130 249 101 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M88 139 C70 136 55 131 43 125 C61 126 77 124 96 119 C100 127 97 134 88 139 Z" } }
+          - { element: path, attrs: { d: "M284 116 C294 121 302 127 309 134 V164 C302 157 294 152 284 149 C287 137 287 126 284 116 Z" } }
         features:
           tail_band:
-            - { element: path, paint: accent, attrs: { d: "M76 121 C84 123 92 126 100 131", fill: none, stroke_width: "5" } }
+            - { element: path, paint: accent, attrs: { d: "M270 105 C275 126 274 148 268 168", fill: none, stroke_width: "5" } }
           pale_tail_tip:
-            - { element: path, paint: light, attrs: { d: "M45 124 C59 127 71 130 82 134", fill: none, stroke_width: "6" } }
+            - { element: path, paint: light, attrs: { d: "M292 105 C296 125 294 145 288 162", fill: none, stroke_width: "6" } }
       chest_belly:
         base:
-          - { element: path, attrs: { d: "M98 116 C111 88 145 72 187 76 C218 79 237 96 237 119 C237 145 211 163 171 166 C133 169 105 153 98 132 C96 126 96 121 98 116 Z" } }
-          - { element: path, attrs: { d: "M216 104 C221 91 231 80 242 78 C251 77 257 83 256 92 C255 103 244 116 231 124 Z" } }
+          - { element: path, attrs: { d: "M14 50 H306 V188 H14 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M107 136 C130 148 169 153 203 141 C194 158 171 166 143 163 C125 161 113 151 107 136 Z" } }
+          - { element: path, attrs: { d: "M64 128 C112 143 185 151 253 132 C245 162 213 179 164 180 C113 181 77 164 64 128 Z" } }
         features:
           breast_band:
-            - { element: path, paint: accent, attrs: { d: "M218 109 C210 123 209 138 216 149", fill: none, stroke_width: "7" } }
+            - { element: path, paint: accent, attrs: { d: "M82 116 C88 132 88 147 82 160", fill: none, stroke_width: "7" } }
       wing:
         base:
-          - { element: path, attrs: { d: "M110 116 C124 88 163 80 202 94 C196 123 169 143 124 148 C111 140 105 128 110 116 Z" } }
+          - { element: path, attrs: { d: "M92 91 C132 72 202 76 253 104 C234 139 187 159 119 151 C101 138 91 116 92 91 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M132 104 C153 94 177 95 194 103 C180 112 159 119 137 120 Z" } }
+          - { element: path, attrs: { d: "M128 102 C160 88 205 91 232 106 C210 119 177 126 141 122 Z" } }
         features:
           wing_bars:
-            - { element: path, paint: accent, attrs: { d: "M127 119 C145 126 164 126 184 119", fill: none, stroke_width: "4" } }
-            - { element: path, paint: accent, attrs: { d: "M124 130 C143 137 160 137 174 132", fill: none, stroke_width: "4" } }
+            - { element: path, paint: accent, attrs: { d: "M132 124 C163 136 203 134 229 120", fill: none, stroke_width: "5" } }
           wing_patch:
-            - { element: path, paint: accent, attrs: { d: "M146 108 C160 102 177 103 187 109 C176 116 160 120 146 118 Z" } }
+            - { element: path, paint: accent, attrs: { d: "M152 105 C177 96 207 99 226 109 C207 118 181 122 157 118 Z", stroke_width: "0" } }
           speculum:
-            - { element: path, paint: accent, attrs: { d: "M138 112 C154 105 176 106 190 112 C178 120 156 124 139 120 Z" } }
+            - { element: path, paint: accent, attrs: { d: "M151 104 C179 94 211 98 230 110 C208 120 178 124 153 118 Z", stroke_width: "0" } }
       head:
         base:
-          - { element: path, attrs: { d: "M221 90 C219 70 232 53 252 51 C271 49 286 61 288 78 C290 94 279 108 263 113 C246 118 229 109 223 97 Z" } }
-          - { element: path, attrs: { d: "M225 87 C217 92 212 104 213 120 C215 136 223 146 234 151 C238 135 238 116 234 98 Z" } }
+          - { element: path, attrs: { d: "M10 45 H111 C105 67 106 87 115 104 C119 116 111 132 94 143 H10 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M224 70 C237 55 261 52 276 64 C261 69 244 73 226 81 Z" } }
+          - { element: path, attrs: { d: "M42 62 C61 49 89 51 106 66 C88 72 68 76 48 82 Z" } }
         features:
           eye_ring:
-            - { element: circle, paint: accent_stroke, attrs: { cx: "267", cy: "72", r: "7", fill: none, stroke_width: "3" } }
+            - { element: circle, paint: accent_stroke, attrs: { cx: "72", cy: "76", r: "7", fill: none, stroke_width: "3" } }
           eye_stripe:
-            - { element: path, paint: accent, attrs: { d: "M248 70 C262 66 276 68 285 76", fill: none, stroke_width: "5" } }
+            - { element: path, paint: accent, attrs: { d: "M60 76 C75 70 91 72 103 79", fill: none, stroke_width: "5" } }
           neck_ring:
-            - { element: path, paint: accent, attrs: { d: "M221 105 C227 110 233 112 238 112", fill: none, stroke_width: "5" } }
+            - { element: path, paint: accent, attrs: { d: "M95 92 C101 104 102 115 99 126", fill: none, stroke_width: "5" } }
     details:
-      - { element: path, paint: beak, attrs: { d: "M285 76 L310 82 L288 91 Z" } }
-      - { element: circle, paint: eye, attrs: { cx: "269", cy: "71", r: "2.7" } }
+      - { element: circle, paint: eye, attrs: { cx: "72", cy: "76", r: "2.7" } }
 
   ardeidae:
     source_asset: observation_outlines/ardeidae.svg
+    source_frame: { x: 104, y: 9, width: 112, height: 202 }
     scene:
-      - { element: path, paint: scene, attrs: { d: "M28 190 C96 185 174 193 294 185" } }
-      - { element: path, paint: scene_light, attrs: { d: "M64 199 C120 195 207 201 273 196" } }
+      - { element: path, paint: scene, attrs: { d: "M54 207 C112 202 194 207 266 202" } }
+      - { element: path, paint: scene_light, attrs: { d: "M80 215 C137 211 204 214 247 211" } }
     parts:
       tail:
         base:
-          - { element: path, attrs: { d: "M122 131 C101 137 79 151 58 170 C84 165 108 158 132 147 Z" } }
+          - { element: path, attrs: { d: "M102 98 H148 V158 H102 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M112 143 C94 151 80 159 67 167 C83 164 99 160 119 153 Z" } }
+          - { element: path, attrs: { d: "M105 124 H132 V153 H103 Z" } }
         features:
           tail_band:
-            - { element: path, paint: accent, attrs: { d: "M82 158 L105 150", fill: none, stroke_width: "5" } }
+            - { element: path, paint: accent, attrs: { d: "M108 132 L137 124", fill: none, stroke_width: "5" } }
       chest_belly:
         base:
-          - { element: path, attrs: { d: "M112 114 C133 91 171 88 198 105 C216 117 222 137 212 151 C200 169 168 176 138 166 C113 157 101 132 112 114 Z" } }
-          - { element: path, attrs: { d: "M195 114 C205 102 215 92 220 78 C225 63 222 51 231 43 C239 35 251 36 256 44 C244 52 240 64 242 80 C244 101 236 121 216 137 Z" } }
+          - { element: path, attrs: { d: "M100 5 H220 V213 H100 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M119 142 C143 156 177 159 207 146 C198 166 167 174 140 166 C128 162 121 154 119 142 Z" } }
+          - { element: path, attrs: { d: "M115 115 C129 129 151 137 173 132 C170 151 156 163 137 160 C122 157 115 141 115 115 Z" } }
         features:
           breast_band:
-            - { element: path, paint: accent, attrs: { d: "M205 117 C195 128 190 141 193 154", fill: none, stroke_width: "6" } }
+            - { element: path, paint: accent, attrs: { d: "M157 91 C148 105 145 120 148 135", fill: none, stroke_width: "6" } }
       wing:
         base:
-          - { element: path, attrs: { d: "M122 116 C143 96 180 99 207 119 C197 144 173 158 137 159 C121 148 115 130 122 116 Z" } }
+          - { element: path, attrs: { d: "M113 82 C127 67 154 67 174 84 C172 111 156 135 128 145 C113 130 107 103 113 82 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M144 110 C163 106 186 113 199 124 C183 128 162 130 145 126 Z" } }
+          - { element: path, attrs: { d: "M125 87 C137 77 156 79 168 90 C158 103 144 110 129 108 Z" } }
         features:
           wing_bars:
-            - { element: path, paint: accent, attrs: { d: "M135 132 C153 141 174 143 192 137", fill: none, stroke_width: "4" } }
+            - { element: path, paint: accent, attrs: { d: "M122 111 C136 120 152 120 165 112", fill: none, stroke_width: "5" } }
           pale_feather_edges:
-            - { element: path, paint: light, attrs: { d: "M132 146 C153 154 179 153 197 143", fill: none, stroke_width: "4" } }
+            - { element: path, paint: light, attrs: { d: "M119 128 C133 139 151 137 163 125", fill: none, stroke_width: "5" } }
           wing_patch:
-            - { element: path, paint: accent, attrs: { d: "M154 116 C169 114 184 119 193 127 C179 131 165 130 153 126 Z" } }
+            - { element: path, paint: accent, attrs: { d: "M127 88 C139 80 155 81 166 91 C156 101 142 106 130 103 Z", stroke_width: "0" } }
       head:
         base:
-          - { element: path, attrs: { d: "M230 43 C233 28 247 18 262 20 C277 22 286 34 283 47 C280 60 266 68 252 64 C239 61 228 53 230 43 Z" } }
+          - { element: path, attrs: { d: "M145 4 H220 V65 C198 73 184 90 177 111 C164 105 153 96 145 86 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M238 30 C248 21 264 21 275 30 C265 33 253 36 240 39 Z" } }
+          - { element: path, attrs: { d: "M157 18 C171 9 194 11 207 23 C194 29 178 33 162 33 Z" } }
         features:
           eye_stripe:
-            - { element: path, paint: accent, attrs: { d: "M248 40 C258 36 269 38 278 44", fill: none, stroke_width: "4" } }
+            - { element: path, paint: accent, attrs: { d: "M174 25 C184 21 196 23 205 29", fill: none, stroke_width: "4" } }
           cheek_patch:
-            - { element: ellipse, paint: accent, attrs: { cx: "257", cy: "51", rx: "9", ry: "6" } }
+            - { element: ellipse, paint: accent, attrs: { cx: "185", cy: "34", rx: "9", ry: "6", stroke_width: "0" } }
           crest:
-            - { element: path, paint: accent, attrs: { d: "M236 31 C222 20 214 16 202 14 C214 27 220 36 229 42 Z" } }
+            - { element: path, paint: accent, attrs: { d: "M166 19 C153 11 143 8 132 9 C146 18 155 27 164 35 Z", stroke_width: "0" } }
         variants:
           crest:
             mode: append
             elements:
-              - { element: path, attrs: { d: "M237 31 C224 18 212 12 197 10 C212 26 221 39 232 45 Z" } }
+              - { element: path, attrs: { d: "M166 19 C151 8 138 5 124 7 C144 19 155 31 166 42 Z" } }
     details:
-      - { element: path, paint: beak, attrs: { d: "M281 41 L318 47 L282 52 Z" } }
-      - { element: circle, paint: eye, attrs: { cx: "267", cy: "39", r: "2.5" } }
-      - { element: path, paint: scene, attrs: { d: "M151 165 C149 177 147 188 146 199 M178 165 C180 178 184 188 186 199", fill: none, stroke_width: "3" } }
+      - { element: circle, paint: eye, attrs: { cx: "188", cy: "25", r: "2.5" } }
 
   compact_passerine:
     source_asset: observation_outlines/compact_passerine.svg

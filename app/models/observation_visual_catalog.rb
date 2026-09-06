@@ -7,6 +7,8 @@ module ObservationVisualCatalog
   VARIANT_MODES = %w[append replace].freeze
   HEX_COLOR = /\A#[0-9A-F]{6}\z/i
   VIEW_BOX = /\A-?\d+(?:\.\d+)?(?: +-?\d+(?:\.\d+)?){3}\z/
+  SOURCE_FRAME_KEYS = %i[x y width height].freeze
+  SOURCE_TRANSFORM = /\Atranslate\(-?\d+(?:\.\d+)?,-?\d+(?:\.\d+)?\) scale\(-?\d+(?:\.\d+)?,-?\d+(?:\.\d+)?\)\z/
 
   class InvalidConfiguration < StandardError; end
 
@@ -32,6 +34,11 @@ module ObservationVisualCatalog
 
     def color_hex(color_key)
       ObservationOptions.colors.find { |color| color.fetch(:key) == color_key.to_s }&.fetch(:hex)
+    end
+
+    def source_geometry(outline_key)
+      @source_geometries ||= {}
+      @source_geometries[outline_key.to_s] ||= load_source_geometry(outline!(outline_key)).freeze
     end
 
     private
@@ -66,6 +73,8 @@ module ObservationVisualCatalog
       expected_asset = ObservationOptions.outlines.find { |entry| entry.fetch(:key) == outline_key }.fetch(:asset)
       invalid!("source asset mismatch for #{outline_key}") unless outline.fetch(:source_asset) == expected_asset
 
+      validate_source_frame!(outline_key, outline[:source_frame]) if outline[:source_frame]
+
       validate_elements!(outline.fetch(:scene), "#{outline_key}.scene")
       validate_elements!(outline.fetch(:details), "#{outline_key}.details")
 
@@ -90,6 +99,30 @@ module ObservationVisualCatalog
           validate_elements!(variant.fetch(:elements), "#{path}.variants.#{feature_key}")
         end
       end
+    end
+
+    def validate_source_frame!(outline_key, frame)
+      invalid!("#{outline_key}.source_frame must have x, y, width, and height") unless frame.keys.sort == SOURCE_FRAME_KEYS.sort
+      invalid!("#{outline_key}.source_frame dimensions must be positive") unless frame[:width].to_f.positive? && frame[:height].to_f.positive?
+      invalid!("#{outline_key}.source_frame values must be numeric") unless frame.values.all? { |value| value.is_a?(Numeric) }
+    end
+
+    def load_source_geometry(outline)
+      source_path = Rails.root.join("app/assets/images", outline.fetch(:source_asset))
+      document = Nokogiri::XML(source_path.read) { |config| config.strict.nonet }
+      svg = document.at_xpath("/*[local-name()='svg']")
+      group = svg&.at_xpath("./*[local-name()='g']")
+      view_box = svg&.[]("viewBox").to_s.split.map(&:to_f)
+      transform = group&.[]("transform").to_s
+      paths = group&.xpath(".//*[local-name()='path']")&.map { |path| path["d"].to_s }
+
+      invalid!("source asset must have a positive viewBox") unless view_box.length == 4 && view_box.drop(2).all?(&:positive?)
+      invalid!("source asset transform is unsupported") unless SOURCE_TRANSFORM.match?(transform)
+      invalid!("source asset must contain paths") if paths.blank? || paths.any? { |path| path.blank? || path.match?(/[<>]|javascript:|https?:/i) }
+
+      { view_box:, transform:, paths: paths.freeze }.freeze
+    rescue Errno::ENOENT, Nokogiri::XML::SyntaxError => error
+      invalid!("invalid source asset: #{error.message}")
     end
 
     def validate_feature!(feature_key, part_key, path)

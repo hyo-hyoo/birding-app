@@ -1622,15 +1622,17 @@ a.setting-card:hover { border-color: rgba(40, 74, 62, 0.4); }
   overflow: visible;
 }
 
-.observation-impression__part,
-.observation-impression__secondary {
+.observation-impression__part {
   stroke: var(--pine);
   stroke-width: 2;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
 
-.observation-impression__secondary { stroke-width: 1.4; }
+.observation-impression__secondary {
+  stroke: none;
+  vector-effect: non-scaling-stroke;
+}
 
 .impression-sample__parts {
   display: grid;
