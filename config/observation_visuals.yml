@@ -118,6 +118,7 @@ outlines:
 
   compact_passerine:
     source_asset: observation_outlines/compact_passerine.svg
+    source_frame: { x: 36, y: 18, width: 248, height: 194 }
     scene:
       - { element: path, paint: scene, attrs: { d: "M24 177 C85 164 173 178 299 159", stroke_width: "5" } }
       - { element: path, paint: scene, attrs: { d: "M83 171 L69 193 M183 169 L196 188", stroke_width: "3" } }
@@ -143,25 +144,21 @@ outlines:
               - { element: path, attrs: { d: "M116 134 C84 141 49 159 18 190 C56 174 91 162 124 151 Z" } }
       chest_belly:
         base:
-          - { element: path, attrs: { d: "M100 101 C118 73 158 61 196 72 C228 82 245 109 237 137 C228 166 194 182 156 177 C119 173 94 150 93 124 C93 115 95 107 100 101 Z" } }
+          - { element: path, attrs: { d: "M50 72 H287 V208 H50 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M102 134 C126 154 166 163 205 151 C193 173 160 181 130 169 C113 162 103 150 102 134 Z" } }
+          - { element: path, attrs: { d: "M102 126 C132 139 179 144 227 126 C220 157 194 177 158 177 C130 177 110 158 102 126 Z" } }
         features:
           breast_band:
             - { element: path, paint: accent, attrs: { d: "M216 104 C205 120 203 137 211 151", fill: none, stroke_width: "7" } }
       wing:
         base:
-          - { element: path, attrs: { d: "M111 102 C133 78 174 75 207 94 C201 123 176 148 132 156 C113 143 104 119 111 102 Z" } }
+          - { element: path, attrs: { d: "M105 88 C133 69 181 73 220 101 C208 137 175 158 128 157 C109 140 101 111 105 88 Z" } }
         secondary:
-          - { element: path, attrs: { d: "M133 94 C152 84 178 87 196 99 C180 107 157 112 136 109 Z" } }
+          - { element: path, attrs: { d: "M123 119 C145 130 177 131 204 116 C198 134 176 146 149 146 C137 143 128 134 123 119 Z" } }
         features:
-          wing_bars:
-            - { element: path, paint: accent, attrs: { d: "M128 115 C148 124 171 124 190 117", fill: none, stroke_width: "4" } }
-            - { element: path, paint: accent, attrs: { d: "M126 129 C145 139 165 140 181 134", fill: none, stroke_width: "4" } }
-          pale_feather_edges:
-            - { element: path, paint: light, attrs: { d: "M124 145 C147 153 172 149 190 137", fill: none, stroke_width: "4" } }
-          wing_patch:
-            - { element: ellipse, paint: accent, attrs: { cx: "161", cy: "112", rx: "22", ry: "12" } }
+          wing_bars: []
+          pale_feather_edges: []
+          wing_patch: []
       head:
         base:
           - { element: path, attrs: { d: "M202 78 C206 48 231 29 260 34 C286 38 302 60 297 83 C292 105 270 118 247 113 C222 109 199 97 202 78 Z" } }

@@ -75,7 +75,7 @@ class FrontendPreviewsController < ApplicationController
         parts: {
           head: part("black", "white", "cheek_patch", "脸侧有清楚的浅色区域", "certain"),
           chest_belly: part("yellow", "buff", "streaked", nil, "probable"),
-          wing: part("blue", "white", "wing_bars", "翼上两道浅色线较明显", "certain"),
+          wing: part("blue", "white", "wing_patch", "翼上有一块连续的浅色区域", "certain"),
           tail: part("blue_gray", "white", "long_tail", nil, "probable")
         }
       )
