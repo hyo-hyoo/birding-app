@@ -75,6 +75,7 @@ birding-app/
 10. 前端开发 Agent 依据正式需求、MVP、UI 和技术文档执行静态页面实施，并在 `docs/frontend-development-plan.md` 中维护阶段进度与验证证据；该计划不得反向改变上游正式决定。
 11. 修改 Rails 前端前，开发 Agent 使用 `docs/frontend-implementation-guide.md` 理解当前代码组织、维护约定和验证方式；指南中的代码现状和差异记录不得反向覆盖上游正式决定。
 12. 后端开发 Agent 使用 `docs/backend-development-plan.md` 管理阶段、依赖、状态和验证证据，使用 `docs/database-design.md` 维护领域模型、ER 图、物理 Schema、约束及 Migration 映射。两份文档都必须服从需求、MVP 和技术决策，不得用计划或 Schema 草案反向确认未决产品与技术选择。
+13. 后端开发与 Project Maintainer 使用独立 worktree 和独立分支。Maintainer 完成一轮文档维护、检查并提交后，直接把提交信息和状态交给后端开发任务；用户不需要在两个任务之间手工转发常规的文档整合信息。
 
 ## 工具职责
 
@@ -85,6 +86,29 @@ birding-app/
 - `$project-doc-maintainer`：只在当前任务明确承担 Project Maintainer 职责，或用户明确要求正式文档维护时调用；它在项目文档或项目级规则变化后检查 Git 变更、文档职责、状态、路径和遗漏，信息不足时列出问题，不编造项目决定。
 
 当当前 Codex 任务被明确分配为 Project Maintainer、UI Designer 或开发 Agent，而用户请求明显属于另一角色时，当前 Agent 应先提醒用户可能发错任务或窗口，并在该轮停止执行，不得静默切换职责。
+
+## 独立文档 Worktree 交付流程
+
+以下是已确认的长期协作规则：
+
+- 后端开发和文档维护不得通过两个任务共享同一目录并频繁切换分支。
+- Project Maintainer 只修改正式项目文档、项目级工作规则和自身 Skill，不修改 Rails 代码、Migration、测试、应用配置、原型或资源文件。
+- 每轮形成一组连贯的文档修改后，Maintainer 运行文档检查，创建一个使用英文标题的纯文档提交，并直接通知后端开发任务。
+- 后端开发任务只有在提交仅包含文档、没有 Git 或文档冲突、没有改变产品需求、MVP 范围或已确认主要技术路线，并且不需要用户决定升级时，才可以自动整合并普通推送。
+- 如果提交夹带代码、发生冲突、范围不清、改变产品或 MVP、涉及重大技术或风险决定，或者需要重写历史，必须暂停并询问用户。自动 force push、hard reset 或其他历史重写不在授权范围内。
+
+当前暂定采用以下工作位置；它们是协作配置，不是不可变的项目决定：
+
+| 职责 | Worktree | 分支 |
+| --- | --- | --- |
+| 后端开发 | `E:\AAproject\birding-app` | `codex/backend-development` |
+| 文档维护 | `E:\AAproject\birding-app-docs` | `codex/backend-documentation` |
+
+Maintainer 每轮开始前必须核对当前路径、分支和工作区状态。路径或分支不符，或存在来源不明的修改时，应停止编辑并直接通知后端开发任务，不自行清理或覆盖。
+
+文档提交交接至少包含：文档分支、提交哈希与英文标题、所基于的开发提交、修改文件、已确认事实、暂定或未确认事项、冲突或升级需求，以及最终工作区状态。后端开发任务负责检查提交内容是否满足自动整合条件。
+
+当前暂定在每轮文档提交完成整合后，将 `codex/backend-documentation` 快进到最新的 `codex/backend-development`，再开始下一轮维护。该约定不授权 force push、hard reset 或历史重写；不能普通快进时必须暂停确认。当前不采用定时轮询文档分支，后续如有需要须另行确认。
 
 ## 维护检查
 

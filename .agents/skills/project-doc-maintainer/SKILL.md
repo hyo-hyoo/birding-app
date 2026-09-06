@@ -109,6 +109,18 @@ Use exactly these status categories: `confirmed`, `provisional`, `open-question`
 - Do not create a new document without a clear, established responsibility.
 - Do not duplicate a fact across documents merely to make synchronization appear complete.
 
+## Independent documentation-worktree delivery
+
+When project governance assigns maintenance to a dedicated documentation worktree:
+
+1. Before editing, verify the expected worktree path, current branch, and a clean or fully understood working tree against `AGENTS.md` and `DOCUMENTS-GUIDE.md`.
+2. If the worktree or branch is wrong, or existing changes have an unknown source, stop without cleaning, switching, or overwriting anything and report the mismatch directly to the development task.
+3. Modify only formal project documents, project-level rules, and this Skill or its references. Do not modify application code, Migrations, tests, application configuration, prototypes, or assets.
+4. After one coherent maintenance round, inspect the staged scope, create one documentation-only commit with an English message, and verify the final worktree status. Do not push or switch the development branch from the documentation worktree.
+5. Send the development task a direct handoff containing the documentation branch, commit hash and title, development baseline, changed files, confirmed facts, provisional or unresolved items, conflicts or escalation needs, and final worktree status.
+6. Leave integration to the development task. Never force-push, hard-reset, rewrite history, or treat a conflicting or mixed code-and-document commit as eligible for automatic integration.
+7. Treat worktree paths, branch names, and post-integration fast-forward behavior according to the confirmation status recorded in `DOCUMENTS-GUIDE.md`; do not promote provisional collaboration configuration into an immutable rule.
+
 ## Post-maintenance reporting
 
 After making edits:
@@ -118,7 +130,7 @@ After making edits:
 - List files that were inspected or considered but left unchanged, and explain why. Do not pad this list with unrelated files.
 - List unresolved questions explicitly; write `无` when none remain.
 - Suggest one concise Git commit message derived from the actual completed diff. Do not include planned or unimplemented work in the message.
-- Suggest a commit message only; do not run `git add` or `git commit` unless the user explicitly requests it.
+- Suggest a commit message only unless the user explicitly requests a commit or repository-level standing authorization requires the dedicated documentation worktree to produce a verified documentation-only commit. When that authorization applies, follow the independent-worktree procedure above.
 - Do not create a standalone documentation change log, maintenance log, or similar file unless the user explicitly requests one or project governance rules require it.
 
 ## Required output
