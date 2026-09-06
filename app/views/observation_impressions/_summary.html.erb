@@ -1,0 +1,13 @@
+<% if summary.empty? %>
+  <p class="observation-summary__empty"><%= t("observation_impressions.summary.empty", locale: summary.locale) %></p>
+<% else %>
+  <ol class="observation-summary__list">
+    <% summary.items.each do |item| %>
+      <li data-summary-part="<%= item.part_key %>">
+        <strong><%= item.part_label %></strong>
+        <span><%= item.details.join(t("observation_impressions.summary.separator", locale: summary.locale)) %></span>
+        <small><%= t("observation_impressions.summary.certainty", locale: summary.locale, value: item.certainty_label) %></small>
+      </li>
+    <% end %>
+  </ol>
+<% end %>

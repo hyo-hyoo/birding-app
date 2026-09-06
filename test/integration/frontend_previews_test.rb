@@ -18,6 +18,7 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     frontend_preview_detail_path
     frontend_preview_settings_path
     frontend_preview_change_password_path
+    frontend_preview_impression_samples_path
   ].freeze
   PREVIEW_LOCALES = %w[zh-CN ja].freeze
 
@@ -309,5 +310,21 @@ class FrontendPreviewsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "html[lang='ja']", count: 1
     assert_select "h1", text: "おかえりなさい"
+  end
+
+  test "renders three isolated stage 8A visual samples with bilingual summaries" do
+    get frontend_preview_impression_samples_path(locale: "zh-CN")
+
+    assert_response :success
+    assert_select ".impression-sample", count: 3
+    assert_select ".impression-sample[data-sample-outline='anatidae']", count: 1
+    assert_select ".impression-sample[data-sample-outline='ardeidae']", count: 1
+    assert_select ".impression-sample[data-sample-outline='compact_passerine']", count: 1
+    assert_select ".observation-impression-svg", count: 6
+    assert_select ".observation-summary[lang='zh-CN']", count: 3
+    assert_select ".observation-summary[lang='ja']", count: 3
+    assert_select "[data-summary-part]", count: 24
+    assert_select ".observation-impression-svg script", count: 0
+    assert_no_match(/translation missing/, response.body)
   end
 end

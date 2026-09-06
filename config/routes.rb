@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     get "previews/detail", to: "frontend_previews#detail", as: :frontend_preview_detail
     get "previews/settings", to: "frontend_previews#settings", as: :frontend_preview_settings
     get "previews/change-password", to: "frontend_previews#change_password", as: :frontend_preview_change_password
+    get "previews/impression-samples", to: "frontend_previews#impression_samples", as: :frontend_preview_impression_samples
   end
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?

@@ -94,6 +94,27 @@
       building: "建筑物"
       wire_pole: "电线或杆"
       air: "空中"
+  observation_impressions:
+    summary:
+      empty: "尚未记录身体部位。"
+      primary: "主色：%{value}"
+      secondary: "补充色：%{value}"
+      feature: "特征：%{value}"
+      description: "补充：%{value}"
+      certainty: "确定程度：%{value}"
+      certainty_pending: "尚未选择"
+      separator: "；"
+    samples:
+      page_title: "阶段 8A 抽象鸟图小样｜观鸟观察册"
+      eyebrow: "Stage 8A · Visual checkpoint"
+      title: "三个代表性抽象鸟图"
+      description: "分别检查鸭科、鹭科和圆身小鸟的身体分区、补充色、花纹与结构变化。"
+      notice: "本页只使用固定测试数据，不读取或写入观察记录。三个小样通过视觉验收后，才会扩展其余十四个轮廓。"
+      visual_label: "%{outline}抽象鸟图"
+      thumbnail_label: "%{outline}历史缩略图"
+      part_legend: "身体分区主色"
+      summaries: "简体中文与日文摘要"
+      thumbnail: "历史卡片缩略图尺寸"
   errors:
     format: "%{attribute}%{message}"
     messages:

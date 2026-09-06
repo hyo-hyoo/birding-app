@@ -94,6 +94,27 @@ ja:
       building: "建物"
       wire_pole: "電線・柱"
       air: "空中"
+  observation_impressions:
+    summary:
+      empty: "身体部位はまだ記録されていません。"
+      primary: "主な色：%{value}"
+      secondary: "補助色：%{value}"
+      feature: "特徴：%{value}"
+      description: "補足：%{value}"
+      certainty: "確かさ：%{value}"
+      certainty_pending: "未選択"
+      separator: "；"
+    samples:
+      page_title: "ステージ 8A 抽象鳥図サンプル｜野鳥観察ノート"
+      eyebrow: "Stage 8A · Visual checkpoint"
+      title: "3 つの代表的な抽象鳥図"
+      description: "カモ科、サギ科、丸みのある小鳥について、身体区分、補助色、模様、構造変化を確認します。"
+      notice: "このページは固定テストデータだけを使用し、観察記録の読み書きは行いません。3 サンプルの視覚確認後に、残り 14 輪郭へ展開します。"
+      visual_label: "%{outline}の抽象鳥図"
+      thumbnail_label: "%{outline}の履歴サムネイル"
+      part_legend: "身体区分の主な色"
+      summaries: "簡体字中国語と日本語の要約"
+      thumbnail: "履歴カードのサムネイルサイズ"
   errors:
     format: "%{attribute}%{message}"
     messages:
