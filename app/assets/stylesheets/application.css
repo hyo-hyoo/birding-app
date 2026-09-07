@@ -497,6 +497,11 @@ select:focus-visible {
   color: var(--pine);
 }
 
+.bird-thumb .observation-impression-svg {
+  width: 100%;
+  height: 100%;
+}
+
 .bird-thumbnail { width: 94px; height: 72px; }
 .record-card__content { min-width: 0; }
 .record-card h3 { margin: 9px 0 3px; font-size: 14px; }
@@ -714,6 +719,48 @@ select:focus-visible {
 }
 
 .specimen-label strong { color: var(--pine); }
+
+.specimen-card turbo-frame {
+  display: block;
+  margin-top: 12px;
+}
+
+.observation-preview__visual {
+  display: grid;
+  min-height: 205px;
+  place-items: center;
+}
+
+.observation-preview__visual .observation-impression-svg {
+  width: 100%;
+  max-height: 220px;
+}
+
+.observation-preview__summary { margin-top: 8px; }
+.observation-preview__summary .section-title { margin-bottom: 8px; }
+
+.observation-preview__error {
+  margin: 10px 0 0;
+  color: #8a3b32;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.preview-refresh-button {
+  display: block;
+  min-height: 36px;
+  margin: 12px 0 0 auto;
+  padding: 6px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--body);
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.preview-refresh-button:hover { border-color: var(--pine); color: var(--pine); }
 
 .impression-bird {
   position: absolute;
@@ -1142,6 +1189,14 @@ fieldset.field-group {
   bottom: 0;
   width: 325px;
   height: 195px;
+}
+
+.detail-hero .observation-impression-svg {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 210px;
 }
 
 .detail-meta {

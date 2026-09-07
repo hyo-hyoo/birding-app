@@ -1,0 +1,12 @@
+<%= turbo_frame_tag "observation-impression-preview", data: { observation_preview_target: "frame" } do %>
+  <div class="observation-preview__visual">
+    <%= render "observation_impressions/visual", impression:, id_prefix:, label: %>
+  </div>
+  <section class="observation-preview__summary" aria-live="polite">
+    <h2 class="section-title"><%= t("observation_impressions.preview.summary_heading") %></h2>
+    <%= render "observation_impressions/summary", summary: %>
+  </section>
+  <p class="observation-preview__error" role="alert" hidden data-observation-preview-error>
+    <%= t("observation_impressions.preview.error") %>
+  </p>
+<% end %>

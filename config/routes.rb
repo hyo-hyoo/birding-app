@@ -30,7 +30,10 @@ Rails.application.routes.draw do
   resource :verification_email, path: "verification-email", only: %i[show new create]
   get "email-verification", to: "email_verifications#show", as: :email_verification
   post "email-verification", to: "email_verifications#update"
-  resources :observations, only: %i[index new create show edit update]
+  resources :observations, only: %i[index new create show edit update] do
+    post :preview, on: :collection
+    post :preview, on: :member
+  end
   resource :settings, only: :show
 
   root "sessions#new"

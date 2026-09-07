@@ -1,15 +1,19 @@
 <% editing = form_method == :patch %>
 <% content_for :title, t(editing ? "observations.form.edit_page_title" : "observations.form.new_page_title") %>
 <% selected_locations = submission_location_keys(@submission) %>
+<% preview_impression = ObservationImpression.new(outline_key: @outline.fetch(:key), parts: @submission.parts) %>
+<% preview_summary = ObservationSummary.new(preview_impression) %>
+<% preview_url = editing ? preview_observation_path(@observation) : preview_observations_path %>
 
 <section class="app-page editor-page"
-         data-controller="observation-form"
+         data-controller="observation-form observation-preview"
          data-observation-form-exit-url-value="<%= back_url %>"
          data-observation-form-empty-message-value="<%= t("observations.form.save_empty") %>"
          data-observation-form-certainty-message-value="<%= t("observations.form.save_certainty") %>"
          data-observation-form-ready-message-value="<%= t("observations.form.save_ready") %>"
-         data-observation-form-location-limit-message-value="<%= t("observations.form.location_limit") %>">
-  <%= form_with scope: :observation, url: form_url, method: form_method, html: { data: { observation_form_target: "form", action: "input->observation-form#changed submit->observation-form#submit" } } do |form| %>
+         data-observation-form-location-limit-message-value="<%= t("observations.form.location_limit") %>"
+         data-observation-preview-url-value="<%= preview_url %>">
+  <%= form_with scope: :observation, url: form_url, method: form_method, html: { data: { observation_form_target: "form", observation_preview_target: "form", action: "input->observation-form#changed input->observation-preview#schedule change->observation-preview#schedule submit->observation-form#submit" } } do |form| %>
     <%= form.hidden_field :outline_key, value: @submission.outline_key %>
     <% if editing %>
       <%= form.hidden_field :expected_revision, value: @submission.expected_revision %>
@@ -37,7 +41,16 @@
           <span id="specimen-heading"><%= t("observations.form.selected_outline") %></span>
           <strong><%= observation_option_label(:outlines, @outline[:key]) %></strong>
         </div>
-        <%= image_tag @outline.fetch(:asset), class: "outline-asset outline-asset--specimen", alt: "" %>
+        <%= render "observation_impressions/preview",
+          impression: preview_impression,
+          summary: preview_summary,
+          id_prefix: "observation-form-preview",
+          label: t("observation_impressions.preview.visual_label") %>
+        <button type="submit" class="preview-refresh-button"
+                formaction="<%= preview_url %>" formmethod="post" formnovalidate
+                data-preview-submit="true" data-turbo-frame="observation-impression-preview">
+          <%= t("observation_impressions.preview.refresh") %>
+        </button>
       </section>
 
       <section class="section-block spine-node">
@@ -49,7 +62,7 @@
           <% ObservationOptions.parts.each_with_index do |part, index| %>
             <button class="part-tab<%= " is-active" if index.zero? %>" type="button" role="tab"
                     aria-selected="<%= index.zero? %>" data-part-key="<%= part[:key] %>"
-                    data-observation-form-target="partTab" data-action="observation-form#choosePart">
+                    data-observation-form-target="partTab" data-action="observation-form#choosePart observation-preview#request">
               <%= observation_option_label(:parts, part[:key]) %>
             </button>
           <% end %>

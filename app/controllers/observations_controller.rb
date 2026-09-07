@@ -1,8 +1,25 @@
 class ObservationsController < ApplicationController
   before_action :set_observation, only: %i[show edit update]
+  before_action :set_preview_observation, only: :preview
 
   def index
     @observations = Current.user.observations.includes(:part_impressions).order(created_at: :desc, id: :desc)
+  end
+
+  def preview
+    @submission = ObservationSubmission.new(observation_params)
+    @show_editor = true
+    prepare_form_options
+    @impression = ObservationImpression.new(outline_key: @outline.fetch(:key), parts: @submission.parts)
+    @summary = ObservationSummary.new(@impression)
+
+    if turbo_frame_request?
+      render partial: "observation_impressions/preview", locals: preview_locals
+    elsif @observation
+      render :edit
+    else
+      render :new
+    end
   end
 
   def new
@@ -51,6 +68,12 @@ class ObservationsController < ApplicationController
     @observation = Current.user.observations.includes(:part_impressions, :activity_location_selections).find(params[:id])
   end
 
+  def set_preview_observation
+    return unless params[:id]
+
+    @observation = Current.user.observations.includes(:part_impressions, :activity_location_selections).find(params[:id])
+  end
+
   def observation_params
     params.require(:observation).permit(
       :outline_key, :behavior_text, :expected_revision,
@@ -61,6 +84,15 @@ class ObservationsController < ApplicationController
   def prepare_form_options
     @outline = outline_for(@submission.outline_key)
     @outline ||= ObservationOptions.outlines.find { |entry| entry.fetch(:fallback, false) }
+  end
+
+  def preview_locals
+    {
+      impression: @impression,
+      summary: @summary,
+      id_prefix: "observation-preview-#{@observation&.id || 'new'}",
+      label: t("observation_impressions.preview.visual_label")
+    }
   end
 
   def outline_for(key)

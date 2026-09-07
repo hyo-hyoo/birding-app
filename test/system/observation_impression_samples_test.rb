@@ -37,15 +37,28 @@ class ObservationImpressionSamplesTest < ApplicationSystemTestCase
     clear_device_metrics
   end
 
+  test "keeps the sample grid readable at desktop width" do
+    set_device_metrics(1440, height: 900, mobile: false)
+    visit frontend_preview_impression_samples_path(locale: "zh-CN")
+
+    assert_selector ".impression-sample", count: 3
+    assert_selector ".observation-impression-svg", count: 6
+    assert_selector ".impression-sample__summaries[aria-label='简体中文与日文摘要']", count: 3
+
+    save_visual_checkpoint("stage8a-1440-zh", width: 1440) if ENV["CAPTURE_STAGE8_SAMPLES"] == "1"
+  ensure
+    clear_device_metrics
+  end
+
   private
 
-  def set_device_metrics(width)
+  def set_device_metrics(width, height: 844, mobile: true)
     page.driver.browser.execute_cdp(
       "Emulation.setDeviceMetricsOverride",
       width:,
-      height: 844,
+      height:,
       deviceScaleFactor: 1,
-      mobile: true
+      mobile:
     )
   end
 

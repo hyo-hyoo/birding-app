@@ -64,7 +64,9 @@ export default class extends Controller {
     window.location.assign(this.exitUrlValue)
   }
 
-  submit() {
+  submit(event) {
+    if (event.submitter?.dataset.previewSubmit === "true") return
+
     this.dirty = false
   }
 

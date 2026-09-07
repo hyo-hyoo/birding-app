@@ -95,6 +95,13 @@
       wire_pole: "电线或杆"
       air: "空中"
   observation_impressions:
+    preview:
+      visual_label: "根据当前表单生成的抽象鸟图"
+      saved_visual_label: "根据已保存观察生成的抽象鸟图"
+      thumbnail_label: "观察记录的抽象鸟图缩略图"
+      summary_heading: "当前特征摘要"
+      refresh: "更新预览"
+      error: "预览暂时无法更新，表单内容仍然保留。请重试。"
     summary:
       empty: "尚未记录身体部位。"
       primary: "主色：%{value}"

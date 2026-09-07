@@ -95,6 +95,13 @@ ja:
       wire_pole: "電線・柱"
       air: "空中"
   observation_impressions:
+    preview:
+      visual_label: "現在のフォームから生成した抽象的な鳥の図"
+      saved_visual_label: "保存済みの観察から生成した抽象的な鳥の図"
+      thumbnail_label: "観察記録の抽象的な鳥のサムネイル"
+      summary_heading: "現在の特徴要約"
+      refresh: "プレビューを更新"
+      error: "プレビューを更新できませんでした。入力内容は保持されています。もう一度お試しください。"
     summary:
       empty: "身体部位はまだ記録されていません。"
       primary: "主な色：%{value}"

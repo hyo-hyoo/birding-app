@@ -48,13 +48,86 @@ class ObservationFlowTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_response :ok
     assert_includes response.body, "bright cheek"
+    assert_select ".detail-hero .observation-impression-svg", count: 1
+    assert_select ".observation-summary__list", count: 1
     assert_includes response.body, I18n.t!("observation_options.activity_locations.water_surface", locale: :ja)
     assert_select "a[href=?]", edit_observation_path(observation)
 
     get observations_path
     assert_response :ok
     assert_select ".record-card", count: 1
+    assert_select ".record-card .observation-impression-svg", count: 1
     assert_select "a[href=?]", observation_path(observation)
+  end
+
+  test "collection preview derives safe html without writing observation tables" do
+    sign_in(@user)
+    params = valid_request_params.deep_dup
+    params[:parts][:head][:description] = "完整保留的观察文字 <script>bad</script>"
+
+    assert_no_difference [ "Observation.count", "PartImpression.count", "ActivityLocationSelection.count" ] do
+      post preview_observations_path(locale: "zh-CN"),
+        params: { observation: params },
+        headers: { "Turbo-Frame" => "observation-impression-preview" }
+    end
+
+    assert_response :ok
+    assert_select "turbo-frame#observation-impression-preview", count: 1
+    assert_select ".observation-impression-svg", count: 1
+    assert_select ".observation-summary__list", count: 1
+    assert_includes response.body, "完整保留的观察文字"
+    assert_select "script", count: 0
+  end
+
+  test "ordinary collection preview renders the whole form and preserves incomplete input" do
+    sign_in(@user)
+    params = valid_request_params.deep_dup
+    params[:parts] = { wing: { description: "只有文字，还没选择确定程度" } }
+
+    assert_no_difference [ "Observation.count", "PartImpression.count", "ActivityLocationSelection.count" ] do
+      post preview_observations_path(locale: "zh-CN"), params: { observation: params }
+    end
+
+    assert_response :ok
+    assert_select ".editor-page", count: 1
+    assert_select "textarea", text: "只有文字，还没选择确定程度"
+    assert_includes response.body, I18n.t!("observation_impressions.summary.certainty_pending", locale: :"zh-CN")
+  end
+
+  test "member preview is owner scoped and does not change the revision or rows" do
+    sign_in(@user)
+    post observations_path, params: { observation: valid_request_params }
+    observation = @user.observations.sole
+    preview_params = valid_request_params.deep_merge(
+      expected_revision: observation.content_revision,
+      parts: { tail: { primary_color_key: "red", feature_key: "long_tail", certainty_key: "probable" } }
+    )
+
+    assert_no_changes -> { observation.reload.content_revision } do
+      assert_no_difference [ "Observation.count", "PartImpression.count", "ActivityLocationSelection.count" ] do
+        post preview_observation_path(observation),
+          params: { observation: preview_params },
+          headers: { "Turbo-Frame" => "observation-impression-preview" }
+      end
+    end
+
+    assert_response :ok
+    assert_select "[data-feature-key='long_tail']", count: 0
+    assert_includes response.body, "特徴：長い尾"
+
+    delete session_path
+    other_user = create_user(email_verified_at: Time.current)
+    sign_in(other_user)
+    post preview_observation_path(observation), params: { observation: preview_params }
+    assert_response :not_found
+  end
+
+  test "preview requires authentication" do
+    assert_no_difference [ "Observation.count", "PartImpression.count", "ActivityLocationSelection.count" ] do
+      post preview_observations_path, params: { observation: valid_request_params }
+    end
+
+    assert_redirected_to new_session_path
   end
 
   test "invalid submission preserves input and leaves no partial aggregate" do
@@ -132,6 +205,11 @@ class ObservationFlowTest < ActionDispatch::IntegrationTest
 
     assert_no_changes -> { observation.reload.content_revision } do
       patch observation_path(observation), params: { observation: valid_request_params.merge(expected_revision: 0) }
+    end
+    assert_response :unprocessable_content
+
+    assert_no_difference [ "Observation.count", "PartImpression.count" ] do
+      post preview_observations_path, params: { observation: valid_request_params }
     end
     assert_response :unprocessable_content
   ensure
