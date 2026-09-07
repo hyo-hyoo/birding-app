@@ -1,8 +1,9 @@
 require "test_helper"
 
 class ObservationVisualCatalogTest < ActiveSupport::TestCase
-  test "loads and freezes the three stage 8A mappings" do
-    assert_equal %w[anatidae ardeidae compact_passerine], ObservationVisualCatalog.outline_keys
+  test "loads freezes and completely maps every configured outline" do
+    assert_equal ObservationOptions.outline_keys.sort, ObservationVisualCatalog.outline_keys.sort
+    assert_equal 17, ObservationVisualCatalog.outline_keys.size
     assert_predicate ObservationVisualCatalog.config, :frozen?
 
     ObservationVisualCatalog.outlines.each do |outline_key, outline|
@@ -15,7 +16,9 @@ class ObservationVisualCatalogTest < ActiveSupport::TestCase
       outline.fetch(:parts).each_value do |part|
         assert_not_empty part.fetch(:base)
         assert_not_empty part.fetch(:secondary)
+        assert_equal %i[angle height width x y], part.fetch(:feature_anchor).keys.sort
       end
+      assert outline.fetch(:parts).values.none? { |part| part.key?(:variants) }
     end
   end
 
@@ -35,7 +38,7 @@ class ObservationVisualCatalogTest < ActiveSupport::TestCase
     assert_nil ObservationVisualCatalog.color_hex("url(https://example.test/paint)")
   end
 
-  test "loads trusted source geometry for all three sample silhouettes" do
+  test "loads trusted source geometry for every silhouette" do
     duck = ObservationVisualCatalog.source_geometry("anatidae")
     heron = ObservationVisualCatalog.source_geometry("ardeidae")
     compact = ObservationVisualCatalog.source_geometry("compact_passerine")
@@ -49,5 +52,25 @@ class ObservationVisualCatalogTest < ActiveSupport::TestCase
     assert_equal 1, duck.fetch(:paths).length
     assert_equal 1, heron.fetch(:paths).length
     assert_equal 1, compact.fetch(:paths).length
+
+    ObservationVisualCatalog.outline_keys.each do |outline_key|
+      geometry = ObservationVisualCatalog.source_geometry(outline_key)
+
+      assert_equal 4, geometry.fetch(:view_box).length
+      assert geometry.fetch(:view_box).drop(2).all?(&:positive?)
+      assert_match(/\Atranslate\(.+\) scale\(.+\)\z/, geometry.fetch(:transform))
+      assert_not_empty geometry.fetch(:paths)
+    end
+  end
+
+
+  test "classifies only color-block features as visual" do
+    assert ObservationVisualCatalog.visual_feature?("wing", "wing_patch")
+    assert ObservationVisualCatalog.visual_feature?("head", "eye_ring")
+    assert_not ObservationVisualCatalog.visual_feature?("wing", "streaked")
+    assert_not ObservationVisualCatalog.visual_feature?("wing", "pale_feather_edges")
+    assert_not ObservationVisualCatalog.visual_feature?("head", "crest")
+    assert_not ObservationVisualCatalog.visual_feature?("tail", "forked_tail")
+    assert_not ObservationVisualCatalog.visual_feature?("tail", "long_tail")
   end
 end

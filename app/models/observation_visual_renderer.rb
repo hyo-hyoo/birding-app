@@ -10,13 +10,18 @@ class ObservationVisualRenderer
     "r" => "r",
     "rx" => "rx",
     "ry" => "ry",
+    "x" => "x",
+    "y" => "y",
+    "width" => "width",
+    "height" => "height",
     "x1" => "x1",
     "x2" => "x2",
     "y1" => "y1",
     "y2" => "y2",
     "points" => "points",
     "fill" => "fill",
-    "stroke_width" => "stroke-width"
+    "stroke_width" => "stroke-width",
+    "transform" => "transform"
   }.freeze
 
   attr_reader :impression, :id_prefix, :label
@@ -54,8 +59,7 @@ class ObservationVisualRenderer
 
   def clip_definitions
     ObservationOptions.part_keys.map do |part_key|
-      part = impression.part(part_key)
-      tag.clipPath(safe_join(base_elements_for(part_key, part).map { |element| element_tag(element, {}) }), id: clip_id(part_key))
+      tag.clipPath(safe_join(base_elements_for(part_key).map { |element| element_tag(element, {}) }), id: clip_id(part_key))
     end
   end
 
@@ -76,7 +80,7 @@ class ObservationVisualRenderer
     secondary_color = ObservationVisualCatalog.color_hex(part.secondary_color_key)
     mapping = outline.fetch(:parts).fetch(part_key.to_sym)
 
-    layers = base_elements_for(part_key, part).map do |element|
+    layers = base_elements_for(part_key).map do |element|
       element_tag(
         element,
         fill: base_color,
@@ -88,32 +92,81 @@ class ObservationVisualRenderer
     end
 
     if secondary_color
-      layers.concat(mapping.fetch(:secondary).map do |element|
-        element_tag(element, fill: secondary_color, stroke: "none", class: "observation-impression__secondary", data: { part_key: })
-      end)
+      secondary = secondary_elements(part_key, part, mapping).map do |element|
+        painted_element(element, secondary_color, data: { secondary_for: part_key })
+      end
+      layers << tag.g(
+        safe_join(secondary),
+        class: "observation-impression__secondary",
+        data: { part_key: },
+        "clip-path" => "url(##{clip_id(part_key)})"
+      )
     end
 
-    layers.concat(feature_layers(part_key, part, mapping, secondary_color || contrast_color(base_color)))
     tag.g(safe_join(layers), data: { impression_part: part_key })
   end
 
-  def base_elements_for(part_key, part)
-    mapping = outline.fetch(:parts).fetch(part_key.to_sym)
-    variant = mapping.fetch(:variants, {})[part.feature_key&.to_sym]
-    return mapping.fetch(:base) unless variant
-    return variant.fetch(:elements) if variant.fetch(:mode) == "replace"
-
-    mapping.fetch(:base) + variant.fetch(:elements)
+  def base_elements_for(part_key)
+    outline.fetch(:parts).fetch(part_key.to_sym).fetch(:base)
   end
 
-  def feature_layers(part_key, part, mapping, accent_color)
-    return [] unless part.feature_key
+  def secondary_elements(part_key, part, mapping)
+    return mapping.fetch(:secondary) unless ObservationVisualCatalog.visual_feature?(part_key, part.feature_key)
 
-    layers = []
-    mapping.fetch(:features, {}).fetch(part.feature_key.to_sym, []).each do |element|
-      layers << painted_element(element, accent_color, data: { feature_key: part.feature_key })
+    mapping.fetch(:features, {})[part.feature_key.to_sym].presence || generated_feature_elements(part.feature_key, mapping.fetch(:feature_anchor))
+  end
+
+  def generated_feature_elements(feature_key, anchor)
+    x = anchor.fetch(:x).to_f
+    y = anchor.fetch(:y).to_f
+    width = anchor.fetch(:width).to_f
+    height = anchor.fetch(:height).to_f
+    angle = anchor.fetch(:angle).to_f
+    rotation = "rotate(#{format_number(angle)} #{format_number(x)} #{format_number(y)})"
+
+    case feature_key.to_s
+    when "eye_ring"
+      [ generated_element("ellipse", "accent_stroke", cx: x, cy: y, rx: width * 0.16, ry: height * 0.24, fill: "none", stroke_width: 3) ]
+    when "eye_stripe"
+      [ generated_element("path", "accent", d: horizontal_curve(x, y, width * 0.72), fill: "none", stroke_width: [ height * 0.24, 4 ].max) ]
+    when "eyebrow_stripe"
+      [ generated_element("path", "accent", d: horizontal_curve(x, y - (height * 0.22), width * 0.68), fill: "none", stroke_width: [ height * 0.2, 3.5 ].max) ]
+    when "cheek_patch"
+      [ generated_element("ellipse", "accent", cx: x, cy: y + (height * 0.18), rx: width * 0.27, ry: height * 0.3, transform: rotation) ]
+    when "throat_patch"
+      [ generated_element("ellipse", "accent", cx: x - (width * 0.24), cy: y + (height * 0.52), rx: width * 0.25, ry: height * 0.34, transform: rotation) ]
+    when "neck_ring"
+      [ generated_element("path", "accent", d: horizontal_curve(x - (width * 0.28), y + (height * 0.56), width * 0.58), fill: "none", stroke_width: [ height * 0.26, 4 ].max) ]
+    when "breast_band"
+      [ generated_element("path", "accent", d: horizontal_curve(x, y, width * 0.86), fill: "none", stroke_width: [ height * 0.35, 7 ].max) ]
+    when "wing_bars"
+      [ generated_element("path", "accent", d: horizontal_curve(x, y, width * 0.84), fill: "none", stroke_width: [ height * 0.34, 8 ].max) ]
+    when "wing_patch"
+      [ generated_element("ellipse", "accent", cx: x, cy: y, rx: width * 0.34, ry: height * 0.34, transform: rotation) ]
+    when "speculum"
+      [ generated_element("ellipse", "accent", cx: x, cy: y, rx: width * 0.43, ry: height * 0.2, transform: rotation) ]
+    when "tail_band"
+      [ generated_element("path", "accent", d: horizontal_curve(x, y, width * 0.8), fill: "none", stroke_width: [ height * 0.38, 6 ].max) ]
+    when "pale_tail_tip"
+      [ generated_element("ellipse", "accent", cx: x + (width * 0.32), cy: y, rx: width * 0.28, ry: height * 0.42, transform: rotation) ]
+    when "white_outer_tail"
+      [ generated_element("ellipse", "accent", cx: x, cy: y, rx: width * 0.45, ry: height * 0.2, transform: rotation) ]
+    else
+      []
     end
-    layers
+  end
+
+  def generated_element(element, paint, **attributes)
+    {
+      element:,
+      paint:,
+      attrs: attributes.transform_values { |value| value.is_a?(Numeric) ? format_number(value) : value }
+    }
+  end
+
+  def horizontal_curve(x, y, width)
+    half = width / 2
+    "M#{format_number(x - half)} #{format_number(y)} Q#{format_number(x)} #{format_number(y + (width * 0.08))} #{format_number(x + half)} #{format_number(y)}"
   end
 
   def silhouette_clip_definition
@@ -209,6 +262,7 @@ class ObservationVisualRenderer
     when "line" then tag.line(**attributes)
     when "polyline" then tag.polyline(**attributes)
     when "polygon" then tag.polygon(**attributes)
+    when "rect" then tag.rect(**attributes)
     end
   end
 
@@ -225,9 +279,5 @@ class ObservationVisualRenderer
     return prefix if /\A[a-zA-Z][a-zA-Z0-9_-]*\z/.match?(prefix)
 
     "impression-#{SecureRandom.hex(6)}"
-  end
-
-  def contrast_color(color)
-    color.casecmp("#252729").zero? ? "#F5F3EA" : ObservationVisualCatalog.outline_color
   end
 end

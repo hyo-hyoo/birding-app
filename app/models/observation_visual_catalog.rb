@@ -1,10 +1,16 @@
 module ObservationVisualCatalog
   CONFIG_PATH = Rails.root.join("config/observation_visuals.yml")
-  SAMPLE_OUTLINE_KEYS = %w[anatidae ardeidae compact_passerine].freeze
-  ELEMENTS = %w[path circle ellipse line polyline polygon].freeze
-  ATTRIBUTES = %w[d cx cy r rx ry x1 x2 y1 y2 points fill stroke_width].freeze
+  OUTLINE_KEYS = ObservationOptions.outline_keys.freeze
+  ELEMENTS = %w[path circle ellipse line polyline polygon rect].freeze
+  ATTRIBUTES = %w[d cx cy r rx ry x y width height x1 x2 y1 y2 points fill stroke_width transform].freeze
   PAINTS = %w[scene scene_light beak eye accent accent_stroke light].freeze
-  VARIANT_MODES = %w[append replace].freeze
+  FEATURE_ANCHOR_KEYS = %i[x y width height angle].freeze
+  VISUAL_FEATURE_KEYS = {
+    "head" => %w[eye_ring eye_stripe eyebrow_stripe cheek_patch throat_patch neck_ring],
+    "chest_belly" => %w[breast_band],
+    "wing" => %w[wing_bars wing_patch speculum],
+    "tail" => %w[tail_band pale_tail_tip white_outer_tail]
+  }.freeze
   HEX_COLOR = /\A#[0-9A-F]{6}\z/i
   VIEW_BOX = /\A-?\d+(?:\.\d+)?(?: +-?\d+(?:\.\d+)?){3}\z/
   SOURCE_FRAME_KEYS = %i[x y width height].freeze
@@ -36,6 +42,10 @@ module ObservationVisualCatalog
       ObservationOptions.colors.find { |color| color.fetch(:key) == color_key.to_s }&.fetch(:hex)
     end
 
+    def visual_feature?(part_key, feature_key)
+      VISUAL_FEATURE_KEYS.fetch(part_key.to_s, []).include?(feature_key.to_s)
+    end
+
     def source_geometry(outline_key)
       @source_geometries ||= {}
       @source_geometries[outline_key.to_s] ||= load_source_geometry(outline!(outline_key)).freeze
@@ -58,7 +68,7 @@ module ObservationVisualCatalog
       end
 
       outlines = values.fetch(:outlines)
-      invalid!("stage 8A sample keys are incomplete") unless outlines.keys.map(&:to_s).sort == SAMPLE_OUTLINE_KEYS.sort
+      invalid!("stage 8 outline keys are incomplete") unless outlines.keys.map(&:to_s).sort == OUTLINE_KEYS.sort
 
       outlines.each do |outline_key, outline|
         validate_outline!(outline_key.to_s, outline)
@@ -73,7 +83,7 @@ module ObservationVisualCatalog
       expected_asset = ObservationOptions.outlines.find { |entry| entry.fetch(:key) == outline_key }.fetch(:asset)
       invalid!("source asset mismatch for #{outline_key}") unless outline.fetch(:source_asset) == expected_asset
 
-      validate_source_frame!(outline_key, outline[:source_frame]) if outline[:source_frame]
+      validate_source_frame!(outline_key, outline.fetch(:source_frame))
 
       validate_elements!(outline.fetch(:scene), "#{outline_key}.scene")
       validate_elements!(outline.fetch(:details), "#{outline_key}.details")
@@ -87,18 +97,19 @@ module ObservationVisualCatalog
         invalid!("#{path} secondary must not be empty") if part.fetch(:secondary).empty?
         validate_elements!(part.fetch(:base), "#{path}.base")
         validate_elements!(part.fetch(:secondary), "#{path}.secondary")
+        validate_feature_anchor!(part.fetch(:feature_anchor), path)
 
         part.fetch(:features, {}).each do |feature_key, elements|
           validate_feature!(feature_key, part_key, path)
           validate_elements!(elements, "#{path}.features.#{feature_key}")
         end
-
-        part.fetch(:variants, {}).each do |feature_key, variant|
-          validate_feature!(feature_key, part_key, path)
-          invalid!("invalid variant mode at #{path}.variants.#{feature_key}") unless VARIANT_MODES.include?(variant.fetch(:mode))
-          validate_elements!(variant.fetch(:elements), "#{path}.variants.#{feature_key}")
-        end
       end
+    end
+
+    def validate_feature_anchor!(anchor, path)
+      invalid!("#{path}.feature_anchor must have x, y, width, height, and angle") unless anchor.keys.sort == FEATURE_ANCHOR_KEYS.sort
+      invalid!("#{path}.feature_anchor values must be numeric") unless anchor.values.all? { |value| value.is_a?(Numeric) }
+      invalid!("#{path}.feature_anchor dimensions must be positive") unless anchor[:width].to_f.positive? && anchor[:height].to_f.positive?
     end
 
     def validate_source_frame!(outline_key, frame)

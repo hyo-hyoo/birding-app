@@ -4,10 +4,9 @@ neutral_color: "#DCE4DE"
 outline_color: "#284A3E"
 detail_color: "#526D61"
 
-# Stage 8A contains only the three approved representative samples. Every
-# outline is drawn independently from its recorded PhyloPic silhouette source;
-# the remaining fourteen mappings are intentionally deferred until visual
-# approval of these samples.
+# Every outline is drawn independently from its recorded PhyloPic silhouette
+# source. Fine patterns and the crest, forked-tail, and long-tail features stay
+# in the localized text summary and do not alter the SVG silhouette.
 outlines:
   anatidae:
     source_asset: observation_outlines/anatidae.svg
@@ -17,6 +16,7 @@ outlines:
       - { element: path, paint: scene_light, attrs: { d: "M38 194 C101 188 162 198 224 191 C255 188 279 189 299 186" } }
     parts:
       tail:
+        feature_anchor: { x: 279, y: 137, width: 42, height: 34, angle: 8 }
         base:
           - { element: path, attrs: { d: "M249 101 C269 105 290 116 309 133 V184 H245 C256 159 258 130 249 101 Z" } }
         secondary:
@@ -27,6 +27,7 @@ outlines:
           pale_tail_tip:
             - { element: path, paint: light, attrs: { d: "M292 105 C296 125 294 145 288 162", fill: none, stroke_width: "6" } }
       chest_belly:
+        feature_anchor: { x: 92, y: 129, width: 38, height: 46, angle: 86 }
         base:
           - { element: path, attrs: { d: "M14 50 H306 V188 H14 Z" } }
         secondary:
@@ -35,6 +36,7 @@ outlines:
           breast_band:
             - { element: path, paint: accent, attrs: { d: "M82 116 C88 132 88 147 82 160", fill: none, stroke_width: "7" } }
       wing:
+        feature_anchor: { x: 181, y: 113, width: 96, height: 42, angle: 4 }
         base:
           - { element: path, attrs: { d: "M92 91 C132 72 202 76 253 104 C234 139 187 159 119 151 C101 138 91 116 92 91 Z" } }
         secondary:
@@ -47,6 +49,7 @@ outlines:
           speculum:
             - { element: path, paint: accent, attrs: { d: "M151 104 C179 94 211 98 230 110 C208 120 178 124 153 118 Z", stroke_width: "0" } }
       head:
+        feature_anchor: { x: 75, y: 73, width: 58, height: 38, angle: -4 }
         base:
           - { element: path, attrs: { d: "M10 45 H111 C105 67 106 87 115 104 C119 116 111 132 94 143 H10 Z" } }
         secondary:
@@ -69,6 +72,7 @@ outlines:
       - { element: path, paint: scene_light, attrs: { d: "M80 215 C137 211 204 214 247 211" } }
     parts:
       tail:
+        feature_anchor: { x: 119, y: 136, width: 30, height: 36, angle: -10 }
         base:
           - { element: path, attrs: { d: "M102 98 H148 V158 H102 Z" } }
         secondary:
@@ -77,6 +81,7 @@ outlines:
           tail_band:
             - { element: path, paint: accent, attrs: { d: "M108 132 L137 124", fill: none, stroke_width: "5" } }
       chest_belly:
+        feature_anchor: { x: 153, y: 116, width: 42, height: 62, angle: 82 }
         base:
           - { element: path, attrs: { d: "M100 5 H220 V213 H100 Z" } }
         secondary:
@@ -85,6 +90,7 @@ outlines:
           breast_band:
             - { element: path, paint: accent, attrs: { d: "M157 91 C148 105 145 120 148 135", fill: none, stroke_width: "6" } }
       wing:
+        feature_anchor: { x: 145, y: 101, width: 50, height: 45, angle: -8 }
         base:
           - { element: path, attrs: { d: "M113 82 C127 67 154 67 174 84 C172 111 156 135 128 145 C113 130 107 103 113 82 Z" } }
         secondary:
@@ -97,6 +103,7 @@ outlines:
           wing_patch:
             - { element: path, paint: accent, attrs: { d: "M127 88 C139 80 155 81 166 91 C156 101 142 106 130 103 Z", stroke_width: "0" } }
       head:
+        feature_anchor: { x: 184, y: 34, width: 44, height: 36, angle: -8 }
         base:
           - { element: path, attrs: { d: "M145 4 H220 V65 C198 73 184 90 177 111 C164 105 153 96 145 86 Z" } }
         secondary:
@@ -108,13 +115,7 @@ outlines:
             - { element: ellipse, paint: accent, attrs: { cx: "185", cy: "34", rx: "9", ry: "6", stroke_width: "0" } }
           crest:
             - { element: path, paint: accent, attrs: { d: "M166 19 C153 11 143 8 132 9 C146 18 155 27 164 35 Z", stroke_width: "0" } }
-        variants:
-          crest:
-            mode: append
-            elements:
-              - { element: path, attrs: { d: "M166 19 C151 8 138 5 124 7 C144 19 155 31 166 42 Z" } }
-    details:
-      - { element: circle, paint: eye, attrs: { cx: "188", cy: "25", r: "2.5" } }
+    details: []
 
   compact_passerine:
     source_asset: observation_outlines/compact_passerine.svg
@@ -124,6 +125,7 @@ outlines:
       - { element: path, paint: scene, attrs: { d: "M83 171 L69 193 M183 169 L196 188", stroke_width: "3" } }
     parts:
       tail:
+        feature_anchor: { x: 75, y: 159, width: 62, height: 30, angle: -12 }
         base:
           - { element: path, attrs: { d: "M113 135 C88 140 62 153 39 171 C66 168 94 160 122 151 Z" } }
         secondary:
@@ -133,16 +135,8 @@ outlines:
             - { element: path, paint: accent, attrs: { d: "M67 159 L96 151", fill: none, stroke_width: "5" } }
           pale_tail_tip:
             - { element: path, paint: light, attrs: { d: "M43 169 C55 167 68 164 80 160", fill: none, stroke_width: "5" } }
-        variants:
-          forked_tail:
-            mode: replace
-            elements:
-              - { element: path, attrs: { d: "M116 134 C88 139 57 148 31 164 L66 158 L42 178 C70 170 97 160 123 150 Z" } }
-          long_tail:
-            mode: replace
-            elements:
-              - { element: path, attrs: { d: "M116 134 C84 141 49 159 18 190 C56 174 91 162 124 151 Z" } }
       chest_belly:
+        feature_anchor: { x: 210, y: 126, width: 44, height: 58, angle: 84 }
         base:
           - { element: path, attrs: { d: "M50 72 H287 V208 H50 Z" } }
         secondary:
@@ -151,6 +145,7 @@ outlines:
           breast_band:
             - { element: path, paint: accent, attrs: { d: "M216 104 C205 120 203 137 211 151", fill: none, stroke_width: "7" } }
       wing:
+        feature_anchor: { x: 162, y: 122, width: 82, height: 42, angle: -5 }
         base:
           - { element: path, attrs: { d: "M105 88 C133 69 181 73 220 101 C208 137 175 158 128 157 C109 140 101 111 105 88 Z" } }
         secondary:
@@ -160,6 +155,7 @@ outlines:
           pale_feather_edges: []
           wing_patch: []
       head:
+        feature_anchor: { x: 268, y: 70, width: 60, height: 42, angle: -8 }
         base:
           - { element: path, attrs: { d: "M202 78 C206 48 231 29 260 34 C286 38 302 60 297 83 C292 105 270 118 247 113 C222 109 199 97 202 78 Z" } }
         secondary:
@@ -175,12 +171,452 @@ outlines:
             - { element: ellipse, paint: accent, attrs: { cx: "265", cy: "85", rx: "13", ry: "9" } }
           crest:
             - { element: path, paint: accent, attrs: { d: "M218 48 C211 31 205 22 193 14 C199 35 203 49 208 61 Z" } }
-        variants:
-          crest:
-            mode: append
-            elements:
-              - { element: path, attrs: { d: "M220 49 C214 30 205 18 192 10 C198 34 204 51 211 63 Z" } }
-    details:
-      - { element: path, paint: beak, attrs: { d: "M296 72 L318 79 L296 86 Z" } }
-      - { element: circle, paint: eye, attrs: { cx: "275", cy: "64", r: "2.7" } }
-      - { element: path, paint: scene, attrs: { d: "M150 172 L145 184 M173 172 L178 183", fill: none, stroke_width: "3" } }
+    details: []
+
+  podicipedidae:
+    source_asset: observation_outlines/podicipedidae.svg
+    source_frame: { x: 18, y: 50, width: 284, height: 168 }
+    scene:
+      - { element: path, paint: scene_light, attrs: { d: "M18 190 C92 184 210 195 302 186" } }
+    parts:
+      tail:
+        feature_anchor: { x: 286, y: 170, width: 44, height: 28, angle: 4 }
+        base:
+          - { element: rect, attrs: { x: "247", y: "113", width: "62", height: "68" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "277", cy: "151", rx: "25", ry: "13" } }
+      chest_belly:
+        feature_anchor: { x: 126, y: 142, width: 46, height: 50, angle: 80 }
+        base:
+          - { element: rect, attrs: { x: "76", y: "69", width: "214", height: "121" } }
+        secondary:
+          - { element: path, attrs: { d: "M93 132 C132 151 199 159 253 139 C238 169 205 182 158 179 C123 177 102 161 93 132 Z" } }
+      wing:
+        feature_anchor: { x: 190, y: 132, width: 88, height: 38, angle: 4 }
+        base:
+          - { element: ellipse, attrs: { cx: "188", cy: "129", rx: "79", ry: "45" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "195", cy: "133", rx: "44", ry: "16" } }
+      head:
+        feature_anchor: { x: 60, y: 83, width: 50, height: 38, angle: -6 }
+        base:
+          - { element: ellipse, attrs: { cx: "65", cy: "78", rx: "42", ry: "39" } }
+          - { element: path, attrs: { d: "M65 78 C75 87 91 108 112 143 L82 155 C72 119 60 98 48 89 Z" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "60", cy: "67", rx: "25", ry: "13" } }
+    details: []
+
+  phalacrocoracidae:
+    source_asset: observation_outlines/phalacrocoracidae.svg
+    source_frame: { x: 12, y: 60, width: 296, height: 118 }
+    scene: []
+    parts:
+      tail:
+        feature_anchor: { x: 161, y: 148, width: 48, height: 28, angle: 90 }
+        base:
+          - { element: rect, attrs: { x: "132", y: "143", width: "58", height: "45" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "161", cy: "162", rx: "18", ry: "12" } }
+      chest_belly:
+        feature_anchor: { x: 161, y: 132, width: 48, height: 54, angle: 0 }
+        base:
+          - { element: ellipse, attrs: { cx: "161", cy: "126", rx: "47", ry: "52" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "161", cy: "145", rx: "31", ry: "23" } }
+      wing:
+        feature_anchor: { x: 161, y: 119, width: 236, height: 42, angle: 0 }
+        base:
+          - { element: path, attrs: { d: "M8 88 C72 69 112 82 161 118 C207 82 251 69 312 88 L310 145 C246 143 204 133 161 120 C116 134 76 145 10 145 Z" } }
+        secondary:
+          - { element: path, attrs: { d: "M48 104 C91 94 124 101 155 119 C120 118 85 122 49 130 Z M272 104 C229 94 196 101 165 119 C200 118 235 122 271 130 Z" } }
+      head:
+        feature_anchor: { x: 174, y: 77, width: 38, height: 30, angle: 4 }
+        base:
+          - { element: ellipse, attrs: { cx: "174", cy: "78", rx: "28", ry: "27" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "177", cy: "69", rx: "17", ry: "9" } }
+    details: []
+
+  rallidae:
+    source_asset: observation_outlines/rallidae.svg
+    source_frame: { x: 18, y: 66, width: 284, height: 142 }
+    scene:
+      - { element: path, paint: scene_light, attrs: { d: "M18 187 C91 180 222 195 302 183" } }
+    parts:
+      tail:
+        feature_anchor: { x: 279, y: 147, width: 44, height: 30, angle: 4 }
+        base:
+          - { element: rect, attrs: { x: "247", y: "111", width: "65", height: "74" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "281", cy: "149", rx: "24", ry: "13" } }
+      chest_belly:
+        feature_anchor: { x: 115, y: 145, width: 44, height: 48, angle: 80 }
+        base:
+          - { element: rect, attrs: { x: "74", y: "77", width: "215", height: "111" } }
+        secondary:
+          - { element: path, attrs: { d: "M91 136 C132 154 198 159 251 141 C237 169 202 181 157 179 C122 177 101 161 91 136 Z" } }
+      wing:
+        feature_anchor: { x: 191, y: 134, width: 88, height: 40, angle: 4 }
+        base:
+          - { element: ellipse, attrs: { cx: "187", cy: "130", rx: "79", ry: "43" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "195", cy: "134", rx: "44", ry: "16" } }
+      head:
+        feature_anchor: { x: 63, y: 107, width: 52, height: 38, angle: -4 }
+        base:
+          - { element: ellipse, attrs: { cx: "66", cy: "105", rx: "44", ry: "38" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "62", cy: "94", rx: "26", ry: "13" } }
+    details: []
+
+  laridae:
+    source_asset: observation_outlines/laridae.svg
+    source_frame: { x: 35, y: 12, width: 250, height: 196 }
+    scene:
+      - { element: path, paint: scene, attrs: { d: "M38 203 C109 197 211 205 282 198" } }
+    parts:
+      tail:
+        feature_anchor: { x: 249, y: 151, width: 54, height: 34, angle: 8 }
+        base:
+          - { element: rect, attrs: { x: "218", y: "91", width: "72", height: "84" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "251", cy: "132", rx: "26", ry: "14" } }
+      chest_belly:
+        feature_anchor: { x: 112, y: 125, width: 42, height: 58, angle: 82 }
+        base:
+          - { element: rect, attrs: { x: "66", y: "52", width: "186", height: "130" } }
+        secondary:
+          - { element: path, attrs: { d: "M79 119 C112 141 169 151 218 132 C208 162 177 178 137 175 C107 173 88 154 79 119 Z" } }
+      wing:
+        feature_anchor: { x: 177, y: 113, width: 80, height: 42, angle: 6 }
+        base:
+          - { element: ellipse, attrs: { cx: "174", cy: "109", rx: "73", ry: "48" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "182", cy: "116", rx: "41", ry: "17" } }
+      head:
+        feature_anchor: { x: 72, y: 57, width: 48, height: 36, angle: -6 }
+        base:
+          - { element: ellipse, attrs: { cx: "74", cy: "56", rx: "39", ry: "35" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "69", cy: "46", rx: "23", ry: "12" } }
+    details: []
+
+  scolopacidae:
+    source_asset: observation_outlines/scolopacidae.svg
+    source_frame: { x: 24, y: 28, width: 272, height: 196 }
+    scene:
+      - { element: path, paint: scene, attrs: { d: "M29 207 C96 201 221 209 291 202" } }
+    parts:
+      tail:
+        feature_anchor: { x: 64, y: 158, width: 58, height: 32, angle: -7 }
+        base:
+          - { element: rect, attrs: { x: "20", y: "83", width: "79", height: "77" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "62", cy: "123", rx: "27", ry: "13" } }
+      chest_belly:
+        feature_anchor: { x: 211, y: 119, width: 44, height: 58, angle: -78 }
+        base:
+          - { element: rect, attrs: { x: "70", y: "52", width: "190", height: "133" } }
+        secondary:
+          - { element: path, attrs: { d: "M99 125 C138 147 199 151 240 127 C234 157 207 175 167 176 C132 175 108 157 99 125 Z" } }
+      wing:
+        feature_anchor: { x: 146, y: 108, width: 82, height: 42, angle: -5 }
+        base:
+          - { element: ellipse, attrs: { cx: "148", cy: "107", rx: "72", ry: "47" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "143", cy: "113", rx: "40", ry: "17" } }
+      head:
+        feature_anchor: { x: 248, y: 59, width: 48, height: 34, angle: 5 }
+        base:
+          - { element: ellipse, attrs: { cx: "247", cy: "58", rx: "38", ry: "33" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "252", cy: "48", rx: "22", ry: "11" } }
+    details: []
+
+  alcedinidae:
+    source_asset: observation_outlines/alcedinidae.svg
+    source_frame: { x: 61, y: 10, width: 198, height: 202 }
+    scene:
+      - { element: path, paint: scene, attrs: { d: "M36 187 C105 178 191 189 284 173", stroke_width: "5" } }
+    parts:
+      tail:
+        feature_anchor: { x: 206, y: 150, width: 52, height: 42, angle: 42 }
+        base:
+          - { element: rect, attrs: { x: "171", y: "116", width: "82", height: "94" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "209", cy: "153", rx: "24", ry: "13", transform: "rotate(38 209 153)" } }
+      chest_belly:
+        feature_anchor: { x: 118, y: 129, width: 42, height: 58, angle: 78 }
+        base:
+          - { element: rect, attrs: { x: "75", y: "61", width: "151", height: "128" } }
+        secondary:
+          - { element: path, attrs: { d: "M90 119 C113 143 155 154 196 136 C188 165 165 180 134 177 C110 174 96 155 90 119 Z" } }
+      wing:
+        feature_anchor: { x: 157, y: 113, width: 70, height: 42, angle: 9 }
+        base:
+          - { element: ellipse, attrs: { cx: "156", cy: "110", rx: "61", ry: "47", transform: "rotate(10 156 110)" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "160", cy: "116", rx: "34", ry: "16", transform: "rotate(10 160 116)" } }
+      head:
+        feature_anchor: { x: 97, y: 57, width: 50, height: 38, angle: -8 }
+        base:
+          - { element: ellipse, attrs: { cx: "99", cy: "57", rx: "40", ry: "36" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "94", cy: "46", rx: "24", ry: "12" } }
+    details: []
+
+  hawk_like:
+    source_asset: observation_outlines/hawk_like.svg
+    source_frame: { x: 12, y: 70, width: 296, height: 117 }
+    scene: []
+    parts:
+      tail:
+        feature_anchor: { x: 160, y: 167, width: 50, height: 28, angle: 90 }
+        base:
+          - { element: rect, attrs: { x: "128", y: "143", width: "64", height: "51" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "160", cy: "166", rx: "20", ry: "11" } }
+      chest_belly:
+        feature_anchor: { x: 160, y: 126, width: 48, height: 50, angle: 0 }
+        base:
+          - { element: ellipse, attrs: { cx: "160", cy: "124", rx: "50", ry: "47" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "160", cy: "143", rx: "31", ry: "21" } }
+      wing:
+        feature_anchor: { x: 160, y: 123, width: 238, height: 42, angle: 0 }
+        base:
+          - { element: path, attrs: { d: "M8 91 C69 73 112 87 160 120 C208 87 251 73 312 91 L307 151 C247 146 205 135 160 122 C114 135 73 146 13 151 Z" } }
+        secondary:
+          - { element: path, attrs: { d: "M47 106 C92 96 124 103 154 120 C119 119 84 124 49 132 Z M273 106 C228 96 196 103 166 120 C201 119 236 124 271 132 Z" } }
+      head:
+        feature_anchor: { x: 160, y: 91, width: 40, height: 30, angle: 0 }
+        base:
+          - { element: ellipse, attrs: { cx: "160", cy: "91", rx: "29", ry: "26" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "160", cy: "82", rx: "18", ry: "9" } }
+    details: []
+
+  falconidae:
+    source_asset: observation_outlines/falconidae.svg
+    source_frame: { x: 101, y: 8, width: 118, height: 204 }
+    scene: []
+    parts:
+      tail:
+        feature_anchor: { x: 209, y: 109, width: 34, height: 44, angle: 0 }
+        base:
+          - { element: rect, attrs: { x: "184", y: "80", width: "42", height: "61" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "207", cy: "110", rx: "13", ry: "19" } }
+      chest_belly:
+        feature_anchor: { x: 158, y: 110, width: 42, height: 52, angle: 90 }
+        base:
+          - { element: ellipse, attrs: { cx: "159", cy: "110", rx: "45", ry: "38" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "168", cy: "111", rx: "23", ry: "25" } }
+      wing:
+        feature_anchor: { x: 158, y: 110, width: 48, height: 148, angle: 90 }
+        base:
+          - { element: rect, attrs: { x: "106", y: "4", width: "105", height: "212" } }
+        secondary:
+          - { element: path, attrs: { d: "M139 34 C154 61 162 83 160 105 C149 81 133 62 120 48 Z M160 115 C163 139 156 162 140 188 L121 171 C136 151 149 132 160 115 Z" } }
+      head:
+        feature_anchor: { x: 111, y: 109, width: 35, height: 31, angle: 0 }
+        base:
+          - { element: ellipse, attrs: { cx: "114", cy: "109", rx: "23", ry: "25" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "112", cy: "100", rx: "13", ry: "9" } }
+    details: []
+
+  columbidae:
+    source_asset: observation_outlines/columbidae.svg
+    source_frame: { x: 30, y: 24, width: 260, height: 182 }
+    scene:
+      - { element: path, paint: scene, attrs: { d: "M35 198 C108 192 215 202 285 194" } }
+    parts:
+      tail:
+        feature_anchor: { x: 250, y: 141, width: 60, height: 38, angle: 12 }
+        base:
+          - { element: rect, attrs: { x: "213", y: "99", width: "80", height: "88" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "252", cy: "143", rx: "29", ry: "15", transform: "rotate(10 252 143)" } }
+      chest_belly:
+        feature_anchor: { x: 111, y: 128, width: 46, height: 62, angle: 82 }
+        base:
+          - { element: rect, attrs: { x: "61", y: "50", width: "206", height: "138" } }
+        secondary:
+          - { element: path, attrs: { d: "M77 120 C111 146 169 157 220 137 C210 169 177 185 136 181 C105 178 85 157 77 120 Z" } }
+      wing:
+        feature_anchor: { x: 177, y: 114, width: 86, height: 46, angle: 7 }
+        base:
+          - { element: ellipse, attrs: { cx: "174", cy: "111", rx: "77", ry: "51", transform: "rotate(6 174 111)" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "181", cy: "118", rx: "43", ry: "18", transform: "rotate(7 181 118)" } }
+      head:
+        feature_anchor: { x: 72, y: 59, width: 50, height: 38, angle: -5 }
+        base:
+          - { element: ellipse, attrs: { cx: "75", cy: "58", rx: "40", ry: "36" } }
+          - { element: path, attrs: { d: "M75 62 C88 72 97 88 104 108 L75 119 C67 92 61 75 55 66 Z" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "70", cy: "47", rx: "23", ry: "12" } }
+    details: []
+
+  corvidae:
+    source_asset: observation_outlines/corvidae.svg
+    source_frame: { x: 28, y: 26, width: 264, height: 182 }
+    scene:
+      - { element: path, paint: scene, attrs: { d: "M34 197 C108 191 216 201 287 193" } }
+    parts:
+      tail:
+        feature_anchor: { x: 67, y: 143, width: 62, height: 38, angle: -10 }
+        base:
+          - { element: rect, attrs: { x: "24", y: "99", width: "84", height: "90" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "65", cy: "145", rx: "30", ry: "15", transform: "rotate(-9 65 145)" } }
+      chest_belly:
+        feature_anchor: { x: 221, y: 129, width: 46, height: 62, angle: -82 }
+        base:
+          - { element: rect, attrs: { x: "57", y: "51", width: "207", height: "138" } }
+        secondary:
+          - { element: path, attrs: { d: "M101 138 C150 158 208 146 243 120 C236 157 216 178 184 182 C142 186 111 169 101 138 Z" } }
+      wing:
+        feature_anchor: { x: 145, y: 114, width: 88, height: 46, angle: -7 }
+        base:
+          - { element: ellipse, attrs: { cx: "148", cy: "112", rx: "78", ry: "51", transform: "rotate(-6 148 112)" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "141", cy: "119", rx: "44", ry: "18", transform: "rotate(-7 141 119)" } }
+      head:
+        feature_anchor: { x: 250, y: 61, width: 52, height: 39, angle: 5 }
+        base:
+          - { element: ellipse, attrs: { cx: "247", cy: "60", rx: "41", ry: "37" } }
+          - { element: path, attrs: { d: "M246 64 C233 74 223 91 216 110 L246 121 C254 94 260 77 266 67 Z" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "252", cy: "49", rx: "24", ry: "12" } }
+    details: []
+
+  picidae:
+    source_asset: observation_outlines/picidae.svg
+    source_frame: { x: 102, y: 8, width: 116, height: 204 }
+    scene:
+      - { element: line, paint: scene, attrs: { x1: "205", y1: "15", x2: "205", y2: "214", stroke_width: "5" } }
+    parts:
+      tail:
+        feature_anchor: { x: 199, y: 184, width: 38, height: 44, angle: 88 }
+        base:
+          - { element: rect, attrs: { x: "174", y: "145", width: "51", height: "75" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "198", cy: "184", rx: "13", ry: "21" } }
+      chest_belly:
+        feature_anchor: { x: 174, y: 125, width: 40, height: 62, angle: -12 }
+        base:
+          - { element: ellipse, attrs: { cx: "163", cy: "126", rx: "47", ry: "59" } }
+        secondary:
+          - { element: path, attrs: { d: "M145 118 C160 139 177 146 193 139 C188 166 176 180 159 178 C145 174 139 151 145 118 Z" } }
+      wing:
+        feature_anchor: { x: 151, y: 117, width: 47, height: 70, angle: 12 }
+        base:
+          - { element: ellipse, attrs: { cx: "151", cy: "115", rx: "35", ry: "55", transform: "rotate(10 151 115)" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "150", cy: "119", rx: "18", ry: "28", transform: "rotate(10 150 119)" } }
+      head:
+        feature_anchor: { x: 141, y: 45, width: 42, height: 34, angle: -6 }
+        base:
+          - { element: ellipse, attrs: { cx: "143", cy: "45", rx: "34", ry: "32" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "139", cy: "35", rx: "20", ry: "11" } }
+    details: []
+
+  upright_passerine:
+    source_asset: observation_outlines/upright_passerine.svg
+    source_frame: { x: 75, y: 8, width: 170, height: 204 }
+    scene:
+      - { element: path, paint: scene, attrs: { d: "M51 190 C113 182 190 193 269 178", stroke_width: "5" } }
+    parts:
+      tail:
+        feature_anchor: { x: 221, y: 154, width: 54, height: 42, angle: 35 }
+        base:
+          - { element: rect, attrs: { x: "183", y: "116", width: "70", height: "96" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "220", cy: "155", rx: "27", ry: "14", transform: "rotate(32 220 155)" } }
+      chest_belly:
+        feature_anchor: { x: 122, y: 130, width: 44, height: 62, angle: 76 }
+        base:
+          - { element: rect, attrs: { x: "88", y: "55", width: "139", height: "134" } }
+        secondary:
+          - { element: path, attrs: { d: "M98 118 C119 145 158 157 195 139 C190 167 168 181 140 178 C117 175 103 155 98 118 Z" } }
+      wing:
+        feature_anchor: { x: 165, y: 114, width: 65, height: 48, angle: 13 }
+        base:
+          - { element: ellipse, attrs: { cx: "162", cy: "111", rx: "55", ry: "50", transform: "rotate(11 162 111)" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "166", cy: "119", rx: "32", ry: "18", transform: "rotate(12 166 119)" } }
+      head:
+        feature_anchor: { x: 111, y: 48, width: 48, height: 37, angle: -6 }
+        base:
+          - { element: ellipse, attrs: { cx: "113", cy: "47", rx: "38", ry: "35" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "109", cy: "37", rx: "22", ry: "12" } }
+    details: []
+
+  long_tailed_passerine:
+    source_asset: observation_outlines/long_tailed_passerine.svg
+    source_frame: { x: 18, y: 45, width: 284, height: 162 }
+    scene:
+      - { element: path, paint: scene, attrs: { d: "M29 190 C105 181 210 193 295 177", stroke_width: "5" } }
+    parts:
+      tail:
+        feature_anchor: { x: 72, y: 143, width: 92, height: 36, angle: -12 }
+        base:
+          - { element: rect, attrs: { x: "13", y: "101", width: "119", height: "85" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "72", cy: "145", rx: "45", ry: "14", transform: "rotate(-11 72 145)" } }
+      chest_belly:
+        feature_anchor: { x: 230, y: 128, width: 44, height: 58, angle: -78 }
+        base:
+          - { element: rect, attrs: { x: "92", y: "65", width: "189", height: "122" } }
+        secondary:
+          - { element: path, attrs: { d: "M121 135 C164 154 220 148 260 123 C253 158 230 176 197 178 C161 180 131 164 121 135 Z" } }
+      wing:
+        feature_anchor: { x: 169, y: 116, width: 79, height: 44, angle: -7 }
+        base:
+          - { element: ellipse, attrs: { cx: "171", cy: "112", rx: "70", ry: "47", transform: "rotate(-6 171 112)" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "166", cy: "119", rx: "39", ry: "17", transform: "rotate(-7 166 119)" } }
+      head:
+        feature_anchor: { x: 262, y: 76, width: 49, height: 37, angle: 5 }
+        base:
+          - { element: ellipse, attrs: { cx: "259", cy: "75", rx: "39", ry: "35" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "264", cy: "65", rx: "23", ry: "12" } }
+    details: []
+
+  generic:
+    source_asset: observation_outlines/generic.svg
+    source_frame: { x: 18, y: 36, width: 284, height: 184 }
+    scene:
+      - { element: path, paint: scene, attrs: { d: "M26 191 C101 181 211 194 298 176", stroke_width: "5" } }
+    parts:
+      tail:
+        feature_anchor: { x: 247, y: 158, width: 65, height: 43, angle: 24 }
+        base:
+          - { element: rect, attrs: { x: "206", y: "112", width: "96", height: "103" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "246", cy: "158", rx: "32", ry: "15", transform: "rotate(22 246 158)" } }
+      chest_belly:
+        feature_anchor: { x: 118, y: 132, width: 46, height: 62, angle: 78 }
+        base:
+          - { element: rect, attrs: { x: "57", y: "62", width: "213", height: "135" } }
+        secondary:
+          - { element: path, attrs: { d: "M76 123 C110 149 170 160 222 139 C211 171 178 187 136 183 C105 180 84 160 76 123 Z" } }
+      wing:
+        feature_anchor: { x: 177, y: 118, width: 86, height: 47, angle: 8 }
+        base:
+          - { element: ellipse, attrs: { cx: "174", cy: "115", rx: "77", ry: "52", transform: "rotate(7 174 115)" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "181", cy: "122", rx: "43", ry: "18", transform: "rotate(8 181 122)" } }
+      head:
+        feature_anchor: { x: 75, y: 69, width: 50, height: 38, angle: -6 }
+        base:
+          - { element: ellipse, attrs: { cx: "78", cy: "68", rx: "40", ry: "36" } }
+        secondary:
+          - { element: ellipse, attrs: { cx: "73", cy: "57", rx: "23", ry: "12" } }
+    details: []
