@@ -12,7 +12,10 @@
         <span class="status-pill"><%= t("observations.status.pending") %></span>
         <span class="subtle"><%= l(@observation.created_at, format: :short) %></span>
       </div>
-      <%= image_tag @outline.fetch(:asset), class: "outline-asset outline-asset--detail", alt: "" %>
+      <%= render "observation_impressions/visual",
+        impression: @impression,
+        id_prefix: "observation-#{@observation.id}-detail",
+        label: t("observation_impressions.preview.saved_visual_label") %>
       <span class="detail-concept-label"><%= t("observations.show.outline_note") %></span>
     </section>
 
@@ -24,21 +27,7 @@
 
     <section class="section-block" aria-labelledby="recorded-parts-title">
       <div class="section-head"><h2 class="section-title" id="recorded-parts-title"><%= t("observations.show.parts_heading") %></h2></div>
-      <dl class="detail-facts">
-        <% ObservationOptions.parts.each do |part| %>
-          <% impression = @part_impressions[part[:key]] %>
-          <% next unless impression %>
-          <% details = [] %>
-          <% details << observation_option_label(:colors, impression.primary_color_key) if impression.primary_color_key %>
-          <% details << t("observations.show.secondary", value: observation_option_label(:colors, impression.secondary_color_key)) if impression.secondary_color_key %>
-          <% details << observation_option_label(:features, impression.feature_key) if impression.feature_key %>
-          <% details << impression.description if impression.description %>
-          <div>
-            <dt><%= observation_option_label(:parts, part[:key]) %></dt>
-            <dd><%= details.join(" · ") %><br><small><%= observation_option_label(:certainties, impression.certainty_key) %></small></dd>
-          </div>
-        <% end %>
-      </dl>
+      <%= render "observation_impressions/summary", summary: @summary %>
     </section>
 
     <section class="section-block" aria-labelledby="supplement-title">

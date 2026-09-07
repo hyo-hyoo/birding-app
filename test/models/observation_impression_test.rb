@@ -45,4 +45,20 @@ class ObservationImpressionTest < ActiveSupport::TestCase
     assert_equal %w[wing], impression.recorded_parts.map(&:key)
     assert_nil impression.part("wing").primary_color_key
   end
+
+  test "derives the same read-only shape from a saved observation and a form submission" do
+    observation = Observation.new(outline_key: "corvidae")
+    observation.part_impressions.build(
+      part_key: "tail", primary_color_key: "black", feature_key: "forked_tail",
+      description: "clearly split", certainty_key: "certain"
+    )
+    submission = ObservationSubmission.from_observation(observation)
+
+    saved_impression = ObservationImpression.from_observation(observation)
+    form_impression = ObservationImpression.from_submission(submission)
+
+    assert_equal saved_impression.outline_key, form_impression.outline_key
+    assert_equal saved_impression.parts, form_impression.parts
+    assert_equal "forked_tail", saved_impression.part("tail").feature_key
+  end
 end

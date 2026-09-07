@@ -16,6 +16,21 @@ class ObservationImpression
 
   attr_reader :outline_key, :parts
 
+  def self.from_observation(observation)
+    new(
+      outline_key: observation.outline_key,
+      parts: observation.part_impressions.each_with_object({}) do |part, values|
+        values[part.part_key] = part.attributes.slice(
+          "primary_color_key", "secondary_color_key", "feature_key", "description", "certainty_key"
+        )
+      end
+    )
+  end
+
+  def self.from_submission(submission)
+    new(outline_key: submission.outline_key, parts: submission.parts)
+  end
+
   def initialize(outline_key:, parts:)
     @outline_key = normalize_outline(outline_key)
     @parts = normalize_parts(parts).freeze

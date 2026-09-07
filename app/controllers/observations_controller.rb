@@ -23,7 +23,8 @@ class ObservationsController < ApplicationController
   end
 
   def show
-    @part_impressions = @observation.part_impressions.index_by(&:part_key)
+    @impression = ObservationImpression.from_observation(@observation)
+    @summary = ObservationSummary.new(@impression)
     @activity_locations = @observation.activity_location_selections.order(:slot).to_a
     @outline = outline_for(@observation.outline_key)
   end

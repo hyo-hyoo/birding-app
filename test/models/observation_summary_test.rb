@@ -31,4 +31,20 @@ class ObservationSummaryTest < ActiveSupport::TestCase
     assert_equal "尚未选择", summary.items.first.certainty_label
     assert_includes summary.items.first.details, "补充：visible"
   end
+
+  test "keeps crest forked tail and long tail in localized text summaries" do
+    [
+      [ "head", "crest", "冠羽", "冠羽" ],
+      [ "tail", "forked_tail", "叉尾", "燕尾（二又）" ],
+      [ "tail", "long_tail", "长尾", "長い尾" ]
+    ].each do |part_key, feature_key, chinese_label, japanese_label|
+      impression = ObservationImpression.new(
+        outline_key: "compact_passerine",
+        parts: { part_key => { feature_key:, certainty_key: "certain" } }
+      )
+
+      assert_includes ObservationSummary.new(impression, locale: :"zh-CN").items.first.details, "特征：#{chinese_label}"
+      assert_includes ObservationSummary.new(impression, locale: :ja).items.first.details, "特徴：#{japanese_label}"
+    end
+  end
 end
